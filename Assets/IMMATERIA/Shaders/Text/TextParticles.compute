@@ -1,0 +1,316 @@
+﻿
+#pragma kernel SetGlyph
+#pragma kernel SetAnchor
+#pragma kernel SetPage
+#pragma kernel Simulation 
+#pragma kernel SimulationBasic 
+#pragma kernel Transfer 
+
+struct Vert{
+    float3 pos;
+    float3 vel;
+    float3 nor;
+    float3 lockPosition;
+    float2 uv;
+    float2 offset;
+};
+
+
+struct Anchor{
+    float3 pos;
+    float3 nor;
+    float2 position;
+    float2 dimensions;
+    float2 offset;
+};
+
+
+RWStructuredBuffer<Vert> _VertBuffer;
+RWStructuredBuffer<Vert> _TransferBuffer;
+RWStructuredBuffer<Anchor> _AnchorBuffer;
+
+int _VertBuffer_COUNT;
+int _AnchorBuffer_COUNT;
+int _TransferBuffer_COUNT;
+
+#include "../Chunks/safeID.cginc"
+#include "../Chunks/snoise.cginc"
+#include "../Chunks/curlNoise.cginc"
+#include "../Chunks/hash.cginc"
+
+
+float3 _CameraUp;
+float3 _CameraLeft;
+float _Radius;
+float _Scale;
+float _Time;
+
+float3 _RayOrigin;
+float3 _RayDirection;
+
+float3 _UrsulaPos;
+float3 _Up;
+
+float _PageAlive;
+
+
+
+float3 getProj( float3 pos , float3 sp , float3 ep ){
+  float3 dif = sp-ep;
+  float dot1 = dot( pos-sp , normalize(dif));
+
+  float3 proj = normalize(dif) * dot1;
+  float dotProj = dot( proj, ep-sp);
+  
+  float3 lineToPoint = pos-sp-proj;
+
+  return lineToPoint;
+}
+
+
+float3 CurlForce( float3 v , float3 rO , float3 rD ){
+
+
+  float3 toLine = getProj( v , rO , rO + rD );
+
+  float3 curl = cross( toLine , rD );
+
+  return curl; 
+
+} 
+
+
+float _Active;
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+
+    int particleID = pID / 4;
+    int sID = safeID(pID,_TransferBuffer_COUNT);
+    Vert v = _TransferBuffer[sID];
+    
+
+    if( particleID < _AnchorBuffer_COUNT ){
+
+      Anchor p = _AnchorBuffer[safeID(particleID,_AnchorBuffer_COUNT)];
+
+      int idInParticle = pID % 4;
+      int row = idInParticle / 2;
+      int col = pID % 2;
+
+      float3 u = -normalize(cross(p.nor,float3(0,1,0)));
+      float3 l = normalize(cross(p.nor,u));
+
+      float3 l1 =l* (float(col)-.5);
+      float3 u1 =u* (float(row)-.5);
+
+      float glyphWidth = 80.5 / 1024.;
+      float glyphHeight = 145. / 1024.;
+      float glyphBelow =   29. / 1024.;
+      float totalSize = glyphHeight;
+      
+      float widthOffset = (glyphHeight - glyphWidth)/2.;
+      float wOPercent = widthOffset / totalSize;
+
+      float belowP = glyphBelow / totalSize;
+
+      float wO = (glyphHeight - glyphWidth)/2.;
+
+      float wh = glyphWidth / glyphHeight;
+
+      float2 fOffset = float2(0,0);
+
+      fOffset.y += ((float)col - .5) * p.dimensions.y;
+      fOffset.y -= .5*p.dimensions.y;
+      fOffset.y += 1*p.offset.y;
+      fOffset.y -= (145./1024.)/4;
+      fOffset.x += (float(row) - .5) * p.dimensions.x;
+
+
+      float2 fUV = float2( float(row) , float(col) );
+
+      float x = fUV.x * p.dimensions.x  + p.position.x;
+      float y = fUV.y * p.dimensions.y  - p.position.y - p.dimensions.y;
+
+      fUV = float2(x,y);
+
+      v.uv = fUV;
+      v.offset = fOffset;
+      v.nor = p.nor;
+    
+    }else{
+    
+      v.uv = float2(0,0);
+      v.offset = float2(0,0);
+      v.nor = float3(0,0,1);
+    
+    }
+
+    _TransferBuffer[sID] = v;
+
+}
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void SetAnchor(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+    int sID =safeID(pID,_VertBuffer_COUNT);
+    Vert v = _VertBuffer[sID];
+    if(pID <= _AnchorBuffer_COUNT ){
+      Anchor p = _AnchorBuffer[safeID(pID,_AnchorBuffer_COUNT)];
+      v.lockPosition = p.pos;
+
+    }else{
+      v.lockPosition = _UrsulaPos;
+    }
+
+    _VertBuffer[sID] = v;
+
+}
+
+
+float3 randDir( float l ){
+
+  return float3((2*hash(l * 123.)-1),
+                (2*hash(l * 226.)-1),
+                (2*hash(l * 317.)-1));
+}
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void SetPage(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+    int sID =safeID(pID,_VertBuffer_COUNT);
+    Vert v = _VertBuffer[sID];
+    
+    float3 d = v.pos - _UrsulaPos;
+    float l = length(d);
+
+    if(l > 2 ){
+      v.pos = _UrsulaPos;// + randDir(float(pID)) * .4;
+      v.vel = randDir(float(pID)) * .01;//float3(0,0,0);
+    }
+
+    _VertBuffer[sID] = v;
+
+}
+
+float sdCapsule( float3 p, float3 a, float3 b, float r )
+{
+    float3 pa = p - a, ba = b - a;
+    float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
+    return length( pa - ba*h ) - r;
+}
+
+
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+    int sID =safeID(pID,_VertBuffer_COUNT);
+    Vert v = _VertBuffer[sID];
+
+    float3 force = 0;
+    float m = (2 + hash(float(pID))) /2;//sin(float(sID));
+    
+      float3 activeForce = 0;
+      float3 passiveForce = 0;
+
+      activeForce += ((v.pos - v.lockPosition)/max(.01,_Scale))*.5;
+
+      float3 d = getProj( v.pos , _RayOrigin + _RayDirection * 100 , _RayOrigin - _RayDirection * 100 );
+      float l = length(d);
+      activeForce += .1*normalize(d)* -saturate(( (_Scale*_Scale*1) - l ) /(_Scale*_Scale*1) );
+
+      d = v.pos - _UrsulaPos;
+      l = length(d);
+      activeForce += .01*normalize(d);//* - saturate(( (_Scale*_Scale*3) - l*l ) /(_Scale*_Scale*3) );
+
+      activeForce += curlNoise(v.pos * 1 /(max(.01,_Scale)) + _Time * (_Scale) ) * .0001;
+   
+
+
+       d = v.pos - _UrsulaPos;
+      l = length(d);
+      //passiveForce +=.01*normalize(d) * (l-1);
+
+      d = getProj( v.pos , _UrsulaPos - _Up , _UrsulaPos + _Up );
+      l = length(d);
+     //passiveForce +=.01*normalize(d) * (l-1);// * -saturate(( (3 - l*l ) /3 ));
+     //passiveForce += .01 * CurlForce( v.pos , _UrsulaPos - _Up , _Up );
+     
+     passiveForce += curlNoise( v.pos * .1 ) * .01;
+     passiveForce += randDir( float(sID)) * .001;
+
+    
+    force = lerp( passiveForce , activeForce , _PageAlive )*m;
+   // force += (v.pos - _UrsulaPos) *.1 *m;
+
+    if( length(force) > 3 ){ force = normalize(force) * 3;}
+    if( length(v.vel) > 3 ){ v.vel = normalize(v.vel) * 3;}
+  
+    v.vel -= force * .1;
+    v.pos += v.vel;
+    v.vel *= .8;
+    _VertBuffer[sID] = v;
+
+}
+
+
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void SimulationBasic(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+    int sID =safeID(pID,_VertBuffer_COUNT);
+    Vert v = _VertBuffer[sID];
+    
+    v.pos = v.lockPosition; //v.vel;
+    
+    _VertBuffer[sID] = v;
+
+}
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Transfer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+    int sID =safeID(pID,_TransferBuffer_COUNT);
+    Vert v = _TransferBuffer[sID];
+
+    int particleID = pID / 4;
+
+    Vert p = _VertBuffer[safeID(particleID,_VertBuffer_COUNT)];
+
+    int idInParticle = pID % 4;
+    int row = idInParticle / 2;
+    int col = pID % 2;
+
+    float3 u = -normalize(cross(v.nor,float3(0,1,0)));
+    float3 l = normalize(cross(v.nor,u));
+
+    //l = l* (float(col)-.5);
+    //u = u* (float(row)-.5);
+
+    float3 fPos = p.pos + ((l*v.offset.y) + (u*v.offset.x))*_Radius*_Scale;
+
+    v.pos = fPos;
+    v.vel = p.vel;
+    //v.uv = v.uv;
+    //v.nor = p.nor;
+
+    _TransferBuffer[sID] = v;
+
+}
