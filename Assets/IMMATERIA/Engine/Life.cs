@@ -11,6 +11,7 @@ public class Life : Cycle {
   
   public ComputeShader shader;
   public string kernelName;
+  public int countMultiplier = 1;
 
   [HideInInspector] public int kernel;
   [HideInInspector] public float executionTime;
@@ -54,7 +55,7 @@ public class Life : Cycle {
   }
 
   public virtual void GetNumGroups(){
-    numGroups = (primaryForm.count+((int)numThreads-1))/(int)numThreads;
+    numGroups = (primaryForm.count*countMultiplier+((int)numThreads-1))/(int)numThreads;
   }
  
   public void BindForm( string name , Form form ){
@@ -67,6 +68,18 @@ public class Life : Cycle {
   }else{
     print("BORKEN no form reset");
   }
+  }
+
+    public void RebindPrimaryForm(string name , Form form ){
+
+      if( primaryForm ){
+
+          primaryForm = form;
+          primaryName = name;
+    }else{
+
+      print("no primary form to reset");
+    }
   }
 
    public void BindInt( string name , int form ){

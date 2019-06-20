@@ -3,6 +3,7 @@
 #pragma kernel SetAnchor
 #pragma kernel SetPage
 #pragma kernel Simulation 
+#pragma kernel SimulationTest 
 #pragma kernel SimulationBasic 
 #pragma kernel Transfer 
 
@@ -33,6 +34,7 @@ int _VertBuffer_COUNT;
 int _AnchorBuffer_COUNT;
 int _TransferBuffer_COUNT;
 
+
 #include "../Chunks/safeID.cginc"
 #include "../Chunks/snoise.cginc"
 #include "../Chunks/curlNoise.cginc"
@@ -53,6 +55,12 @@ float3 _Up;
 
 float _PageAlive;
 
+int _BaseID;
+int _TipID;
+
+int GetID( int id ){
+  return (id + _BaseID) % _VertBuffer_COUNT;
+}
 
 
 float3 getProj( float3 pos , float3 sp , float3 ep ){
@@ -88,10 +96,11 @@ void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     int pID = threadID + u3GroupID.x * NR_THREADS;
 
-    int particleID = pID / 4;
-    int sID = safeID(pID,_TransferBuffer_COUNT);
-    Vert v = _TransferBuffer[sID];
+    int particleID = pID/4;
+
+    int sID = safeID(GetID( particleID )*4 + pID%4,_TransferBuffer_COUNT);
     
+    Vert v = _TransferBuffer[sID ];
 
     if( particleID < _AnchorBuffer_COUNT ){
 
@@ -158,14 +167,20 @@ void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 void SetAnchor(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     int pID = threadID + u3GroupID.x * NR_THREADS;
-    int sID =safeID(pID,_VertBuffer_COUNT);
+
+    // The vert we are setting needs to be cycled
+    // but the anchor should just be the pID
+    int sID =safeID(GetID(pID),_VertBuffer_COUNT);
+
     Vert v = _VertBuffer[sID];
+
     if(pID <= _AnchorBuffer_COUNT ){
+    
       Anchor p = _AnchorBuffer[safeID(pID,_AnchorBuffer_COUNT)];
-      v.lockPosition = p.pos;
+      v.lockPosition = p.pos + hash( float(pID)) * .01;
 
     }else{
-      v.lockPosition = _UrsulaPos;
+     // v.lockPosition = _UrsulaPos;
     }
 
     _VertBuffer[sID] = v;
@@ -186,7 +201,7 @@ float3 randDir( float l ){
 void SetPage(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     int pID = threadID + u3GroupID.x * NR_THREADS;
-    int sID =safeID(pID,_VertBuffer_COUNT);
+    int sID =safeID(GetID(pID),_VertBuffer_COUNT);
     Vert v = _VertBuffer[sID];
     
     float3 d = v.pos - _UrsulaPos;
@@ -197,7 +212,7 @@ void SetPage(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
       v.vel = randDir(float(pID)) * .01;//float3(0,0,0);
     }
 
-    _VertBuffer[sID] = v;
+   // _VertBuffer[sID] = v;
 
 }
 
@@ -265,6 +280,57 @@ void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 }
 
+bool inCurrent( int id ){
+
+  if( GetID( id ) < _BaseID || GetID( id ) > _TipID ){
+    return false;
+  }else{
+    return true;
+  }
+}
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+    int sID =safeID(pID,_VertBuffer_COUNT);
+    Vert v = _VertBuffer[sID];
+
+    //if( GetID( sID ) )
+
+    float3 force = 0;
+
+    //if( inCurrent(pID) ){
+
+    int dif = _TipID - _BaseID;
+
+    int inBase = _BaseID % _VertBuffer_COUNT;
+
+
+    int newID = pID;
+    if( inBase + dif > _VertBuffer_COUNT ){
+      if( newID < inBase ){ newID += _VertBuffer_COUNT; }
+    }
+
+    if( newID >=  inBase && newID < inBase + dif ){
+
+    force += -(v.pos - v.lockPosition) * .01;
+    }else{
+
+      force += curlNoise( v.pos ) * .01;
+  }
+    //}
+    //}else{
+    //  force += float3(0,1,0) * .01;
+    //}
+    v.vel  += force;
+    v.pos += v.vel;
+    v.vel *= .8;
+
+    //v.pos = v.lockPosition;
+    _VertBuffer[sID] = v;
+}
 
 
 
@@ -273,11 +339,14 @@ void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 void SimulationBasic(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     int pID = threadID + u3GroupID.x * NR_THREADS;
-    int sID =safeID(pID,_VertBuffer_COUNT);
+    int sID =safeID(GetID(pID),_VertBuffer_COUNT);
     Vert v = _VertBuffer[sID];
-    
-    v.pos = v.lockPosition; //v.vel;
-    
+
+
+   
+    v.pos = v.lockPosition;
+
+
     _VertBuffer[sID] = v;
 
 }
@@ -287,10 +356,11 @@ void SimulationBasic(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID
 void Transfer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     int pID = threadID + u3GroupID.x * NR_THREADS;
-    int sID =safeID(pID,_TransferBuffer_COUNT);
+    int sID =safeID(GetID(pID/4)*4 + pID%4,_TransferBuffer_COUNT);
+
     Vert v = _TransferBuffer[sID];
 
-    int particleID = pID / 4;
+    int particleID = GetID(pID/4);
 
     Vert p = _VertBuffer[safeID(particleID,_VertBuffer_COUNT)];
 
@@ -299,12 +369,13 @@ void Transfer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     int col = pID % 2;
 
     float3 u = -normalize(cross(v.nor,float3(0,1,0)));
-    float3 l = normalize(cross(v.nor,u));
+    float3 l =normalize(cross(v.nor,u));
 
     //l = l* (float(col)-.5);
     //u = u* (float(row)-.5);
 
     float3 fPos = p.pos + ((l*v.offset.y) + (u*v.offset.x))*_Radius*_Scale;
+    //float3 fPos = p.pos + ((l) + (u))*_Radius*_Scale;
 
     v.pos = fPos;
     v.vel = p.vel;

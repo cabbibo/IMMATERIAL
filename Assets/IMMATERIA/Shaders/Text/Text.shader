@@ -109,7 +109,9 @@ float3 bg = tex2Dproj(_BackgroundTexture, v.screenPos );
          //}//1-d;
 
           c *= lum;
-        return float4(  c * 1.4 , lum);
+        //return float4(  c * 1.4 , lum);
+        return 1;
+
 			}
 
 			ENDCG

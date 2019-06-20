@@ -18,6 +18,7 @@
           float3 eye      : TEXCOORD2;
           float3 debug    : TEXCOORD3;
           float2 uv       : TEXCOORD4;
+          float id        : TEXCOORD5;
       };
 
 //Our vertex function simply fetches a point from the buffer corresponding to the vertex index
@@ -49,19 +50,11 @@ varyings vert (uint id : SV_VertexID){
       o.eye = _WorldSpaceCameraPos - o.worldPos;
       o.nor =v.nor;
       o.uv = v.uv;
-
+      o.id = base;
       o.pos = mul (UNITY_MATRIX_VP, float4(o.worldPos,1.0f));
 
   }
 
   return o;
 
-}
-
-
-
-
-//Pixel function returns a solid color for each point.
-float4 frag (varyings v) : COLOR {
-    return float4(_Color,1 );
 }

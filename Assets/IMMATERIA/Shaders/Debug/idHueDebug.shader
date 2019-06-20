@@ -1,7 +1,8 @@
-﻿Shader "Debug/Particles24" {
+﻿
+Shader "Debug/idHueDebug" {
     Properties {
 
-    _Color ("Color", Color) = (1,1,1,1)
+    _HueSize ("HueSize", float) = .01
     _Size ("Size", float) = .01
     }
 
@@ -18,15 +19,19 @@
       #pragma fragment frag
 
       #include "UnityCG.cginc"
-      #include "../Chunks/Struct24.cginc"
+      #include "../Chunks/hsv.cginc"
+      #include "../Chunks/Struct16.cginc"
       #include "../Chunks/debugVSChunk.cginc"
 
-      
+float _HueSize;
 
 //Pixel function returns a solid color for each point.
 float4 frag (varyings v) : COLOR {
-    return float4(_Color,1 );
+
+    float3 col = hsv( v.id * _HueSize , 1, 1);
+    return float4(col,1 );
 }
+
 
       ENDCG
 

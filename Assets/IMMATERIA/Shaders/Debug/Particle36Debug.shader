@@ -21,6 +21,13 @@
       #include "../Chunks/Struct36.cginc"
       #include "../Chunks/debugVSChunk.cginc"
 
+      
+
+//Pixel function returns a solid color for each point.
+float4 frag (varyings v) : COLOR {
+    return float4(_Color,1 );
+}
+
       ENDCG
 
     }

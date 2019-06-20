@@ -21,6 +21,9 @@ public class TextParticles : LifeForm{
 
   public float scale;
 
+public int currentMax;
+public int currentMin;
+
   public void HideShowParticles(bool val){
     body.active = val;
   }
@@ -34,16 +37,18 @@ public class TextParticles : LifeForm{
     SafeInsert(transfer);
     SafeInsert(body);
     DoCreate();
+    currentMin = 0;
+    currentMax = 0;
 
   }
 
   public override void Bind(){
 
-    setGlyph.BindPrimaryForm("_TransferBuffer",body.verts);
-    setGlyph.BindForm("_AnchorBuffer",anchor);
+    setGlyph.BindForm("_TransferBuffer",body.verts);
+    setGlyph.BindPrimaryForm("_AnchorBuffer",anchor);
 
-    setAnchor.BindPrimaryForm("_VertBuffer",particles);
-    setAnchor.BindForm("_AnchorBuffer",anchor);
+    setAnchor.BindForm("_VertBuffer",particles);
+    setAnchor.BindPrimaryForm("_AnchorBuffer",anchor);
 
     setPage.BindPrimaryForm("_VertBuffer",particles);
 
@@ -53,6 +58,19 @@ public class TextParticles : LifeForm{
     transfer.BindForm("_VertBuffer",particles);
     transfer.BindAttribute("_Radius","radius",this);//.BindForm("_VertBuffer",particles);
     transfer.BindAttribute("_Scale","scale",this);//.BindForm("_VertBuffer",particles);
+
+    setGlyph.BindAttribute("_BaseID" , "currentMin" , this );
+    setAnchor.BindAttribute("_BaseID" , "currentMin" , this );
+    setPage.BindAttribute("_BaseID" , "currentMin" , this );
+    simulate.BindAttribute("_BaseID" , "currentMin" , this );
+    transfer.BindAttribute("_BaseID" , "currentMin" , this );
+
+
+    setGlyph.BindAttribute(  "_TipID" , "currentMax" , this );
+    setAnchor.BindAttribute( "_TipID" , "currentMax" , this );
+    setPage.BindAttribute(   "_TipID" , "currentMax" , this );
+    simulate.BindAttribute(  "_TipID" , "currentMax" , this );
+    transfer.BindAttribute(  "_TipID" , "currentMax" , this );
 
 
    /* simulate.BindAttribute("_Active","pageActive",story);
@@ -75,12 +93,18 @@ public class TextParticles : LifeForm{
   }
 
   public void Set(TextAnchor t){
+
+    currentMin = currentMax;
+
+    currentMax = currentMin + t.count; 
+    print( currentMax );
+    print( t.count );
     
     anchor = t;
     scale = t.scale;
 
-    setGlyph.RebindForm("_AnchorBuffer",anchor);
-    setAnchor.RebindForm("_AnchorBuffer",anchor);
+    setGlyph.RebindPrimaryForm("_AnchorBuffer",anchor);
+    setAnchor.RebindPrimaryForm("_AnchorBuffer",anchor);
 
     setAnchor.YOLO();
     setGlyph.YOLO();
