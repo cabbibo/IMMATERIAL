@@ -42,6 +42,15 @@ public int currentMin;
 
   }
 
+  public override void OnBirthed(){
+    float[] values = new float[ particles.count * particles.structSize ];
+    particles.SetData( values );
+
+    values = new float[ body.verts.count * particles.structSize  ];
+    body.verts.SetData( values );
+
+  }
+
   public override void Bind(){
 
     setGlyph.BindForm("_TransferBuffer",body.verts);
@@ -50,7 +59,8 @@ public int currentMin;
     setAnchor.BindForm("_VertBuffer",particles);
     setAnchor.BindPrimaryForm("_AnchorBuffer",anchor);
 
-    setPage.BindPrimaryForm("_VertBuffer",particles);
+    setPage.BindForm("_AnchorBuffer",anchor);
+    setPage.BindForm("_VertBuffer",particles);
 
     simulate.BindPrimaryForm("_VertBuffer",particles);
 
@@ -105,13 +115,14 @@ public int currentMin;
 
     setGlyph.RebindPrimaryForm("_AnchorBuffer",anchor);
     setAnchor.RebindPrimaryForm("_AnchorBuffer",anchor);
+    setPage.RebindPrimaryForm( "_AnchorBuffer" , anchor );
 
     setAnchor.YOLO();
     setGlyph.YOLO();
   }
 
   public override void OnLive(){
-    Set( anchor );
+    if( anchor != null ){ Set( anchor ); }
   }
 
 

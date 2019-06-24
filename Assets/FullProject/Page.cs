@@ -18,4 +18,14 @@ public class Page : Cycle
     }
 
 
+
+    public override void Activate(){
+
+     // data.text.Set( text );
+     // data.text.PageStart();
+    }
+
+
+
+
 }

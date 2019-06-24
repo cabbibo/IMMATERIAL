@@ -99,8 +99,8 @@
         float smoothing = .2;
         float lum = smoothstep( 0.4 - smoothing , 0.4 + smoothing , d.x );
 
-        if( d < .1 ){discard;}
-float3 bg = tex2Dproj(_BackgroundTexture, v.screenPos );
+        if( d < .4 ){discard;}
+        float3 bg = tex2Dproj(_BackgroundTexture, v.screenPos );
         float3 c = tex2D(_ColorMap,float2(v.debug.z * 10.1 + .7 ,0) ).xyz;
         
 
@@ -108,9 +108,10 @@ float3 bg = tex2Dproj(_BackgroundTexture, v.screenPos );
          //c = 0;
          //}//1-d;
 
-          c *= lum;
-        //return float4(  c * 1.4 , lum);
-        return 1;
+         //c = float3(1,0,0);
+        c *= lum;
+        return float4(  c * 1.4 , lum);
+        //return 1;
 
 			}
 

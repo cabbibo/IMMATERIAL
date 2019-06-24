@@ -2,6 +2,7 @@
 #pragma kernel SetGlyph
 #pragma kernel SetAnchor
 #pragma kernel SetPage
+#pragma kernel SetPageAtCamera
 #pragma kernel Simulation 
 #pragma kernel SimulationTest 
 #pragma kernel SimulationBasic 
@@ -42,6 +43,7 @@ int _TransferBuffer_COUNT;
 
 
 float3 _CameraUp;
+float3 _CameraPosition;
 float3 _CameraLeft;
 float _Radius;
 float _Scale;
@@ -50,6 +52,7 @@ float _Time;
 float3 _RayOrigin;
 float3 _RayDirection;
 
+float3 _PlayerPosition;
 float3 _UrsulaPos;
 float3 _Up;
 
@@ -216,6 +219,25 @@ void SetPage(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 }
 
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void SetPageAtCamera(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+    int sID =safeID(GetID(pID),_VertBuffer_COUNT);
+    Vert v = _VertBuffer[sID];
+    
+
+    // Need to make sure that its not bigger than anchor count
+    // so doesn't accidently set another letter
+    if(pID <= _AnchorBuffer_COUNT ){ v.pos = _CameraPosition; }
+
+    _VertBuffer[sID] = v;
+
+}
+
+
 float sdCapsule( float3 p, float3 a, float3 b, float r )
 {
     float3 pa = p - a, ba = b - a;
@@ -318,13 +340,18 @@ void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
     force += -(v.pos - v.lockPosition) * .01;
     }else{
 
-      force += curlNoise( v.pos ) * .01;
+      force += curlNoise( v.pos * .1 ) * .001;
   }
+
+  if( length( force ) > 1 ){ force = normalize(force) * 1; }
     //}
     //}else{
     //  force += float3(0,1,0) * .01;
     //}
     v.vel  += force;
+
+
+  if( length( v.vel ) > 1 ){ v.vel = normalize(v.vel) * 1; }
     v.pos += v.vel;
     v.vel *= .8;
 

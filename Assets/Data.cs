@@ -19,6 +19,8 @@ public class Data : Cycle
     
   public Transform Camera;
   public Transform Player;
+
+  public TextParticles text;
   //public Terrain terrain;
 
   public Vector3 CameraForward;

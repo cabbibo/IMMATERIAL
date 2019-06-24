@@ -28,6 +28,8 @@ public class Cycle : MonoBehaviour{
   public bool debug = false;
   public bool active = false;
 
+  public Data data;
+
   public List<Cycle> Cycles;
 
 /*
@@ -57,12 +59,21 @@ public class Cycle : MonoBehaviour{
     Create();
 
     foreach( Cycle c in Cycles ){
+
       if( c == null ){
         DebugThis( "SOME CYCLE NULL");
       }
 
-   //   print(this);
+
+
+      CheckSelfCycle(c);
+
+      //   print(this);
       c._Create();
+
+
+      if( c.data == null ){ c.data = data; }
+      if( data == null ){ print("fuhhh"); }
     }
 
 
@@ -87,6 +98,8 @@ public class Cycle : MonoBehaviour{
 
     OnGestate();
     foreach( Cycle c in Cycles ){
+      
+      CheckSelfCycle(c);
       c._OnGestate();
     }
 
@@ -103,6 +116,8 @@ public class Cycle : MonoBehaviour{
   protected void DoGestating(float v){
     WhileGestating(v);
     foreach( Cycle c in Cycles ){
+      
+      CheckSelfCycle(c);
       c._WhileGestating(v);
     }
   }
@@ -119,6 +134,8 @@ public class Cycle : MonoBehaviour{
     gestating = false;
     OnGestated();
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._OnGestated();
     }
     gestated = true;
@@ -143,6 +160,8 @@ public class Cycle : MonoBehaviour{
     begunBirth = true;
     OnBirth();
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._OnBirth();
     }
     birthing = true;
@@ -156,6 +175,8 @@ public class Cycle : MonoBehaviour{
   protected void DoBirthing(float v){
     WhileBirthing(v); 
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._WhileBirthing(v);
     }
   }
@@ -169,6 +190,8 @@ public class Cycle : MonoBehaviour{
     birthing = false;
     OnBirthed();
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._OnBirthed();
     }
     birthed = true;
@@ -189,6 +212,8 @@ public class Cycle : MonoBehaviour{
     begunLive = true;
     OnLive();
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._OnLive();
     }
     living = true;
@@ -199,7 +224,9 @@ public class Cycle : MonoBehaviour{
 
   protected void DoLiving(float v){
     WhileLiving(v);
+
     foreach( Cycle c in Cycles ){
+      CheckSelfCycle(c);
       c._WhileLiving(v);
     }
   }
@@ -212,6 +239,8 @@ public class Cycle : MonoBehaviour{
     living = false;
     OnLived();
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._OnLived();
     }
     lived = true;
@@ -234,6 +263,8 @@ public class Cycle : MonoBehaviour{
     begunDeath = true;
     OnDie();
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._OnDie();
     }
     dying = true;
@@ -246,6 +277,8 @@ public class Cycle : MonoBehaviour{
 
     WhileDying(v);    
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._WhileDying(v);
     }
   }
@@ -258,6 +291,8 @@ public class Cycle : MonoBehaviour{
     dying = false;
     OnDied();
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._OnDied();
     }
     died = true;
@@ -275,6 +310,8 @@ public class Cycle : MonoBehaviour{
   protected void DoDestroy(){
     SetStates();
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._Destroy();
     }
 
@@ -293,6 +330,8 @@ public class Cycle : MonoBehaviour{
 public virtual void _Activate(){
   Activate();
   foreach( Cycle c in Cycles ){
+
+    CheckSelfCycle(c);
     c._Activate();
   }
   active = true;
@@ -301,7 +340,9 @@ public virtual void Activate(){}
 
 public virtual void _Deactivate(){
   Deactivate();
-   foreach( Cycle c in Cycles ){
+  foreach( Cycle c in Cycles ){
+
+    CheckSelfCycle(c);
     c._Deactivate();
   }
   active = false;
@@ -339,6 +380,8 @@ void SetStates(){
     if( debug ){ WhileDebug(); }
 
     foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
       c._WhileDebug();
     }
     
@@ -358,11 +401,32 @@ void SetStates(){
 
   }
 
+  public void SafePrepend(Cycle c2){
+
+    bool can = true;
+
+    foreach( Cycle c in Cycles ){
+      if( c == c2 ) can = false;
+    }
+
+
+    if( can ) Cycles.Insert( 0, c2);
+
+  }
+
   /*
     Helpers
   */
   public void DebugThis( string s ){
     print( "Object Name : " + this.gameObject.name +"     || Script Name : "+this.GetType()+ "     || Message: " + s );
+  }
+
+  public void CheckSelfCycle(Cycle c){
+       if( c == this ){
+         Debug.LogError("YOU CYCLED YOURSELF!" + c );
+
+        Cycles.Remove( c );
+      }
   }
 
 }
