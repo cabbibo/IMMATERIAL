@@ -9,6 +9,7 @@ public class God : Cycle {
 
 
 private static God _instance;
+  
 
 
 public override void Create(){
@@ -35,6 +36,7 @@ public void LateUpdate(){
 
 public void OnEnable(){
 
+      EditorApplication.update += Always;
     if( _instance == null ){ _instance = this; }
     _Create(); 
     _OnGestate();
@@ -46,9 +48,15 @@ public void OnEnable(){
 
 public void OnDisable(){
 
+      EditorApplication.update -= Always;
     _Destroy();   
 }
 
+
+ 
+    void Always(){
+      EditorApplication.QueuePlayerLoopUpdate();
+    }
 public void Rebuild(){
     OnDisable();
     OnEnable();

@@ -8,8 +8,10 @@ public class PageTurner : Cycle
   private Vector3 ro;
   private Vector3 rd;
 
+  private float switchTime;
   public override void Create(){
 
+    switchTime = 0;
     for( int i = 0; i < pages.Length; i ++ ){
       SafeInsert(pages[i]);
     }
@@ -27,26 +29,40 @@ public class PageTurner : Cycle
 
     if( Application.isPlaying ){
 
-    Vector2 p =  Input.mousePosition;///Input.GetTouch(0).position;
-    ro = Camera.main.ScreenToWorldPoint( new Vector3( p.x , p.y , Camera.main.nearClipPlane ) );
-    rd = -(Camera.main.transform.position - ro).normalized;
-    
-    if( Input.GetMouseButtonDown(0) ){
+      Vector2 p =  Input.mousePosition;///Input.GetTouch(0).position;
+      ro = Camera.main.ScreenToWorldPoint( new Vector3( p.x , p.y , Camera.main.nearClipPlane ) );
+      rd = -(Camera.main.transform.position - ro).normalized;
+      
+      if( Input.GetMouseButtonDown(0) ){
 
-      RaycastHit hit;
-      if( Physics.Raycast(ro,rd, out hit, Mathf.Infinity)){
-       
-        if( hit.collider.gameObject.tag == "Frame"){
+        RaycastHit hit;
+        if( Physics.Raycast(ro,rd, out hit, Mathf.Infinity)){
+         
+          if( hit.collider.gameObject.tag == "Frame"){
 
-          print( hit.collider.transform.parent.GetComponent<Page>());
-          print( data.text );
-          data.text.Set( hit.collider.transform.parent.GetComponent<Page>().text );
-          data.text.PageStart();
+            hit.collider.transform.parent.GetComponent<Page>().SetActivePage();
+          
+
+          }
         }
       }
-    }
 
-  }
+    }else{
+
+
+      switchTime += 1;
+      if( switchTime > 400 ){
+
+        print("swartch");
+
+        switchTime -= 400;
+        pages[Random.Range( 0, pages.Length )].SetActivePage();
+        
+      }
+
+
+
+    }
 
   }
 

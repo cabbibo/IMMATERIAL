@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class CaptureTest : MonoBehaviour {
     // Capture frames as a screenshot sequence. Images are
     // stored as PNG files in a folder - these can be combined into
@@ -57,7 +58,7 @@ public class CaptureTest : MonoBehaviour {
         if( capturing == true ){
 
 
-
+            print( "savingIOmager");
             // Append filename to folder name (format is '0005 shot.png"')
             string name = string.Format("{0}/shot{1:D04}.png", final, Time.frameCount - startFrameCount );
 

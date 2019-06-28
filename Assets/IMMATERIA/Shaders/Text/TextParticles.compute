@@ -3,6 +3,7 @@
 #pragma kernel SetAnchor
 #pragma kernel SetPage
 #pragma kernel SetPageAtCamera
+#pragma kernel SetPageAtPlayer
 #pragma kernel Simulation 
 #pragma kernel SimulationTest 
 #pragma kernel SimulationBasic 
@@ -238,6 +239,24 @@ void SetPageAtCamera(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID
 }
 
 
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void SetPageAtPlayer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+    int sID =safeID(GetID(pID),_VertBuffer_COUNT);
+    Vert v = _VertBuffer[sID];
+    
+
+    // Need to make sure that its not bigger than anchor count
+    // so doesn't accidently set another letter
+    if(pID <= _AnchorBuffer_COUNT ){ v.pos = _PlayerPosition; }
+
+    _VertBuffer[sID] = v;
+
+}
+
+
 float sdCapsule( float3 p, float3 a, float3 b, float r )
 {
     float3 pa = p - a, ba = b - a;
@@ -378,6 +397,7 @@ void SimulationBasic(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID
 
 }
 
+
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
 void Transfer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
@@ -395,13 +415,13 @@ void Transfer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     int row = idInParticle / 2;
     int col = pID % 2;
 
-    float3 u = -normalize(cross(v.nor,float3(0,1,0)));
-    float3 l =normalize(cross(v.nor,u));
+    float3 u = _CameraUp;
+    float3 l = normalize(cross(v.nor,u));
 
     //l = l* (float(col)-.5);
     //u = u* (float(row)-.5);
 
-    float3 fPos = p.pos + ((l*v.offset.y) + (u*v.offset.x))*_Radius*_Scale;
+    float3 fPos = p.pos + ((u*v.offset.y) + (-l*v.offset.x))*_Radius*_Scale;
     //float3 fPos = p.pos + ((l) + (u))*_Radius*_Scale;
 
     v.pos = fPos;

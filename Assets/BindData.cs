@@ -6,8 +6,6 @@ public class BindData : Binder
 {
     
   public override void Bind() {
-
-    print("hmmmm");
     data.BindCameraData(toBind);
     data.BindPlayerData(toBind);
   }

@@ -1,0 +1,458 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8870415198883867273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8870415198883867318}
+  - component: {fileID: 8870415198883867324}
+  - component: {fileID: 8870415198883867319}
+  - component: {fileID: 8870415198883867327}
+  - component: {fileID: 8870415198883867326}
+  - component: {fileID: 8870415198883867313}
+  - component: {fileID: 8870415198883867312}
+  - component: {fileID: 8870415198883867315}
+  - component: {fileID: 8870415198883867314}
+  - component: {fileID: 8870415198883867317}
+  - component: {fileID: 8870415198883867316}
+  - component: {fileID: 8870415198883867325}
+  m_Layer: 0
+  m_Name: Text Particles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8870415198883867318
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8870415198883867324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f08f5c0023e3ec44399cd701cf642666, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 0
+  data: {fileID: 0}
+  Cycles:
+  - {fileID: 8870415198883867319}
+  - {fileID: 8870415198883867327}
+  - {fileID: 8870415198883867326}
+  - {fileID: 8870415198883867313}
+  - {fileID: 8870415198883867312}
+  - {fileID: 8870415198883867315}
+  - {fileID: 8870415198883867314}
+  - {fileID: 8870415198883867325}
+  particles: {fileID: 8870415198883867319}
+  anchor: {fileID: 0}
+  body: {fileID: 8870415198883867314}
+  setAnchor: {fileID: 8870415198883867327}
+  setGlyph: {fileID: 8870415198883867326}
+  setPage: {fileID: 8870415198883867313}
+  simulate: {fileID: 8870415198883867312}
+  transfer: {fileID: 8870415198883867315}
+  radius: 2
+  scale: 0.33333334
+  currentMax: 0
+  currentMin: 0
+--- !u!114 &8870415198883867319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a74b6894ada215f44a309bd667c7026e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 0
+  data: {fileID: 0}
+  Cycles: []
+  count: 1000
+  intBuffer: 0
+  structSize: 16
+  description: 
+  timeToCreate: 0
+  totalMemory: 0
+  debugMaterial: {fileID: 2100000, guid: 41c35f41ff2bcb94cb16a1fc7c0ab466, type: 2}
+--- !u!114 &8870415198883867327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521ed2d62d2034941a1197389f9c70d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 0
+  data: {fileID: 0}
+  Cycles: []
+  primaryName: _AnchorBuffer
+  primaryForm: {fileID: 0}
+  shader: {fileID: 7200000, guid: 0d32b570230bc09408283e23de5e7add, type: 3}
+  kernelName: SetAnchor
+  countMultiplier: 1
+  kernel: 1
+  executionTime: 0
+--- !u!114 &8870415198883867326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521ed2d62d2034941a1197389f9c70d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 0
+  data: {fileID: 0}
+  Cycles: []
+  primaryName: _AnchorBuffer
+  primaryForm: {fileID: 0}
+  shader: {fileID: 7200000, guid: 0d32b570230bc09408283e23de5e7add, type: 3}
+  kernelName: SetGlyph
+  countMultiplier: 4
+  kernel: 0
+  executionTime: 0
+--- !u!114 &8870415198883867313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521ed2d62d2034941a1197389f9c70d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 0
+  data: {fileID: 0}
+  Cycles: []
+  primaryName: _AnchorBuffer
+  primaryForm: {fileID: 0}
+  shader: {fileID: 7200000, guid: 0d32b570230bc09408283e23de5e7add, type: 3}
+  kernelName: SetPageAtPlayer
+  countMultiplier: 1
+  kernel: 4
+  executionTime: 0
+--- !u!114 &8870415198883867312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521ed2d62d2034941a1197389f9c70d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 1
+  data: {fileID: 0}
+  Cycles: []
+  primaryName: _VertBuffer
+  primaryForm: {fileID: 8870415198883867319}
+  shader: {fileID: 7200000, guid: 0d32b570230bc09408283e23de5e7add, type: 3}
+  kernelName: SimulationTest
+  countMultiplier: 1
+  kernel: 6
+  executionTime: 0
+--- !u!114 &8870415198883867315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521ed2d62d2034941a1197389f9c70d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 1
+  data: {fileID: 0}
+  Cycles: []
+  primaryName: _TransferBuffer
+  primaryForm: {fileID: 8870415198883867317}
+  shader: {fileID: 7200000, guid: 0d32b570230bc09408283e23de5e7add, type: 3}
+  kernelName: Transfer
+  countMultiplier: 1
+  kernel: 8
+  executionTime: 0
+--- !u!114 &8870415198883867314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4c7fa692e4cc426aa37fba780fcae78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 1
+  data: {fileID: 0}
+  Cycles:
+  - {fileID: 8870415198883867317}
+  - {fileID: 8870415198883867316}
+  verts: {fileID: 8870415198883867317}
+  triangles: {fileID: 8870415198883867316}
+  material: {fileID: 2100000, guid: e2b1e6ae5e4686249ae22d8cce1abb2c, type: 2}
+  debugMaterial: {fileID: 0}
+--- !u!114 &8870415198883867317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f355d520539208941b24bc8c257c80ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 1
+  data: {fileID: 0}
+  Cycles: []
+  count: 4000
+  intBuffer: 0
+  structSize: 16
+  description: 
+  timeToCreate: 0
+  totalMemory: 0
+  debugMaterial: {fileID: 2100000, guid: 2d2db4c4fed294f37b58a496d7212c18, type: 2}
+  particles: {fileID: 8870415198883867319}
+--- !u!114 &8870415198883867316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b84c1fa5832544386cb6481392ed0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 0
+  data: {fileID: 0}
+  Cycles: []
+  count: 6000
+  intBuffer: 1
+  structSize: 1
+  description: 
+  timeToCreate: 0
+  totalMemory: 0
+  debugMaterial: {fileID: 2100000, guid: a26208c937c775a469f0791f9e50c4fd, type: 2}
+  toIndex: {fileID: 8870415198883867317}
+--- !u!114 &8870415198883867325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870415198883867273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea2bc355186e420fa097666f2a9965e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  created: 1
+  begunGestation: 1
+  gestating: 0
+  gestated: 1
+  begunBirth: 1
+  birthing: 0
+  birthed: 1
+  begunLive: 1
+  living: 1
+  lived: 0
+  begunDeath: 0
+  dying: 0
+  died: 0
+  destroyed: 0
+  debug: 0
+  active: 0
+  data: {fileID: 0}
+  Cycles: []
+  toBind: {fileID: 8870415198883867313}

@@ -25,7 +25,7 @@
 		Pass {
 			//Tags{ "LightMode" = "ForwardBase" }
 			Cull Off
-      Blend OneMinusDstColor One // Soft Additive
+      //Blend OneMinusDstColor One // Soft Additive
 
 			CGPROGRAM
 			#pragma target 4.5
