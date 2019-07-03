@@ -49,7 +49,7 @@ public string text;
   public override void SetCount(){
 
     //print( "setting count");
-    scale = frame.distance / 3;
+   // scale = frame.distance / 3;
 
     scaledPadding = scale * padding;
     scaledCharacterSize = scale  * characterSize;

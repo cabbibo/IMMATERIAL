@@ -29,14 +29,19 @@ public class PageTurner : Cycle
 
     if( Application.isPlaying ){
 
+
       Vector2 p =  Input.mousePosition;///Input.GetTouch(0).position;
       ro = Camera.main.ScreenToWorldPoint( new Vector3( p.x , p.y , Camera.main.nearClipPlane ) );
       rd = -(Camera.main.transform.position - ro).normalized;
       
       if( Input.GetMouseButtonDown(0) ){
 
+      print("helllooooooo");
         RaycastHit hit;
         if( Physics.Raycast(ro,rd, out hit, Mathf.Infinity)){
+
+
+      print("helllooooooo2");
          
           if( hit.collider.gameObject.tag == "Frame"){
 
@@ -50,7 +55,7 @@ public class PageTurner : Cycle
     }else{
 
 
-      switchTime += 1;
+      /*switchTime += 1;
       if( switchTime > 400 ){
 
         print("swartch");
@@ -58,7 +63,7 @@ public class PageTurner : Cycle
         switchTime -= 400;
         pages[Random.Range( 0, pages.Length )].SetActivePage();
         
-      }
+      }*/
 
 
 

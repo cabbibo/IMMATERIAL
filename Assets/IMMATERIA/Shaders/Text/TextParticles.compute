@@ -181,7 +181,7 @@ void SetAnchor(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     if(pID <= _AnchorBuffer_COUNT ){
     
       Anchor p = _AnchorBuffer[safeID(pID,_AnchorBuffer_COUNT)];
-      v.lockPosition = p.pos + hash( float(pID)) * .01;
+      v.lockPosition = p.pos;
 
     }else{
      // v.lockPosition = _UrsulaPos;
@@ -356,10 +356,10 @@ void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
 
     if( newID >=  inBase && newID < inBase + dif ){
 
-    force += -(v.pos - v.lockPosition) * .01;
+      force += -(v.pos - v.lockPosition) * .01;
     }else{
 
-      force += curlNoise( v.pos * .1 ) * .001;
+    force += curlNoise( v.pos * .1 ) * .001;
   }
 
   if( length( force ) > 1 ){ force = normalize(force) * 1; }

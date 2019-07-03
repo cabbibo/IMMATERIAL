@@ -22,7 +22,7 @@ public class Data : Cycle
 
   public TextParticles text;
   
-  public CameraController camControls;
+  public CameraController Controls;
   //public Terrain terrain;
 
   public Vector3 CameraForward;

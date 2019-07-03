@@ -23,7 +23,7 @@ public class Page : Cycle
       data.text.Set( text );
       data.text.PageStart();
 
-      data.camControls.SetLerpTarget( transform ,lerpSpeed);
+      data.Controls.SetLerpTarget( transform ,lerpSpeed);
     
     }
 
