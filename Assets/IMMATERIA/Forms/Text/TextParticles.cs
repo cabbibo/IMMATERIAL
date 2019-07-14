@@ -113,6 +113,10 @@ public int currentMin;
     anchor = t;
     scale = t.scale;
 
+    print("ANCHOR");
+    print( t );
+    print( t.count );
+
     setGlyph.RebindPrimaryForm("_AnchorBuffer",anchor);
     setAnchor.RebindPrimaryForm("_AnchorBuffer",anchor);
     setPage.RebindPrimaryForm( "_AnchorBuffer" , anchor );
@@ -120,6 +124,14 @@ public int currentMin;
     setAnchor.YOLO();
     setGlyph.YOLO();
   }
+
+
+  public void Release(){
+
+    currentMin = currentMax;
+
+  }
+
 
   public override void OnLive(){
     if( anchor != null ){ Set( anchor ); }

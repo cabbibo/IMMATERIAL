@@ -55,6 +55,8 @@ public class Life : Cycle {
   }
 
   public virtual void GetNumGroups(){
+
+    //print(primaryForm);
     numGroups = (primaryForm.count*countMultiplier+((int)numThreads-1))/(int)numThreads;
   }
  
@@ -77,8 +79,9 @@ public class Life : Cycle {
           primaryForm = form;
           primaryName = name;
     }else{
-
       print("no primary form to reset");
+      primaryForm = form;
+      primaryName = name;
     }
   }
 

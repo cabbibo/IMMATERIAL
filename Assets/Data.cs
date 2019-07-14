@@ -20,9 +20,10 @@ public class Data : Cycle
   public Transform Camera;
   public Transform Player;
 
-  public TextParticles text;
-  
+  public TextParticles Text;
   public CameraController Controls;
+  public InputEvents Events;
+
   //public Terrain terrain;
 
   public Vector3 CameraForward;
@@ -35,6 +36,9 @@ public class Data : Cycle
   public Vector3 PlayerUp;
   public Vector3 PlayerRight;
   public Vector3 PlayerPosition;
+  public Vector3 PlayerSoul;
+
+  public Transform Soul;
 
 
   public void BindPlayerData(Life toBind){
@@ -43,6 +47,7 @@ public class Data : Cycle
     toBind.BindAttribute("_PlayerUp", "PlayerUp" , this );
     toBind.BindAttribute("_PlayerRight", "PlayerRight" , this );
     toBind.BindAttribute("_PlayerPosition", "PlayerPosition" , this );
+    toBind.BindAttribute("_PlayerSoul", "PlayerSoul" , this );
 
   }
 
@@ -57,6 +62,7 @@ public class Data : Cycle
 
   public override void WhileLiving( float v ){
 
+
     CameraForward = Camera.forward;
     CameraUp = Camera.up;
     CameraRight = Camera.right;
@@ -67,6 +73,8 @@ public class Data : Cycle
     PlayerUp = Player.up;
     PlayerRight = Player.right;
     PlayerPosition = Player.position;
+    PlayerSoul = Soul.position;
+
 
   }
 

@@ -45,7 +45,7 @@ public class PageTurner : Cycle
          
           if( hit.collider.gameObject.tag == "Frame"){
 
-            hit.collider.transform.parent.GetComponent<Page>().SetActivePage();
+            //hit.collider.transform.parent.GetComponent<Page>().SetActivePage();
           
 
           }

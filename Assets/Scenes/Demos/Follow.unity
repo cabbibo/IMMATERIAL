@@ -38,21 +38,21 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: NaN, g: NaN, b: NaN, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
     m_IndirectOutputScale: 1
     m_AlbedoBoost: 1
     m_EnvironmentLightingMode: 0
-    m_EnableBakedLightmaps: 1
-    m_EnableRealtimeLightmaps: 1
+    m_EnableBakedLightmaps: 0
+    m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
     serializedVersion: 12
     m_Resolution: 2
@@ -381,8 +381,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.17098777, y: 0.683167, z: -0.16942985, w: 0.6894488}
-  m_LocalPosition: {x: -1.1402726, y: 1.3082067, z: 9.960021}
+  m_LocalRotation: {x: -0.017616667, y: 0.96802986, z: -0.2399063, w: -0.07108382}
+  m_LocalPosition: {x: -0.022965603, y: 1.3076515, z: 10.99269}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1453663114}
@@ -725,14 +725,14 @@ MonoBehaviour:
   Camera: {fileID: 963194228}
   Player: {fileID: 9182744075708425142}
   text: {fileID: 0}
-  camControls: {fileID: 1779972637}
-  CameraForward: {x: 0.8840733, y: -0.46727815, z: 0.008092068}
-  CameraUp: {x: 0.46725857, y: 0.88411033, z: 0.0042768717}
-  CameraRight: {x: 0.0091527775, y: 0, z: -0.9999581}
-  CameraPosition: {x: -1.1402802, y: 1.3082162, z: 9.960021}
-  PlayerForward: {x: 0.99999994, y: 0, z: 0.00010639429}
+  Controls: {fileID: 0}
+  CameraForward: {x: -0.12916853, y: -0.466978, z: -0.87478405}
+  CameraUp: {x: -0.068213254, y: 0.88426894, z: -0.46196908}
+  CameraRight: {x: -0.9892738, y: -0.0000000037252903, z: 0.1460738}
+  CameraPosition: {x: -0.022966713, y: 1.3076515, z: 10.992689}
+  PlayerForward: {x: -0.15508367, y: 0, z: -0.98790145}
   PlayerUp: {x: 0, y: 1, z: 0}
-  PlayerRight: {x: 0.00010639429, y: 0, z: -0.99999994}
+  PlayerRight: {x: -0.98790145, y: 0, z: 0.15508367}
   PlayerPosition: {x: -0.13979292, y: -5.04e-43, z: 9.998816}
 --- !u!1 &1779972636
 GameObject:
@@ -1566,12 +1566,13 @@ MonoBehaviour:
   data: {fileID: 1631102100}
   Cycles: []
   animator: {fileID: 1289624695988604620}
-  moveTarget: {x: 11, y: 0, z: 10}
+  moveTarget: {x: -2.5679743, y: 1.21436e-16, z: -5.4689913}
   runMultiplier: 25
   maxSpeed: 0.07
+  forwardCutoff: 0
   velocity: {x: 0, y: 0, z: 0}
-  force: {x: 0.00033419378, y: 0, z: 0.000000035533905}
-  moveForce: 0.1
+  force: {x: -0.09469907, y: 4.7360036e-18, z: -0.6032444}
+  moveForce: 30
   dampening: 0.8
 --- !u!1 &5457665749215770165
 GameObject:
@@ -2287,7 +2288,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5275105828032647589}
-  m_LocalRotation: {x: 0, y: 0.70706916, z: 0, w: 0.7071444}
+  m_LocalRotation: {x: 0, y: 0.9969708, z: 0, w: -0.07777744}
   m_LocalPosition: {x: -0.13979292, y: -5.04e-43, z: 9.998816}
   m_LocalScale: {x: 0.077365, y: 0.077365, z: 0.077365}
   m_Children:

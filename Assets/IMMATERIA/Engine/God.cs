@@ -34,10 +34,13 @@ public void LateUpdate(){
 }
 
 
+
 public void OnEnable(){
 
-      EditorApplication.update += Always;
+    EditorApplication.update += Always;
+    
     if( _instance == null ){ _instance = this; }
+    Reset();
     _Create(); 
     _OnGestate();
     _OnGestated();
@@ -57,7 +60,11 @@ public void OnDisable(){
     void Always(){
       EditorApplication.QueuePlayerLoopUpdate();
     }
+
+
+
 public void Rebuild(){
+    Reset();
     OnDisable();
     OnEnable();
 }

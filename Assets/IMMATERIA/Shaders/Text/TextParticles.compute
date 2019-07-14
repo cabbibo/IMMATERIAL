@@ -46,6 +46,7 @@ int _TransferBuffer_COUNT;
 float3 _CameraUp;
 float3 _CameraPosition;
 float3 _CameraLeft;
+float3 _CameraRight;
 float _Radius;
 float _Scale;
 float _Time;
@@ -54,6 +55,7 @@ float3 _RayOrigin;
 float3 _RayDirection;
 
 float3 _PlayerPosition;
+float3 _PlayerSoul;
 float3 _UrsulaPos;
 float3 _Up;
 
@@ -152,7 +154,7 @@ void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
       v.uv = fUV;
       v.offset = fOffset;
-      v.nor = p.nor;
+      v.nor = float3(0,0,1);//p.nor;
     
     }else{
     
@@ -250,7 +252,7 @@ void SetPageAtPlayer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID
 
     // Need to make sure that its not bigger than anchor count
     // so doesn't accidently set another letter
-    if(pID <= _AnchorBuffer_COUNT ){ v.pos = _PlayerPosition; }
+    if(pID <= _AnchorBuffer_COUNT ){ v.pos = _PlayerSoul; }
 
     _VertBuffer[sID] = v;
 
@@ -416,7 +418,7 @@ void Transfer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     int col = pID % 2;
 
     float3 u = _CameraUp;
-    float3 l = normalize(cross(v.nor,u));
+    float3 l = -_CameraRight;//normalize(cross(float3(0,0,1),u));
 
     //l = l* (float(col)-.5);
     //u = u* (float(row)-.5);

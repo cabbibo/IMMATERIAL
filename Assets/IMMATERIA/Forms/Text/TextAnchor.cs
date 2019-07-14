@@ -131,6 +131,7 @@ public string text;
       values[ index ++ ] = p.y;
       values[ index ++ ] = p.z;
 
+      print(frame.normal.x);
       // normal
       values[ index ++ ] = frame.normal.x;
       values[ index ++ ] = frame.normal.y;

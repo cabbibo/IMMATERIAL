@@ -414,6 +414,29 @@ void SetStates(){
 
   }
 
+
+  public void Reset(){
+    created = false;
+    begunGestation = false;
+    gestating = false;
+    gestated = false;
+    begunBirth = false;
+    birthing = false;
+    birthed = false;
+    begunLive = false;
+    living = false;
+    lived = false;
+    begunDeath = false;
+    dying = false;
+    died = false;
+    destroyed = true;
+    foreach( Cycle c in Cycles ){
+      CheckSelfCycle(c);  
+      c.Reset();
+    }
+  }
+
+
   /*
     Helpers
   */

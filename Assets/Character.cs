@@ -11,6 +11,7 @@ public class Character : Cycle {
   
   public float runMultiplier;
   public float maxSpeed;
+  public float forwardCutoff;
   
   public Vector3 velocity;
   public Vector3 force;
@@ -93,7 +94,7 @@ public class Character : Cycle {
     Rotate(forward , turn);
     animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
   
-
+    if( forward < forwardCutoff ){ forward = 0; }
     animator.SetFloat("Forward", forward*runMultiplier, 0.1f, Time.deltaTime);
     //animator.Update(Time.deltaTime);
 

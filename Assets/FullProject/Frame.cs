@@ -25,7 +25,7 @@ public class Frame : Cycle {
   public Vector3 up;
   public Vector3 right;
 
-  public Transform collider;
+  public Collider collider;
 
 
   // Use this for initialization
@@ -41,16 +41,16 @@ public class Frame : Cycle {
       
     GameObject cube = Instantiate(cubeInfo);
     cube.tag = "Frame";
-    collider = cube.transform;
-    collider.parent = this.transform;
+    collider = cube.GetComponent<Collider>();
+    collider.transform.parent = this.transform;
   }
   
   // Update is called once per frame
   public override void WhileLiving(float v) {
     SetFrame();
-    collider.rotation = this.transform.rotation;
-    collider.position = center;
-    collider.localScale = new Vector3( (bottomLeft - bottomRight).magnitude , (bottomLeft - topLeft).magnitude , .001f);
+    collider.transform.rotation = this.transform.rotation;
+    collider.transform.position = center;
+    collider.transform.localScale = new Vector3( (bottomLeft - bottomRight).magnitude , (bottomLeft - topLeft).magnitude , .001f);
   }
 
   void SetFrame(){

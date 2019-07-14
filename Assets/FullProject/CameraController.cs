@@ -117,5 +117,12 @@ public class CameraController : Cycle
 
     }
 
+    public void SetFollowTarget(){
+       following = true;
+      lerping = false;
+      
+      startFollowTime = Time.time;
+    }
+
 
 }
