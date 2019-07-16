@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 
 
-public class InputEvents: MonoBehaviour {
+public class InputEvents: Cycle {
 
   public EventTypes.Vector2Event    OnSwipe;
   public EventTypes.FloatEvent      OnSwipeHorizontal;
@@ -56,7 +56,7 @@ public class InputEvents: MonoBehaviour {
   void Start(){}
   
    // Update is called once per frame
-  void FixedUpdate () {
+  public override void WhileLiving ( float v ){
 
     oP = p;
     oDown = Down;
@@ -64,57 +64,12 @@ public class InputEvents: MonoBehaviour {
     oP2 = p2;
     oDown2 = Down2;
 
-    #if UNITY_EDITOR  
-      if (Input.GetMouseButton (0)) {
-        Down = 1;
-        p  =  Input.mousePosition;///Input.GetTouch(0).position;
-
-
-      }else{
-        Down = 0;
-        oP = p;
-      }
-
-      if( Input.GetMouseButtonDown(0) &&   Input.GetKey("space") ){
-        OnDebugTouch.Invoke();
-      }
-
-      if( Input.GetMouseButton(1)){
-       
-         p2 =   Input.mousePosition;
-         Down2 = 1;
-      }else{
-        Down2 = 0;
-        oP2 = oP;
-      }
+    #if UNITY_EDITOR 
+      MouseInput();
+    #elif UNITY_STANDALONE
+      MouseInput();
     #else
-      if (Input.touchCount == 1 ){
-        Down = 1;
-        p  =  Input.GetTouch(0).position;
-
-        if( Input.touchCount > 2 ){
-          if( Input.GetTouch(0).phase == TouchPhase.Began || Input.GetTouch(1).phase == TouchPhase.Began || Input.GetTouch(2).phase == TouchPhase.Began ){
-            OnDebugTouch.Invoke();
-          }
-        }
-      }else{
-        Down = 0;
-        oP = p;
-      }
-
-      if (Input.touchCount == 2 ){
-        Down2 = 1;
-        p2  =  Input.GetTouch(0).position;
-
-        if( Input.touchCount > 2 ){
-          if( Input.GetTouch(0).phase == TouchPhase.Began || Input.GetTouch(1).phase == TouchPhase.Began || Input.GetTouch(2).phase == TouchPhase.Began ){
-            OnDebugTouch.Invoke();
-          }
-        }
-      }else{
-        Down2 = 0;
-        oP2 = p2;
-      }
+      TouchInput();
     #endif
 
     
@@ -164,11 +119,61 @@ public class InputEvents: MonoBehaviour {
       if( JustDown == 1 ){ oP = p; }
       vel = p - oP;
 
+  }
 
-  
+  void MouseInput(){
+if (Input.GetMouseButton (0)) {
+        Down = 1;
+        p  =  Input.mousePosition;///Input.GetTouch(0).position;
 
 
+      }else{
+        Down = 0;
+        oP = p;
+      }
 
+      if( Input.GetMouseButtonDown(0) &&   Input.GetKey("space") ){
+        OnDebugTouch.Invoke();
+      }
+
+      if( Input.GetMouseButton(1)){
+       
+         p2 =   Input.mousePosition;
+         Down2 = 1;
+      }else{
+        Down2 = 0;
+        oP2 = oP;
+      }
+  }
+
+  void TouchInput(){
+      if (Input.touchCount == 1 ){
+        Down = 1;
+        p  =  Input.GetTouch(0).position;
+
+        if( Input.touchCount > 2 ){
+          if( Input.GetTouch(0).phase == TouchPhase.Began || Input.GetTouch(1).phase == TouchPhase.Began || Input.GetTouch(2).phase == TouchPhase.Began ){
+            OnDebugTouch.Invoke();
+          }
+        }
+      }else{
+        Down = 0;
+        oP = p;
+      }
+
+      if (Input.touchCount == 2 ){
+        Down2 = 1;
+        p2  =  Input.GetTouch(0).position;
+
+        if( Input.touchCount > 2 ){
+          if( Input.GetTouch(0).phase == TouchPhase.Began || Input.GetTouch(1).phase == TouchPhase.Began || Input.GetTouch(2).phase == TouchPhase.Began ){
+            OnDebugTouch.Invoke();
+          }
+        }
+      }else{
+        Down2 = 0;
+        oP2 = p2;
+      }
   }
 
   void whileDown(){

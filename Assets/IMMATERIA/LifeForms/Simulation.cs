@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Simulation : LifeForm
+public class Simulation : Cycle
 {
 
   public string nameInBuffer;
@@ -18,7 +18,9 @@ public class Simulation : LifeForm
     SafeInsert(form);
     SafeInsert(life);
 
-    binders = GetComponents<Binder>();
+    if( binders == null ){
+      binders = GetComponents<Binder>();
+    }
 
     for( int i = 0 ; i < binders.Length; i++ ){
       SafeInsert( binders[i] );

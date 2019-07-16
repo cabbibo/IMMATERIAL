@@ -37,8 +37,9 @@ public void LateUpdate(){
 
 public void OnEnable(){
 
-    EditorApplication.update += Always;
-    
+    #if UNITY_EDITOR 
+        EditorApplication.update += Always;
+    #endif
     if( _instance == null ){ _instance = this; }
     Reset();
     _Create(); 
@@ -51,14 +52,18 @@ public void OnEnable(){
 
 public void OnDisable(){
 
-      EditorApplication.update -= Always;
+    #if UNITY_EDITOR 
+        EditorApplication.update -= Always;
+    #endif
     _Destroy();   
 }
 
 
  
-    void Always(){
+    void Always(){    
+    #if UNITY_EDITOR 
       EditorApplication.QueuePlayerLoopUpdate();
+    #endif
     }
 
 

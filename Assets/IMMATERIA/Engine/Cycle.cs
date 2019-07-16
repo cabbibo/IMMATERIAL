@@ -380,7 +380,6 @@ void SetStates(){
     if( debug ){ WhileDebug(); }
 
     foreach( Cycle c in Cycles ){
-
       CheckSelfCycle(c);
       c._WhileDebug();
     }
@@ -430,10 +429,8 @@ void SetStates(){
     dying = false;
     died = false;
     destroyed = true;
-    foreach( Cycle c in Cycles ){
-      CheckSelfCycle(c);  
-      c.Reset();
-    }
+
+
   }
 
 

@@ -23,6 +23,7 @@ public class Data : Cycle
   public TextParticles Text;
   public CameraController Controls;
   public InputEvents Events;
+  public Land Island;
 
   //public Terrain terrain;
 
@@ -60,21 +61,32 @@ public class Data : Cycle
 
   }
 
+  public void BindLandData(Life toBind){
+
+    Island.BindData(toBind);
+
+  }
+
   public override void WhileLiving( float v ){
 
 
-    CameraForward = Camera.forward;
-    CameraUp = Camera.up;
-    CameraRight = Camera.right;
-    CameraPosition = Camera.position;
+    if( Camera != null ){
+      CameraForward = Camera.forward;
+      CameraUp = Camera.up;
+      CameraRight = Camera.right;
+      CameraPosition = Camera.position;
+    }
 
-
-    PlayerForward = Player.forward;
-    PlayerUp = Player.up;
-    PlayerRight = Player.right;
-    PlayerPosition = Player.position;
-    PlayerSoul = Soul.position;
-
+    if( Player != null ){
+      PlayerForward = Player.forward;
+      PlayerUp = Player.up;
+      PlayerRight = Player.right;
+      PlayerPosition = Player.position;
+    }
+    
+    if( Soul != null ){
+      PlayerSoul = Soul.position;
+    }
 
   }
 

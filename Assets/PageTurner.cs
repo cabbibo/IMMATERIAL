@@ -8,6 +8,9 @@ public class PageTurner : Cycle
   private Vector3 ro;
   private Vector3 rd;
 
+  public bool autoTurn;
+  public bool lerpToPage;
+
   private float switchTime;
   public override void Create(){
 
@@ -55,20 +58,35 @@ public class PageTurner : Cycle
     }else{
 
 
-      /*switchTime += 1;
-      if( switchTime > 400 ){
-
-        print("swartch");
-
-        switchTime -= 400;
-        pages[Random.Range( 0, pages.Length )].SetActivePage();
-        
-      }*/
+    
 
 
 
     }
 
+    if( autoTurn ){
+      switchTime += 1;
+      if( switchTime > 400 ){
+
+        print("swartch");
+
+        switchTime -= 400;
+        SetActivePage( pages[Random.Range( 0, pages.Length )]);//.SetActivePage();
+
+
+  
+        
+      }
+    }
   }
+
+
+  public void SetActivePage(Page page ){
+    data.Text.Set(page.text );
+    data.Text.PageStart();
+    if( lerpToPage ){ data.Controls.SetLerpTarget( page.transform ,page.lerpSpeed); }
+
+
+  } 
 
 }

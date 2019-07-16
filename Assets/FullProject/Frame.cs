@@ -43,6 +43,8 @@ public class Frame : Cycle {
     cube.tag = "Frame";
     collider = cube.GetComponent<Collider>();
     collider.transform.parent = this.transform;
+
+    SetFrame();
   }
   
   // Update is called once per frame
@@ -53,7 +55,7 @@ public class Frame : Cycle {
     collider.transform.localScale = new Vector3( (bottomLeft - bottomRight).magnitude , (bottomLeft - topLeft).magnitude , .001f);
   }
 
-  void SetFrame(){
+  public void SetFrame(){
 
     _ratio = (float)Screen.width / (float)Screen.height;
 

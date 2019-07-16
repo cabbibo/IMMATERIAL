@@ -110,6 +110,7 @@ public string text;
 
   public override void Embody(){
 
+    print( "embodying");
 
     float[] values = new float[count*structSize];
     int index = 0;
@@ -131,7 +132,7 @@ public string text;
       values[ index ++ ] = p.y;
       values[ index ++ ] = p.z;
 
-      print(frame.normal.x);
+//      print(frame.normal.x);
       // normal
       values[ index ++ ] = frame.normal.x;
       values[ index ++ ] = frame.normal.y;

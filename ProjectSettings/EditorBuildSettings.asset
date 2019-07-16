@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/FullTests/FollowAndPage.unity
+    guid: f3431cb4b14801d449aab8f88844a7be
   m_configObjects: {}

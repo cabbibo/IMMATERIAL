@@ -11,10 +11,6 @@ public class Story : Cycle
 
   public bool insideInner;
   public bool insideOuter;
-
-  public bool active;
-
-
    
   public Page[] pages;
   public int currentPage;
@@ -116,18 +112,24 @@ public class Story : Cycle
 
   public void CheckForStart(){
 
+    print( "CHECKING FOR START");
     if( !started ){
+      print("inside check start");
       RaycastHit hit;
 
       if (pages[currentPage].frame.collider.Raycast(data.Events.ray, out hit, 100.0f)){
+        print("page");
         started = true;
         SetActivePage(); 
+      }else{
+        print("No Page");
       }
     }
 //    print("YA");
   }
   
   public override void WhileLiving( float v){
+    
     
     oDif = dif;
     dif = (transform.position - data.Player.position).magnitude;
@@ -160,12 +162,13 @@ public class Story : Cycle
 
   public void EnterOuter(){
   
+    Debug.Log("EnterOuttter");
     insideOuter=true;
   
 
   }
   public void EnterInner(){
-
+    Debug.Log("EnterInnerrr");
     insideInner=true;
     data.Events.OnTap.AddListener( CheckForStart );
     data.Events.OnSwipeLeft.AddListener( NextPage );
