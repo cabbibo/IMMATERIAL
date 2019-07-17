@@ -30,7 +30,7 @@ public class LandTiler : Cycle
     if( Tiles != null ){
     for( int i=0; i < Tiles.Length; i++ ){
 
-          Cycles.Remove(tileObjects[i].GetComponent<Body>());
+          Cycles.Remove(tileObjects[i].GetComponent<LandTile>());
           DestroyImmediate(tileObjects[i]);
 
 
@@ -48,9 +48,7 @@ public class LandTiler : Cycle
     Cycles.Clear();
 
 
-    //if( Tiles != null && Tiles.Length != numTiles * numTiles ){
       DestroyMe();
-    //}
 
         Tiles = new LandTile[numTiles * numTiles ];
         tileObjects = new GameObject[numTiles * numTiles ];
@@ -72,8 +70,9 @@ public class LandTiler : Cycle
             Tiles[id]= g.GetComponent<LandTile>();
             Tiles[id].size = tileSize;
             Tiles[id].dimensions = tileDimensions;
+            Tiles[id].tiler = this;
 
-           SafeInsert(g.GetComponent<Body>());
+            SafeInsert(g.GetComponent<LandTile>());
 
           }
         }
@@ -103,7 +102,7 @@ public class LandTiler : Cycle
     for( int i = 0; i < Tiles.Length; i++ ){
       _Offset = tileObjects[i].transform.position;
       _ID = i;
-      OffsetTile();
+      OffsetTile(i);
     }
   }
 
@@ -151,15 +150,14 @@ public class LandTiler : Cycle
 
       //_Offset = tileObjects[i].transform.position;
       if( oPos != tileObjects[i].transform.position ){
-        OffsetTile();
+        OffsetTile(i);
       }
     }
     
   }
 
-  public void OffsetTile(){
-    setTile.RebindPrimaryForm( "_VertBuffer" , Tiles[_ID] );
-    setTile.YOLO();
+  public void OffsetTile(int i ){
+    Tiles[i].Set();
   }
 
 

@@ -12,6 +12,7 @@ public class Painter : Simulation
   public PaintTris tris;
   public Material windDebugMat;
   public Material grassDebugMat;
+  public Material planeDebugMat;
 
 
   public Vector3 paintPosition;
@@ -43,7 +44,9 @@ public class Painter : Simulation
   }
 
   public override void WhileDebug(){
-
+    planeDebugMat.SetPass(0);
+    planeDebugMat.SetInt("_Dimensions", verts.width );
+    Graphics.DrawProceduralNow( MeshTopology.Triangles ,tris.count );
   }
 
   public void WhileDown(Ray ray){
