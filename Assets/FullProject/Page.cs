@@ -9,7 +9,7 @@ public class Page : Cycle
     public Frame frame;
     public TextAnchor text;
     public float lerpSpeed;
-
+    public Transform moveTarget;
     public MaterialPropertyBlock frameMPB;
 
     public override void Create(){

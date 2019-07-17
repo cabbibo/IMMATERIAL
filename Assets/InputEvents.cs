@@ -122,7 +122,7 @@ public class InputEvents: Cycle {
   }
 
   void MouseInput(){
-if (Input.GetMouseButton (0)) {
+      if (Input.GetMouseButton (0)) {
         Down = 1;
         p  =  Input.mousePosition;///Input.GetTouch(0).position;
 

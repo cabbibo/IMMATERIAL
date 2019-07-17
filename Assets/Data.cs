@@ -22,6 +22,7 @@ public class Data : Cycle
 
   public TextParticles Text;
   public CameraController Controls;
+  public Character PlayerControls;
   public InputEvents Events;
   public Land Island;
 

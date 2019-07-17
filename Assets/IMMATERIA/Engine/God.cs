@@ -55,6 +55,7 @@ public void OnDisable(){
     #if UNITY_EDITOR 
         EditorApplication.update -= Always;
     #endif
+        
     _Destroy();   
 }
 

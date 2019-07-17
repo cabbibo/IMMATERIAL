@@ -7,6 +7,8 @@ public class Character : Cycle {
 
   public Animator animator;
 
+  public bool doTerrain;
+
   public Vector3 moveTarget;
   
   public float runMultiplier;
@@ -37,19 +39,8 @@ public class Character : Cycle {
     velocity = Vector3.zero;
   }
 
-
-  
-  
-
-
-
-
-
-        
-
   public override void WhileLiving (float v) {
     DoMovement();   
-  
   }
 
 
@@ -83,10 +74,6 @@ public class Character : Cycle {
       velocity = velocity.normalized * maxSpeed;
     }
 
-
-    //transform.position += velocity;//  * .001f;//m_Move  * .3f* speed;
-
-
     Vector3 m = transform.InverseTransformDirection(velocity);
     float turn = Mathf.Atan2(m.x, m.z);
     float forward = m.z;
@@ -96,17 +83,18 @@ public class Character : Cycle {
   
     if( forward < forwardCutoff ){ forward = 0; }
     animator.SetFloat("Forward", forward*runMultiplier, 0.1f, Time.deltaTime);
-    //animator.Update(Time.deltaTime);
+
+
+if( doTerrain ){
+    float h = data.Island.SampleHeight( transform.position );
+    transform.position = new Vector3( transform.position.x , h , transform.position.z);
+}
+
+ //animator.Update(Time.deltaTime);
 
     deltaPos = transform.position - oPos;
 
     velocity = deltaPos;
-
-    //transform.position = transform.position + Vector3.up * .01f* Mathf.Sin( Time.time );
-
-
-
-    //m_Move = transform.InverseTransformDirection(m_Move);
   }
 
 

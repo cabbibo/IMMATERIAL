@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/FullTests/FollowAndPage.unity
     guid: f3431cb4b14801d449aab8f88844a7be
+  - enabled: 1
+    path: Assets/Scenes/FullTests/personOnTerrain.unity
+    guid: cd9fecbc7aab8bd41846e600f7a42cda
   m_configObjects: {}

@@ -26,7 +26,7 @@ float _MapHeight;
 
 
     float3 worldPos( float3 pos ){
-        float4 c = _HeightMap.SampleLevel(sampler_HeightMap, pos.xz * _MapSize  , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+        float4 c = _HeightMap.SampleLevel(sampler_HeightMap, pos.xz * _MapSize  , 0);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
         pos.y =  c.x * _MapHeight;
         return pos;
     }
@@ -40,7 +40,7 @@ float _MapHeight;
       float3 dL = worldPos( pos + float3(0,0,delta) );
       float3 dR = worldPos( pos + float3(0,0,-delta) );
 
-      return -normalize(cross(dU.xyz-dD.xyz , dL.xyz-dR.xyz));
+      return normalize(cross(dU.xyz-dD.xyz , dL.xyz-dR.xyz));
 
     }
 

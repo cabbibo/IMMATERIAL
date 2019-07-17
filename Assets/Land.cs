@@ -45,16 +45,17 @@ public class Land : Cycle {
   }
 
   public float SampleHeight( Vector2 v ){
-    float posX = (v.x-.5f)* size;
-    float posZ = (v.y-.5f)* size;
+    float posX = (v.x-.5f) * size + .5f/(float)size;
+    float posZ = (v.y-.5f) * size + .5f/(float)size;
+    
     Color c =  heightMap.GetPixelBilinear(posX , posZ);
     return c.r * height;
   }
 
 
   public float SampleHeight( Vector3 v ){
-    float posX = (v.x-.5f)* size;
-    float posZ = (v.z-.5f)* size;
+    float posX = (v.x-.5f) * size  - (.5f / (float)heightMap.width);
+    float posZ = (v.z-.5f) * size  - (.5f / (float)heightMap.width);
     Color c =  heightMap.GetPixelBilinear(posX , posZ);
     return c.r * height;
   }

@@ -25,12 +25,12 @@ public class LandTiler : Cycle
   private float hT; // halfTile
   private float t; // tile
 
-  public override void Destroy(){
+  public void DestroyMe(){
     print("Destry");
     if( Tiles != null ){
     for( int i=0; i < Tiles.Length; i++ ){
 
-          Cycles.Remove(Tiles[i]);
+          Cycles.Remove(tileObjects[i].GetComponent<Body>());
           DestroyImmediate(tileObjects[i]);
 
 
@@ -45,6 +45,12 @@ public class LandTiler : Cycle
 
     print("OnCreate");
 
+    Cycles.Clear();
+
+
+    //if( Tiles != null && Tiles.Length != numTiles * numTiles ){
+      DestroyMe();
+    //}
 
         Tiles = new LandTile[numTiles * numTiles ];
         tileObjects = new GameObject[numTiles * numTiles ];
@@ -54,7 +60,7 @@ public class LandTiler : Cycle
   
         Tiles = new LandTile[numTiles * numTiles ];
         
-            print("huhhh");
+        
         for( int i = 0; i < numTiles; i++ ){
           for( int j = 0; j < numTiles; j++ ){
 
@@ -63,27 +69,24 @@ public class LandTiler : Cycle
             g.transform.parent = transform;
             tileObjects[id] = g;
 
-              Tiles[id]= g.GetComponent<LandTile>();
-           Tiles[id].size = tileSize;
-           Tiles[id].dimensions = tileDimensions;
+            Tiles[id]= g.GetComponent<LandTile>();
+            Tiles[id].size = tileSize;
+            Tiles[id].dimensions = tileDimensions;
 
-           SafeInsert(Tiles[id]);
+           SafeInsert(g.GetComponent<Body>());
 
           }
         }
       
 
-      SafeInsert(setTile );
-
-        print("birder");
+      SafeInsert(setTile);
       for( int i = 0; i < Tiles.Length; i++ ){
-       // _ID = i;
+        _ID = i;
 
         _Offset = Vector3.left * (i%numTiles) * tileSize;
         _Offset += Vector3.forward * (float)(i/numTiles) * tileSize;
 
         tileObjects[i].transform.position = data.PlayerPosition + _Offset;
-        //OffsetTile();
     }
   }
 
@@ -97,6 +100,11 @@ public class LandTiler : Cycle
 
   public override void OnBirthed(){
 
+    for( int i = 0; i < Tiles.Length; i++ ){
+      _Offset = tileObjects[i].transform.position;
+      _ID = i;
+      OffsetTile();
+    }
   }
 
     // Use this for initialization
@@ -118,28 +126,22 @@ public class LandTiler : Cycle
          _Offset = Vector3.zero;
 
       if( data.PlayerPosition.x - tileObjects[i].transform.position.x < -hT   ){     
-      //print("hellooo") ; 
-          _Offset += -Vector3.right * t;
-         //_ID = i;
-
+        _Offset += -Vector3.right * t;
         tileObjects[i].transform.position += _Offset;
       }
 
       if( data.PlayerPosition.x - tileObjects[i].transform.position.x > hT   ){
-          _Offset += Vector3.right * t;
+        _Offset += Vector3.right * t;
         tileObjects[i].transform.position += _Offset;
       }
 
 
       if( data.PlayerPosition.z - tileObjects[i].transform.position.z < -hT   ){        
-            _Offset += -Vector3.forward * t;
-       
-
+        _Offset += -Vector3.forward * t;
         tileObjects[i].transform.position += _Offset;
       }
 
       if( data.PlayerPosition.z - tileObjects[i].transform.position.z > hT   ){
-      //   print("hellooo") ; 
          _Offset += Vector3.forward * t;
         tileObjects[i].transform.position += _Offset;
   
@@ -148,26 +150,9 @@ public class LandTiler : Cycle
       _Offset = tileObjects[i].transform.position;
 
       //_Offset = tileObjects[i].transform.position;
-      //if( oPos != tileObjects[i].transform.position ){
+      if( oPos != tileObjects[i].transform.position ){
         OffsetTile();
-      //}
-
-
-      /*if( data.PlayerPosition.z - tileObjects[i].position.z < -hT * tileSize ){
-        tileObjects[i].position -= Vector3.forward * t* tileSize ;
       }
-
-      if( data.PlayerPosition.z - tileObjects[i].position.z > hT * tileSize  ){
-        tileObjects[i].position += Vector3.forward * t* tileSize ;
-      }
-
-
-  /// WHY THIS?
-      if( oPos != Tiles[i].position ){
-        Tiles[i].Set( (Tiles[i].transform.position-oPos) );
-      }*/
-
-      //waters[i].position = new Vector3( Tiles[i].position.x , Tiles[i].waterHeight,Tiles[i].position.z);
     }
     
   }

@@ -29,8 +29,8 @@ public class LandTile : Particles
 
     for( int i = 0; i < count; i ++ ){
 
-      float x = (((float)(i % dimensions)+.5f) / (float)dimensions) * size;
-      float z = ((Mathf.Floor((float)(i / dimensions)) +.5f) / (float)dimensions) * size;
+      float x = (((float)(i % dimensions)+.5f) / ((float)dimensions-1)) * size;
+      float z = ((Mathf.Floor((float)(i / dimensions)) +.5f) / ((float)dimensions-1)) * size;
 
       pos = new Vector3( x, 0, z);
       values[ index ++ ] = transform.position.x  +  pos.x - size/2;
@@ -57,7 +57,7 @@ public class LandTile : Particles
 
     }
 
-    print("embodyo");
+//    print("embodyo");
 
     SetData( values );
 

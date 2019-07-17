@@ -96,6 +96,7 @@ public class Story : Cycle
     data.Text.Set( pages[currentPage].text );
     data.Text.PageStart();
     data.Controls.SetLerpTarget( pages[currentPage].transform ,pages[currentPage].lerpSpeed);
+    if( pages[currentPage].moveTarget ){ data.PlayerControls.SetMoveTarget( pages[currentPage].moveTarget.position ); }
 
 
   }   
