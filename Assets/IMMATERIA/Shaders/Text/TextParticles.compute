@@ -25,6 +25,8 @@ struct Anchor{
     float2 position;
     float2 dimensions;
     float2 offset;
+    float2 colRow;
+    float2 colRowNormalized;
 };
 
 
@@ -153,7 +155,7 @@ void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
       fUV = float2(x,y);
 
       v.uv = fUV;
-      v.offset = fOffset;
+      v.offset = fOffset * _Radius * _Scale;
       v.nor = float3(0,0,1);//p.nor;
     
     }else{
@@ -167,6 +169,13 @@ void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     _TransferBuffer[sID] = v;
 
 }
+
+
+float3 _FrameTopLeft;
+float3 _FrameRight;
+float3 _FrameUp;
+float _FrameWidth;
+float _FrameHeight;
 
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
@@ -183,7 +192,7 @@ void SetAnchor(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     if(pID <= _AnchorBuffer_COUNT ){
     
       Anchor p = _AnchorBuffer[safeID(pID,_AnchorBuffer_COUNT)];
-      v.lockPosition = p.pos;
+      v.lockPosition = _FrameTopLeft + p.colRowNormalized.x  * _FrameRight * _FrameWidth - p.colRowNormalized.y * _FrameUp * _FrameHeight;//p.pos;
 
     }else{
      // v.lockPosition = _UrsulaPos;
@@ -423,7 +432,7 @@ void Transfer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     //l = l* (float(col)-.5);
     //u = u* (float(row)-.5);
 
-    float3 fPos = p.pos + ((u*v.offset.y) + (-l*v.offset.x))*_Radius*_Scale;
+    float3 fPos = p.pos + ((u*v.offset.y) + (-l*v.offset.x));//*_Radius*_Scale;
     //float3 fPos = p.pos + ((l) + (u))*_Radius*_Scale;
 
     v.pos = fPos;

@@ -113,17 +113,14 @@ public class Story : Cycle
 
   public void CheckForStart(){
 
-    print( "CHECKING FOR START");
     if( !started ){
-      print("inside check start");
       RaycastHit hit;
 
       if (pages[currentPage].frame.collider.Raycast(data.Events.ray, out hit, 100.0f)){
-        print("page");
         started = true;
         SetActivePage(); 
       }else{
-        print("No Page");
+        
       }
     }
 //    print("YA");

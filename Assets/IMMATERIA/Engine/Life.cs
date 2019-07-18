@@ -79,7 +79,7 @@ public class Life : Cycle {
           primaryForm = form;
           primaryName = name;
     }else{
-      print("no primary form to reset");
+//      print("no primary form to reset");
       primaryForm = form;
       primaryName = name;
     }
@@ -165,8 +165,8 @@ public class Life : Cycle {
         print("YOUR BUFFER : " + name +  " IS NULL!");
       }
     }else{
-      print("WAHT YR FORM IS NULL");
-      print( name );
+ //     print("WAHT YR FORM IS NULL");
+//      print( name );
     }
   }
 

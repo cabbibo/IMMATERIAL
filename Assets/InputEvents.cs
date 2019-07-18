@@ -53,6 +53,9 @@ public class InputEvents: Cycle {
 
   public int touchID = 0;
 
+  public RaycastHit hit;
+  public string hitTag;
+
   void Start(){}
   
    // Update is called once per frame
@@ -80,6 +83,15 @@ public class InputEvents: Cycle {
 
     ray.origin = RayOrigin;
     ray.direction = -RayDirection;//.normalized;
+
+
+    // Does the ray intersect any objects excluding the player layer
+        if (Physics.Raycast( ray , out hit, Mathf.Infinity))
+        {
+          hitTag = hit.collider.tag;
+        }else{
+          hitTag = "Untagged";
+        }
 
 
 

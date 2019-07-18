@@ -66,8 +66,8 @@ public int currentMin;
 
     transfer.BindPrimaryForm("_TransferBuffer",body.verts);
     transfer.BindForm("_VertBuffer",particles);
-    transfer.BindAttribute("_Radius","radius",this);//.BindForm("_VertBuffer",particles);
-    transfer.BindAttribute("_Scale","scale",this);//.BindForm("_VertBuffer",particles);
+    setGlyph.BindAttribute("_Radius","radius",this);//.BindForm("_VertBuffer",particles);
+    setGlyph.BindAttribute("_Scale","scale",this);//.BindForm("_VertBuffer",particles);
 
     setGlyph.BindAttribute("_BaseID" , "currentMin" , this );
     setAnchor.BindAttribute("_BaseID" , "currentMin" , this );
@@ -112,13 +112,21 @@ public int currentMin;
     
     anchor = t;
     scale = t.scale;
+//    radius = t.radius;
 
-    print("ANCHOR");
-    print( t );
-    print( t.count );
+  //  print("ANCHOR");
+ //   print( t );
+//    print( t.count );
 
     setGlyph.RebindPrimaryForm("_AnchorBuffer",anchor);
     setAnchor.RebindPrimaryForm("_AnchorBuffer",anchor);
+
+    setAnchor.shader.SetVector("_FrameTopLeft", t.frame.topLeft );
+    setAnchor.shader.SetFloat("_FrameWidth", t.frame.width );
+    setAnchor.shader.SetFloat("_FrameHeight", t.frame.height );
+    setAnchor.shader.SetVector("_FrameUp", t.frame.up );
+    setAnchor.shader.SetVector("_FrameRight", t.frame.right );
+    
     setPage.RebindPrimaryForm( "_AnchorBuffer" , anchor );
 
     setAnchor.YOLO();

@@ -44,7 +44,7 @@ public string text;
     if( frame == null ){ frame = GetComponent<Frame>(); }
   }
 
-  public override void SetStructSize(){ structSize = 12; }
+  public override void SetStructSize(){ structSize = 16; }
   
   public override void SetCount(){
 
@@ -149,6 +149,13 @@ public string text;
       // debug
       values[ index ++ ] = gInfo[4];
       values[ index ++ ] = gInfo[5];
+
+      //
+
+      values[ index ++ ] = scaledPadding + glyphs[i].column * scaledCharacterSize;
+      values[ index ++ ] = scaledPadding + glyphs[i].row * scaledLineHeight;
+      values[ index ++ ] = (scaledPadding + glyphs[i].column * scaledCharacterSize) / frame.width;
+      values[ index ++ ] = (scaledPadding + glyphs[i].row * scaledLineHeight)/frame.height;
 
     }
 
