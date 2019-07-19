@@ -110,7 +110,7 @@ public string text;
 
   public override void Embody(){
 
-    print( "embodying");
+//    print( "embodying");
 
     float[] values = new float[count*structSize];
     int index = 0;

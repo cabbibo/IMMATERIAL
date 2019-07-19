@@ -16,10 +16,12 @@ public class LandTile : Cycle
   public LandTileTris  tris;
 
 
+ 
   public override void Create(){
-    print("creating");
 
     SafeInsert(body);
+
+    print(verts);
 
     verts.dimensions = dimensions;
     verts.size = size;

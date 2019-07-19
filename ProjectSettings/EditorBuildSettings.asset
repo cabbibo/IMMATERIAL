@@ -8,7 +8,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/FullTests/FollowAndPage.unity
     guid: f3431cb4b14801d449aab8f88844a7be
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/FullTests/personOnTerrain.unity
     guid: cd9fecbc7aab8bd41846e600f7a42cda
+  - enabled: 0
+    path: Assets/Scenes/Demos/Advanced/Text/3_SpawnFromCamera.unity
+    guid: 87e2cdc10d92444239f5bcab3e393517
+  - enabled: 1
+    path: Assets/Scenes/FullTests/personOnTerrainWithPages.unity
+    guid: 8d02be4c63b1a4243b476edd648e4380
   m_configObjects: {}

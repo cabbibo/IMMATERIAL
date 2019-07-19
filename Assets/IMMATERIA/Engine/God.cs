@@ -8,6 +8,7 @@ using UnityEditor;
 public class God : Cycle {
 
 
+public bool AllInEditMode;
 private static God _instance;
   
 
@@ -19,6 +20,8 @@ public override void Create(){
     }else{
         print("DUDE WHERE'S MY DATA");
     }
+
+
 }
 
 public void OnRenderObject(){
@@ -61,11 +64,13 @@ public void OnDisable(){
 
 
  
-    void Always(){    
-    #if UNITY_EDITOR 
-      EditorApplication.QueuePlayerLoopUpdate();
-    #endif
-    }
+void Always(){    
+  #if UNITY_EDITOR 
+  if( AllInEditMode ){
+    EditorApplication.QueuePlayerLoopUpdate();
+  }
+  #endif
+}
 
 
 
