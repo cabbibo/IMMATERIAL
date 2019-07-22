@@ -6,6 +6,10 @@ public class Story : Cycle
 {
 
 
+  public Vector2 uv;
+  public Monolith monolith;
+
+
   public float innerRadius;
   public float outerRadius;
 
@@ -14,6 +18,11 @@ public class Story : Cycle
    
   public Page[] pages;
   public int currentPage;
+
+  public EventTypes.BaseEvent OnEnterOuter;
+  public EventTypes.BaseEvent OnEnterInner;
+  public EventTypes.BaseEvent OnExitOuter;
+  public EventTypes.BaseEvent OnExitInner;
 
 
   private float dif;
@@ -28,9 +37,14 @@ public class Story : Cycle
   
   public override void Create(){
 
+
+    uv =new Vector2( transform.position.x * data.land.size , transform.position.z * data.land.size);
+    dif = 10000000;
     for( int i = 0; i < pages.Length; i ++ ){
       SafeInsert(pages[i]);
     }
+    SafeInsert( monolith );
+    monolith.story = this;
 
   }
 
@@ -53,11 +67,14 @@ public class Story : Cycle
         transitionSpeed = pages[currentPage].lerpSpeed;
         transitionStartTime = Time.time;
         oldTransitionPage = pages[currentPage-1];
+        pages[currentPage].OnStart.Invoke();
+        pages[currentPage-1].OnEnd.Invoke();
       }else{
         transitioning = true;
         transitionSpeed = pages[0].lerpSpeed;
         transitionStartTime = Time.time;
         oldTransitionPage = pages[currentPage-1];
+        pages[currentPage-1].OnEnd.Invoke();
         currentPage = 0;
         Release();
       }
@@ -79,12 +96,17 @@ public class Story : Cycle
         transitionStartTime = Time.time;
         oldTransitionPage = pages[currentPage+1];
 
+         pages[currentPage].OnStart.Invoke();
+         pages[currentPage+1].OnEnd.Invoke();
+
       }else{
         
         transitioning = true;
         transitionSpeed = pages[0].lerpSpeed;
         transitionStartTime = Time.time;
         oldTransitionPage = pages[currentPage+1];
+
+        pages[currentPage+1].OnEnd.Invoke();
         currentPage = 0;
         Release();
       }
@@ -93,10 +115,11 @@ public class Story : Cycle
   }
 
   public void SetActivePage(){
-    data.Text.Set( pages[currentPage].text );
-    data.Text.PageStart();
-    data.Controls.SetLerpTarget( pages[currentPage].transform ,pages[currentPage].lerpSpeed);
-    if( pages[currentPage].moveTarget ){ data.PlayerControls.SetMoveTarget( pages[currentPage].moveTarget.position ); }
+    data.textParticles.Set( pages[currentPage].text );
+    data.textParticles.PageStart();
+    data.cameraControls.SetLerpTarget( pages[currentPage].transform ,pages[currentPage].lerpSpeed);
+   
+    if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget.position ); }
 
 
   }   
@@ -105,8 +128,8 @@ public class Story : Cycle
 
 
     started = false;
-    data.Controls.SetFollowTarget();
-    data.Text.Release();
+    data.cameraControls.SetFollowTarget();
+    data.textParticles.Release();
   }
 
 
@@ -116,7 +139,7 @@ public class Story : Cycle
     if( !started ){
       RaycastHit hit;
 
-      if (pages[currentPage].frame.collider.Raycast(data.Events.ray, out hit, 100.0f)){
+      if (pages[currentPage].frame.collider.Raycast(data.inputEvents.ray, out hit, 100.0f)){
         started = true;
         SetActivePage(); 
       }else{
@@ -130,7 +153,7 @@ public class Story : Cycle
     
     
     oDif = dif;
-    dif = (transform.position - data.Player.position).magnitude;
+    dif = (transform.position - data.player.position).magnitude;
 
     if( dif < outerRadius && oDif >= outerRadius ){
       EnterOuter();
@@ -162,15 +185,17 @@ public class Story : Cycle
   
     Debug.Log("EnterOuttter");
     insideOuter=true;
+    data.sceneCircle.Set( this );
   
 
   }
   public void EnterInner(){
     Debug.Log("EnterInnerrr");
     insideInner=true;
-    data.Events.OnTap.AddListener( CheckForStart );
-    data.Events.OnSwipeLeft.AddListener( NextPage );
-    data.Events.OnSwipeRight.AddListener( PreviousPage );
+    data.inputEvents.OnTap.AddListener( CheckForStart );
+    data.inputEvents.OnSwipeLeft.AddListener( NextPage );
+    data.inputEvents.OnSwipeRight.AddListener( PreviousPage );
+    
 
   }
 
@@ -181,9 +206,9 @@ public class Story : Cycle
 
   public void ExitInner(){
     insideInner=false;
-    data.Events.OnTap.RemoveListener( CheckForStart );
-    data.Events.OnSwipeLeft.RemoveListener( NextPage );
-    data.Events.OnSwipeRight.RemoveListener( PreviousPage );
+    data.inputEvents.OnTap.RemoveListener( CheckForStart );
+    data.inputEvents.OnSwipeLeft.RemoveListener( NextPage );
+    data.inputEvents.OnSwipeRight.RemoveListener( PreviousPage );
   }
 
 

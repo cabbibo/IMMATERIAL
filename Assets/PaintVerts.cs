@@ -13,10 +13,10 @@ public class PaintVerts : Form
 
   public override void SetCount(){
     print(data);
-    width = data.Island.heightMap.width;
+    width = data.land.heightMap.width;
     print( width );
     count = width * width;
-    size = data.Island.size;
+    size = data.land.size;
   }
 
   public override void Embody(){
@@ -29,12 +29,12 @@ public class PaintVerts : Form
       int x = i % width;
       int y = i / width;
 
-      Color c =  data.Island.heightMap.GetPixelBilinear((float)x / (float)width , (float)y / (float)width);
+      Color c =  data.land.heightMap.GetPixelBilinear((float)x / (float)width , (float)y / (float)width);
 
 
-      values[ index ++ ] = ((float)x/(float)width) / data.Island.size;
-      values[ index ++ ] = c.r * data.Island.height;
-      values[ index ++ ] = ((float)y/(float)width) / data.Island.size;
+      values[ index ++ ] = ((float)x/(float)width) / data.land.size;
+      values[ index ++ ] = c.r * data.land.height;
+      values[ index ++ ] = ((float)y/(float)width) / data.land.size;
 
       values[ index ++ ] = 0;
       values[ index ++ ] = 0;

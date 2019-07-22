@@ -82,9 +82,9 @@ public class PageTurner : Cycle
 
 
   public void SetActivePage(Page page ){
-    data.Text.Set(page.text );
-    data.Text.PageStart();
-    if( lerpToPage ){ data.Controls.SetLerpTarget( page.transform ,page.lerpSpeed); }
+    data.textParticles.Set(page.text );
+    data.textParticles.PageStart();
+    if( lerpToPage ){ data.cameraControls.SetLerpTarget( page.transform ,page.lerpSpeed); }
 
 
   } 

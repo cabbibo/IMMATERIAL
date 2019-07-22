@@ -70,13 +70,13 @@ public class BookStory : Cycle
   }
 
   public void SetActivePage(){
-    data.Text.Set( pages[currentPage].text );
-    data.Text.PageStart();
+    data.textParticles.Set( pages[currentPage].text );
+    data.textParticles.PageStart();
   }   
 
   public void Release(){
     started = false;
-    data.Text.Release();
+    data.textParticles.Release();
   }
 
 

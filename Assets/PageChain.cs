@@ -45,9 +45,9 @@ public class PageChain : Cycle
   }
 
   public void SetActivePage(){
-    data.Text.Set( pages[currentPage].text );
-    data.Text.PageStart();
-    data.Controls.SetLerpTarget( pages[currentPage].transform ,pages[currentPage].lerpSpeed);
+    data.textParticles.Set( pages[currentPage].text );
+    data.textParticles.PageStart();
+    data.cameraControls.SetLerpTarget( pages[currentPage].transform ,pages[currentPage].lerpSpeed);
   }   
 
 
@@ -56,7 +56,7 @@ public class PageChain : Cycle
   }
 
   public void Release(){
-    data.Controls.SetFollowTarget( data.Player ,data.Controls.lerpSpeed);
+    data.cameraControls.SetFollowTarget( data.player ,data.cameraControls.lerpSpeed);
   }
 
 

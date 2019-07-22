@@ -5,6 +5,8 @@
       uniform int _Count;
       uniform float _Size;
       uniform float3 _Color;
+
+      
       StructuredBuffer<Vert> _VertBuffer;
 
 
@@ -29,20 +31,22 @@ varyings vert (uint id : SV_VertexID){
 
   int base = id / 6;
   int alternate = id %6;
+
   if( base < _Count ){
 
       float3 extra = float3(0,0,0);
 
     float3 l = UNITY_MATRIX_V[0].xyz;
     float3 u = UNITY_MATRIX_V[1].xyz;
+    
     float2 uv = float2(0,0);
 
-      if( alternate == 0 ){ extra = -l - u; uv = float2(0,0); }
+    if( alternate == 0 ){ extra = -l - u; uv = float2(0,0); }
     if( alternate == 1 ){ extra =  l - u; uv = float2(1,0); }
     if( alternate == 2 ){ extra =  l + u; uv = float2(1,1); }
     if( alternate == 3 ){ extra = -l - u; uv = float2(0,0); }
     if( alternate == 4 ){ extra =  l + u; uv = float2(1,1); }
-      if( alternate == 5 ){ extra = -l + u; uv = float2(0,1); }
+    if( alternate == 5 ){ extra = -l + u; uv = float2(0,1); }
 
 
       Vert v = _VertBuffer[base % _Count];

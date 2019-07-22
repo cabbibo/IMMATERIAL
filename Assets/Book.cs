@@ -62,10 +62,10 @@ public class Book : Cycle
 
       started = true;
 
-      data.PlayerControls.animator.SetTrigger("LiftPhone");
+      data.playerControls.animator.SetTrigger("LiftPhone");
 
-      transform.position = data.PlayerPosition + Vector3.up * above;
-      transform.rotation = data.Player.rotation;
+      transform.position = data.playerPosition + Vector3.up * above;
+      transform.rotation = data.player.rotation;
 
       for(int i = 0; i < bookStories.Length; i++ ){
 
@@ -83,14 +83,14 @@ public class Book : Cycle
 
       }
 
-      data.Controls.SetLerpTarget( transform , 1);
+      data.cameraControls.SetLerpTarget( transform , 1);
       //started = true;
         //  OpenBook();
     
 
-      data.Events.OnTap.AddListener( TapInBook );
-      data.Events.OnSwipeLeft.AddListener( LeftSwipe);
-      data.Events.OnSwipeRight.AddListener( RightSwipe);
+      data.inputEvents.OnTap.AddListener( TapInBook );
+      data.inputEvents.OnSwipeLeft.AddListener( LeftSwipe);
+      data.inputEvents.OnSwipeRight.AddListener( RightSwipe);
 
     }
 
@@ -122,23 +122,23 @@ public class Book : Cycle
       
       started = false;
 
-      data.Controls.SetFollowTarget();
+      data.cameraControls.SetFollowTarget();
 
-      data.PlayerControls.animator.SetTrigger("LowerPhone");
+      data.playerControls.animator.SetTrigger("LowerPhone");
 
-      data.Events.OnTap.RemoveListener( TapInBook );
-      data.Events.OnSwipeLeft.RemoveListener( LeftSwipe );
-      data.Events.OnSwipeRight.RemoveListener( RightSwipe );
+      data.inputEvents.OnTap.RemoveListener( TapInBook );
+      data.inputEvents.OnSwipeLeft.RemoveListener( LeftSwipe );
+      data.inputEvents.OnSwipeRight.RemoveListener( RightSwipe );
 
     }
 
 
   public void TapInBook(){
 
-    if( data.Events.hitTag == "StartNode"){
+    if( data.inputEvents.hitTag == "StartNode"){
       print("YA!");
       for( int i = 0; i < startNodes.Length; i++ ){
-         if( data.Events.hit.collider.gameObject == startNodes[i] ){
+         if( data.inputEvents.hit.collider.gameObject == startNodes[i] ){
             print( "node + " +  i );
             OpenStory(i);
          }
@@ -204,7 +204,7 @@ public class Book : Cycle
 
       if( !started ){
         RaycastHit hit;
-        if( data.Events.hitTag == "Player" ){
+        if( data.inputEvents.hitTag == "Player" ){
           print("Ya Boi");
           OpenBook();
         }

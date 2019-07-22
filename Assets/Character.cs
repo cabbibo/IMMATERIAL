@@ -33,6 +33,7 @@ public class Character : Cycle {
 
   public override void Create () {
 
+    moveTarget = transform.position;
     oRot = Quaternion.identity;
     deltaRot = Quaternion.identity;
     oPos = Vector3.zero;
@@ -86,7 +87,7 @@ public class Character : Cycle {
 
 
 if( doTerrain ){
-    float h = data.Island.SampleHeight( transform.position );
+    float h = data.land.SampleHeight( transform.position );
     transform.position = new Vector3( transform.position.x , h , transform.position.z);
 }
 

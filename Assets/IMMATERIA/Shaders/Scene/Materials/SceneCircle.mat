@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Point 16 Debug
-  m_Shader: {fileID: 4800000, guid: e9e49404f86e1034d868422565781b1d, type: 3}
-  m_ShaderKeywords: Enable16Struct
+  m_Name: SceneCircle
+  m_Shader: {fileID: 4800000, guid: ca1e2d4da5cc54b2f86c8818a3dd93a8, type: 3}
+  m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -55,6 +55,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RibbonMap:
+        m_Texture: {fileID: 2800000, guid: 8378fb9eecd604a8d8b5f3421a3e7380, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
@@ -67,15 +71,9 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Size: 0.01
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Struct12: 0
-    - _Struct16: 1
-    - _Struct24: 0
-    - _Struct36: 0
-    - _Struct9: 0
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:

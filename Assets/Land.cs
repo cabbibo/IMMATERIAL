@@ -40,7 +40,7 @@ public class Land : Cycle {
     Shader.SetGlobalFloat("_MapSize", size);
     Shader.SetGlobalFloat("_MapHeight", height);
 
-    camRay.position = Trace( data.CameraPosition , data.CameraForward );
+    camRay.position = Trace( data.cameraPosition , data.cameraForward );
 
   }
 

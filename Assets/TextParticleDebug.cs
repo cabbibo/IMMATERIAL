@@ -26,14 +26,14 @@ public class TextParticleDebug : Cycle
 
     print("binding");
 
-    locationMPB.SetBuffer("_ParticleBuffer" , data.Text.particles._buffer );
+    locationMPB.SetBuffer("_ParticleBuffer" , data.textParticles.particles._buffer );
     
 
-    glyphMPB.SetBuffer("_ParticleBuffer" , data.Text.particles._buffer );
+    glyphMPB.SetBuffer("_ParticleBuffer" , data.textParticles.particles._buffer );
 
     glyphMPB.SetTexture("_TextMap" , GlyphTexture );
-    glyphMPB.SetBuffer("_VertBuffer" , data.Text.body.verts._buffer );
-    glyphMPB.SetBuffer("_TriBuffer" , data.Text.body.triangles._buffer );
+    glyphMPB.SetBuffer("_VertBuffer" , data.textParticles.body.verts._buffer );
+    glyphMPB.SetBuffer("_TriBuffer" , data.textParticles.body.triangles._buffer );
 
 
   }
@@ -46,21 +46,21 @@ public class TextParticleDebug : Cycle
     transform.rotation = Camera.main.transform.rotation;
 
     glyphMPB.SetMatrix( "_World" , transform.localToWorldMatrix );
-    glyphMPB.SetInt("_BaseID" , data.Text.currentMin);
-    glyphMPB.SetInt("_TipID" , data.Text.currentMax);
-    glyphMPB.SetInt("_TextCount" , data.Text.particles.count );
+    glyphMPB.SetInt("_BaseID" , data.textParticles.currentMin);
+    glyphMPB.SetInt("_TipID" , data.textParticles.currentMax);
+    glyphMPB.SetInt("_TextCount" , data.textParticles.particles.count );
 
 
 
     locationMPB.SetMatrix( "_World" , transform.localToWorldMatrix );
-    locationMPB.SetInt("_BaseID" , data.Text.currentMin);
-    locationMPB.SetInt("_TipID" , data.Text.currentMax);
-    locationMPB.SetInt("_TextCount" , data.Text.particles.count );
+    locationMPB.SetInt("_BaseID" , data.textParticles.currentMin);
+    locationMPB.SetInt("_TipID" , data.textParticles.currentMax);
+    locationMPB.SetInt("_TextCount" , data.textParticles.particles.count );
 
 
 
-    Graphics.DrawProcedural(GlyphMaterial,  new Bounds(transform.position, Vector3.one * 50000), MeshTopology.Triangles, data.Text.body.triangles.count , 1, null, glyphMPB, ShadowCastingMode.TwoSided, true, gameObject.layer);
-    Graphics.DrawProcedural(LocationMaterial,  new Bounds(transform.position, Vector3.one * 50000), MeshTopology.Triangles, data.Text.particles.count * 3 , 1, null, locationMPB, ShadowCastingMode.TwoSided, true, gameObject.layer);
+    Graphics.DrawProcedural(GlyphMaterial,  new Bounds(transform.position, Vector3.one * 50000), MeshTopology.Triangles, data.textParticles.body.triangles.count , 1, null, glyphMPB, ShadowCastingMode.TwoSided, true, gameObject.layer);
+    Graphics.DrawProcedural(LocationMaterial,  new Bounds(transform.position, Vector3.one * 50000), MeshTopology.Triangles, data.textParticles.particles.count * 3 , 1, null, locationMPB, ShadowCastingMode.TwoSided, true, gameObject.layer);
 
   }
 

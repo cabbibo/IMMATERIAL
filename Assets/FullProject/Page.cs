@@ -12,6 +12,9 @@ public class Page : Cycle
     public Transform moveTarget;
     public MaterialPropertyBlock frameMPB;
 
+    public EventTypes.BaseEvent  OnStart;
+    public EventTypes.BaseEvent  OnEnd;
+
     public override void Create(){
       frame = GetComponent<Frame>();
       text = GetComponent<TextAnchor>();
@@ -23,5 +26,7 @@ public class Page : Cycle
       SafeInsert(frame);
       SafeInsert(text);
     }
+
+
 
 }

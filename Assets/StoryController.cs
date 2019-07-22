@@ -11,7 +11,7 @@ public class StoryController : Cycle
   }
 
   public void SetPlayer(){
-    data.Controls.SetFollowTarget( data.Player , 1 );
+    data.cameraControls.SetFollowTarget( data.player , 1 );
   }
 
 }

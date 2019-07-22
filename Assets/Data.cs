@@ -17,76 +17,93 @@ using UnityEngine;
 public class Data : Cycle
 {
     
-  public Transform Camera;
-  public Transform Player;
+  public Transform camera;
+  public Transform player;
 
-  public TextParticles Text;
-  public CameraController Controls;
-  public Character PlayerControls;
-  public InputEvents Events;
-  public Land Island;
+  public Journey journey;
+
+  public TextParticles textParticles;
+  public CameraController cameraControls;
+  public Character playerControls;
+  public InputEvents inputEvents;
+  public Land land;
+  public SceneCircle sceneCircle;
+  public Book book;
 
   //public Terrain terrain;
 
-  public Vector3 CameraForward;
-  public Vector3 CameraUp;
-  public Vector3 CameraRight;
-  public Vector3 CameraPosition;
+
+  public Vector3 cameraForward;
+  public Vector3 cameraUp;
+  public Vector3 cameraRight;
+  public Vector3 cameraPosition;
 
 
-  public Vector3 PlayerForward;
-  public Vector3 PlayerUp;
-  public Vector3 PlayerRight;
-  public Vector3 PlayerPosition;
-  public Vector3 PlayerSoul;
+  public Vector3 playerForward;
+  public Vector3 playerUp;
+  public Vector3 playerRight;
+  public Vector3 playerPosition;
+  public Vector3 playerSoul;
 
-  public Transform Soul;
+  public Transform soul;
+
+
+  public override void Create(){
+    if( journey != null ){ SafePrepend(journey); }
+    if( textParticles != null ){ SafePrepend(textParticles); }
+    if( cameraControls != null ){ SafePrepend(cameraControls); }
+    if( playerControls != null ){ SafePrepend(playerControls); }
+    if( inputEvents != null ){ SafePrepend(inputEvents); }
+    if( sceneCircle != null ){ SafePrepend(sceneCircle); }
+    if( land != null ){ SafePrepend(land); }
+    if( book != null ){ SafePrepend(book); }
+  }
 
 
   public void BindPlayerData(Life toBind){
 
-    toBind.BindAttribute("_PlayerForward", "PlayerForward" , this );
-    toBind.BindAttribute("_PlayerUp", "PlayerUp" , this );
-    toBind.BindAttribute("_PlayerRight", "PlayerRight" , this );
-    toBind.BindAttribute("_PlayerPosition", "PlayerPosition" , this );
-    toBind.BindAttribute("_PlayerSoul", "PlayerSoul" , this );
+    toBind.BindAttribute("_PlayerForward", "playerForward" , this );
+    toBind.BindAttribute("_PlayerUp", "playerUp" , this );
+    toBind.BindAttribute("_PlayerRight", "playerRight" , this );
+    toBind.BindAttribute("_PlayerPosition", "playerPosition" , this );
+    toBind.BindAttribute("_PlayerSoul", "playerSoul" , this );
 
   }
 
   public void BindCameraData(Life toBind){
 
-    toBind.BindAttribute("_CameraForward", "CameraForward" , this );
-    toBind.BindAttribute("_CameraUp", "CameraUp" , this );
-    toBind.BindAttribute("_CameraRight", "CameraRight" , this );
-    toBind.BindAttribute("_CameraPosition", "CameraPosition" , this );
+    toBind.BindAttribute("_CameraForward", "cameraForward" , this );
+    toBind.BindAttribute("_CameraUp", "cameraUp" , this );
+    toBind.BindAttribute("_CameraRight", "cameraRight" , this );
+    toBind.BindAttribute("_CameraPosition", "cameraPosition" , this );
 
   }
 
   public void BindLandData(Life toBind){
 
-    Island.BindData(toBind);
+    land.BindData(toBind);
 
   }
 
   public override void WhileLiving( float v ){
 
 
-    if( Camera != null ){
-      CameraForward = Camera.forward;
-      CameraUp = Camera.up;
-      CameraRight = Camera.right;
-      CameraPosition = Camera.position;
+    if( camera != null ){
+      cameraForward = camera.forward;
+      cameraUp = camera.up;
+      cameraRight = camera.right;
+      cameraPosition = camera.position;
     }
 
-    if( Player != null ){
-      PlayerForward = Player.forward;
-      PlayerUp = Player.up;
-      PlayerRight = Player.right;
-      PlayerPosition = Player.position;
+    if( player != null ){
+      playerForward = player.forward;
+      playerUp = player.up;
+      playerRight = player.right;
+      playerPosition = player.position;
     }
     
-    if( Soul != null ){
-      PlayerSoul = Soul.position;
+    if( soul != null ){
+      playerSoul = soul.position;
     }
 
   }

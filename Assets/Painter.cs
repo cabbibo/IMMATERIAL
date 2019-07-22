@@ -51,7 +51,7 @@ public class Painter : Simulation
 
   public void WhileDown(Ray ray){
 
-    paintPosition = data.Island.Trace( ray.origin, ray.direction);
+    paintPosition = data.land.Trace( ray.origin, ray.direction);
     paintTip.position = paintPosition;
 
     life.YOLO();
@@ -68,7 +68,7 @@ public class Painter : Simulation
     for( int i = 0; i < verts.count; i ++ ){
       
       // extracting height
-      float h = values[ i * verts.structSize + 1 ] / data.Island.height;
+      float h = values[ i * verts.structSize + 1 ] / data.land.height;
       
       // extracting flow verts
       float x = values[ i * verts.structSize + 6 ] * .5f + .5f;
@@ -81,10 +81,10 @@ public class Painter : Simulation
 
     }
 
-    data.Island.heightMap.SetPixels(colors,0);
-    data.Island.heightMap.Apply(true);
+    data.land.heightMap.SetPixels(colors,0);
+    data.land.heightMap.Apply(true);
 
-    SaveTextureAsPNG( data.Island.heightMap , "Assets/HeightMap.png");
+    SaveTextureAsPNG( data.land.heightMap , "Assets/HeightMap.png");
 
   }
 

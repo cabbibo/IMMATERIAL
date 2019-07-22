@@ -24,17 +24,15 @@ Shader "Debug/Particles16" {
 
 
 
-//Pixel function returns a solid color for each point.
-float4 frag (varyings v) : COLOR {
-    return float4(_Color,1 );
-}
+      //Pixel function returns a solid color for each point.
+      float4 frag (varyings v) : COLOR {
+          return float4(_Color,1 );
+      }
 
       ENDCG
 
     }
   }
-
-  Fallback Off
 
 
 }

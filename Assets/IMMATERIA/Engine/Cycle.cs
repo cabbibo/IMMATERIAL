@@ -308,6 +308,7 @@ public class Cycle : MonoBehaviour{
   public virtual void Destroy(){}
 
   protected void DoDestroy(){
+   
     SetStates();
     foreach( Cycle c in Cycles ){
 
@@ -382,6 +383,7 @@ void SetStates(){
     foreach( Cycle c in Cycles ){
       CheckSelfCycle(c);
       c._WhileDebug();
+      
     }
     
   }

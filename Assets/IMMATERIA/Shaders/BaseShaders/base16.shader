@@ -10,10 +10,11 @@
         Tags { "RenderType"="Opaque" }
         LOD 100
 
-       // Cull Off
+        Cull Off
         Pass
         {
             CGPROGRAM
+            #pragma target 4.5
             #pragma vertex vert
             #pragma fragment frag
             // make fog work

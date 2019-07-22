@@ -7,8 +7,9 @@ public class TerrainTap : Cycle
    
    public void Tap(){
 
-      transform.position = data.Island.Trace( data.Events.ray.origin , data.Events.ray.direction );
-      data.PlayerControls.SetMoveTarget( transform.position );
+    print("helllllo");
+      transform.position = data.land.Trace( data.inputEvents.ray.origin , data.inputEvents.ray.direction );
+      data.playerControls.SetMoveTarget( transform.position );
    }
 
 }

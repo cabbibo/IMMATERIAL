@@ -12,6 +12,7 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma target 4.5
             // make fog work
             #pragma multi_compile_fog
 

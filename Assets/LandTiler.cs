@@ -88,7 +88,7 @@ public class LandTiler : Cycle
         _Offset = Vector3.left * (i%numTiles) * tileSize;
         _Offset += Vector3.forward * (float)(i/numTiles) * tileSize;
 
-        tileObjects[i].transform.position = data.PlayerPosition + _Offset;
+        tileObjects[i].transform.position = data.playerPosition + _Offset;
     }
   }
 
@@ -115,7 +115,7 @@ public class LandTiler : Cycle
 
     Vector3 oPos;
 
-//    print(data.PlayerPosition);
+//    print(data.playerPosition);
 
     for( int i = 0; i < Tiles.Length; i++ ){
 
@@ -127,23 +127,23 @@ public class LandTiler : Cycle
          _ID = i;
          _Offset = Vector3.zero;
 
-      if( data.PlayerPosition.x - tileObjects[i].transform.position.x < -hT   ){     
+      if( data.playerPosition.x - tileObjects[i].transform.position.x < -hT   ){     
         _Offset += -Vector3.right * t;
         tileObjects[i].transform.position += _Offset;
       }
 
-      if( data.PlayerPosition.x - tileObjects[i].transform.position.x > hT   ){
+      if( data.playerPosition.x - tileObjects[i].transform.position.x > hT   ){
         _Offset += Vector3.right * t;
         tileObjects[i].transform.position += _Offset;
       }
 
 
-      if( data.PlayerPosition.z - tileObjects[i].transform.position.z < -hT   ){        
+      if( data.playerPosition.z - tileObjects[i].transform.position.z < -hT   ){        
         _Offset += -Vector3.forward * t;
         tileObjects[i].transform.position += _Offset;
       }
 
-      if( data.PlayerPosition.z - tileObjects[i].transform.position.z > hT   ){
+      if( data.playerPosition.z - tileObjects[i].transform.position.z > hT   ){
          _Offset += Vector3.forward * t;
         tileObjects[i].transform.position += _Offset;
   
