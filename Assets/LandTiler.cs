@@ -43,10 +43,10 @@ public class LandTiler : Cycle
 
   public override void Create(){
 
-    print("OnCreate");
-    print( landTilePrefab );
-    print( landTilePrefab.GetComponent<LandTile>() );
-    print( landTilePrefab.GetComponent<LandTile>().verts );
+    //print("OnCreate");
+    //print( landTilePrefab );
+    //print( landTilePrefab.GetComponent<LandTile>() );
+    //print( landTilePrefab.GetComponent<LandTile>().verts );
 
     Cycles.Clear();
 

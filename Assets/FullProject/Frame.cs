@@ -75,10 +75,14 @@ public class Frame : Cycle {
 
     center = Camera.main.ViewportToWorldPoint(new Vector3( .5f , .5f , distance )); 
 
+    //print("setting");
+
     borderLine.SetPosition( 0 , bottomLeft );
     borderLine.SetPosition( 1 , bottomRight );
     borderLine.SetPosition( 2 , topRight );
     borderLine.SetPosition( 3 , topLeft );
+
+
     //borderLine.SetPosition( 4 , bottomLeft );
 
     //transform.localPosition = new Vector3( 0, 0, distance);

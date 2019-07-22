@@ -107,8 +107,8 @@ public int currentMin;
     currentMin = currentMax;
 
     currentMax = currentMin + t.count; 
-    print( currentMax );
-    print( t.count );
+//    print( currentMax );
+//    print( t.count );
     
     anchor = t;
     scale = t.scale;

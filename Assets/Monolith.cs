@@ -9,9 +9,20 @@ public class Monolith : Cycle
     public Transform monolith;
     public Story story;
 
+    public GameObject[] storyMarkers;
+
     public float ratio;
 
+    public void DestroyMe(){
+     // print( storyMarkers.Length );
+      for( int i = 0; i < storyMarkers.Length; i++ ){
+        DestroyImmediate(storyMarkers[i]);
+      }
+    }
+
     public override void Create(){
+
+      DestroyMe();
 
       ratio = (float)Screen.width / (float) Screen.height;
 
@@ -21,12 +32,18 @@ public class Monolith : Cycle
 
       float size = 2;
       monolith.localScale = new Vector3( size, size * ratio , size / 7 );
-      monolith.transform.localPosition = Vector3.up * size * ratio * .4f;
+      monolith.localPosition = Vector3.up * size * ratio * .4f;
 
 
-
+      storyMarkers = new GameObject[data.journey.stories.Length];
       for( int i = 0; i < data.journey.stories.Length; i++ ){
-
+          storyMarkers[i] = Instantiate( storyMarkerPrefab);
+          storyMarkers[i].GetComponent<StoryMarker>().text.text = data.journey.stories[i].gameObject.name;
+          storyMarkers[i].transform.parent = transform;
+          storyMarkers[i].transform.localPosition = Vector3.zero;
+          storyMarkers[i].transform.localPosition += monolith.localScale.x * monolith.right * (-.5f + data.journey.stories[i].uv.x); 
+          storyMarkers[i].transform.localPosition += monolith.localScale.y * monolith.up * (data.journey.stories[i].uv.y);
+          storyMarkers[i].transform.localPosition -= monolith.localScale.z * monolith.forward * .5f;
       }
     }
 

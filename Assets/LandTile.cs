@@ -21,7 +21,7 @@ public class LandTile : Cycle
 
     SafeInsert(body);
 
-    print(verts);
+//    print(verts);
 
     verts.dimensions = dimensions;
     verts.size = size;

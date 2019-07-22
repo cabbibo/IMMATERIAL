@@ -60,6 +60,21 @@ public class Land : Cycle {
     return c.r * height;
   }
 
+  public Vector3 NewPosition( Vector3 v ){
+    return new Vector3( v.x , SampleHeight( v ), v.z);
+  }
+
+  public Vector3 SampleNormal( Vector3 v ){
+    float eps =1;
+
+    Vector3 h1 = NewPosition( v + Vector3.forward * eps);
+    Vector3 h2 = NewPosition( v - Vector3.forward * eps);
+    Vector3 h3 = NewPosition( v + Vector3.right  * eps);
+    Vector3 h4 = NewPosition( v - Vector3.right  * eps);
+
+    return (Vector3.Cross( (h1-h2).normalized , (h3-h4).normalized )).normalized;
+  }
+
   public Vector3 Trace( Vector3 ro , Vector3 rd ){
 
     for( int i = 0; i < traceSteps; i++ ){

@@ -88,6 +88,22 @@ public class Character : Cycle {
 
 if( doTerrain ){
     float h = data.land.SampleHeight( transform.position );
+   
+    Vector3 normal = data.land.SampleNormal( transform.position );
+    float d = Vector3.Dot( normal , Vector3.up );
+
+    float h2 = data.land.SampleHeight( transform.position + transform.forward * .5f );
+
+//    print( (1-d) * 10);
+animator.SetFloat("Steepness", (1-d) * 10 );
+
+if( h2 > h ){
+  animator.SetBool( "Uphill" , true);
+}else{
+  animator.SetBool("Uphill", false);
+}
+
+
     transform.position = new Vector3( transform.position.x , h , transform.position.z);
 }
 

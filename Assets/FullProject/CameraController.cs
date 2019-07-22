@@ -51,11 +51,18 @@ public class CameraController : Cycle
     public void  DoFollow(){
 
       Vector3 targetPosition = followTarget.position + Vector3.up* heightAbove + followTarget.forward * -radius;
-      Quaternion targetRotation = Quaternion.LookRotation( (followTarget.position - CameraHolder.position) );
+      Quaternion targetRotation = Quaternion.LookRotation( (followTarget.position - CameraHolder.position + Vector3.up) );
 
       float steal = Mathf.Clamp( (Time.time - startFollowTime) / startFollowSpeed , 0 , 1);
 
       float tDelta = Time.deltaTime * steal * steal;
+
+      print( CameraHolder.position );
+      print( targetPosition );
+      print( tDelta );
+      print( steal );
+      print( followMoveSpeed );
+      print( followMoveSpeed * tDelta );
 
       CameraHolder.position = Vector3.Lerp( CameraHolder.position , targetPosition , followMoveSpeed * tDelta );//subject.position  + Vector3.up * (height - hDelta * 3);
       CameraHolder.rotation = Quaternion.Slerp(CameraHolder.rotation, targetRotation ,  followRotateSpeed * tDelta );

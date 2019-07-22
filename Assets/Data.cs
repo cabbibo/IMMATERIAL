@@ -17,18 +17,25 @@ using UnityEngine;
 public class Data : Cycle
 {
     
+
+  public bool bookActive;
+  public bool inStory;
+  
   public Transform camera;
   public Transform player;
 
   public Journey journey;
 
-  public TextParticles textParticles;
   public CameraController cameraControls;
   public Character playerControls;
   public InputEvents inputEvents;
   public Land land;
   public SceneCircle sceneCircle;
   public Book book;
+
+  public TextParticles textParticles;
+  public GuideParticles guideParticles;
+  public GuideParticles monolithParticles;
 
   //public Terrain terrain;
 
@@ -57,6 +64,8 @@ public class Data : Cycle
     if( sceneCircle != null ){ SafePrepend(sceneCircle); }
     if( land != null ){ SafePrepend(land); }
     if( book != null ){ SafePrepend(book); }
+    if( guideParticles != null ){ SafePrepend(guideParticles); }
+    if( monolithParticles != null ){ SafePrepend(monolithParticles); }
   }
 
 
@@ -105,6 +114,12 @@ public class Data : Cycle
     if( soul != null ){
       playerSoul = soul.position;
     }
+
+    Shader.SetGlobalVector("_PlayerForward"   , playerForward );
+    Shader.SetGlobalVector("_PlayerUp"        , playerUp );
+    Shader.SetGlobalVector("_PlayerRight"     , playerRight );
+    Shader.SetGlobalVector("_PlayerPosition"  , playerPosition );
+    Shader.SetGlobalVector("_PlayerSoul"      , playerSoul );
 
   }
 

@@ -10,6 +10,7 @@ public class Book : Cycle
     public Transform projectorPoint;
 
     public float above;
+    public float forward;
 
     public bool started;
 
@@ -64,7 +65,7 @@ public class Book : Cycle
 
       data.playerControls.animator.SetTrigger("LiftPhone");
 
-      transform.position = data.playerPosition + Vector3.up * above;
+      transform.position = data.playerPosition + Vector3.up * above +  data.player.forward * forward;
       transform.rotation = data.player.rotation;
 
       for(int i = 0; i < bookStories.Length; i++ ){
