@@ -18,6 +18,10 @@ public class SceneCircle : Cycle
 
   private SceneCircleVerts verts;
   private SceneCircleVerts tris;
+
+  public float fadeTime;
+  private float setTime;
+  private float setting;
   
   public override void Create(){
    
@@ -45,14 +49,34 @@ public class SceneCircle : Cycle
     inner = story.innerRadius;
     outer = story.outerRadius;
 
+    setTime = Time.time;
+    setting = 1;
+
+    body.active = true;
     body.mpb.SetFloat("_OuterRadius", story.outerRadius);
     body.mpb.SetFloat("_InnerRadius", story.innerRadius);
-    body.mpb.SetFloat("_SetTime", Time.time);
-    
+    body.mpb.SetFloat("_SetTime", setTime);
+    body.mpb.SetFloat("_Setting", setting);
 
-
+    body.mpb.SetFloat("_FadeTime", fadeTime);
 
     life.YOLO();
+
+  }
+
+
+  public void Unset( Story story ){
+
+     setTime = Time.time;
+    setting = 0;
+    body.mpb.SetFloat("_SetTime", setTime);
+    body.mpb.SetFloat("_Setting", setting);
+  }
+
+  public override void WhileLiving( float v ){
+    if( Time.time - setTime > fadeTime && setting == 0 ){
+      body.active = false;
+    }
   }
 
 

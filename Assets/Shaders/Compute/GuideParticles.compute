@@ -163,7 +163,7 @@ void Flow(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     force += 10.3 * normalize(float3(direction.x,0, direction.y));// / max(1,d);
 
-    vert.vel += force * .001 * (1+hash(pID*1021.))/2;
+    vert.vel += force * .0004 * (1+hash(pID*1021.))/2;
 
     if( _Emit > .5){
        vert.life -= .004 * (3+sin(float(pID)));

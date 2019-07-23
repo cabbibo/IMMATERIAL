@@ -127,7 +127,7 @@
             2*noise(v.worldPos* 10 +20 )-1
         ));
 
-        fNor = tex2D(_NormalMap , v.worldPos.xz * .4 );
+        fNor = tex2D(_NormalMap , v.worldPos.xz * .04 );
        // fNor += 2*v.nor;
         
 
@@ -152,7 +152,11 @@ float l = saturate( (20-dif)/20);
 
 
         float grassHeight = (hCol.w * 5 + noise( v.worldPos + float3(0,_Time.y * .2,0) + fNor * _Time.y * .01 ) * .4) / 5;
-        color.xyz = 2* tex2D(_ColorMap, float2( reflM , 0)) * l;
+        color.xyz = tex2D(_ColorMap, float2( reflM * reflM  * .2 + .6 + dif * .03, 0)) * l ;
+
+
+        color = tex2D(_MainTex,v.worldPos.xz * .1);
+        color = tex2D(_ColorMap, float2(color.x * .2 + dif * .03+.6, 0)) * l ;
 
 
 
@@ -167,7 +171,7 @@ float l = saturate( (20-dif)/20);
         //tCol = dif;
 
         //tCol = grassHeight;
-        return float4( shadow , 0 , 0, 1.);
+        return float4( color.xyz * shadow  , 1.);
       }
 
       ENDCG
@@ -206,18 +210,56 @@ float l = saturate( (20-dif)/20);
     };
 
 
+
+float4 ShadowCasterPos (float3 vertex, float3 normal) {
+  float4 clipPos;
+    
+    // Important to match MVP transform precision exactly while rendering
+    // into the depth texture, so branch on normal bias being zero.
+    if (unity_LightShadowBias.z != 0.0) {
+    float3 wPos = vertex.xyz;
+    float3 wNormal = normal;
+    float3 wLight = normalize(UnityWorldSpaceLightDir(wPos));
+
+  // apply normal offset bias (inset position along the normal)
+  // bias needs to be scaled by sine between normal and light direction
+  // (http://the-witness.net/news/2013/09/shadow-mapping-summary-part-1/)
+  //
+  // unity_LightShadowBias.z contains user-specified normal offset amount
+  // scaled by world space texel size.
+
+    float shadowCos = dot(wNormal, wLight);
+    float shadowSine = sqrt(1 - shadowCos * shadowCos);
+    float normalBias = unity_LightShadowBias.z * shadowSine;
+
+    wPos -= wNormal * normalBias;
+
+    clipPos = mul(UNITY_MATRIX_VP, float4(wPos, 1));
+    }
+    else {
+        clipPos = UnityObjectToClipPos(vertex);
+    }
+  return clipPos;
+}
+
+
+
   StructuredBuffer<Vert> _VertBuffer;
   StructuredBuffer<int> _TriBuffer;
 
       struct v2f {
         V2F_SHADOW_CASTER;
+        float3 nor : NORMAL;
       };
 
 
-      v2f vert(appdata_base v, uint id : SV_VertexID)
+      v2f vert(appdata_base input, uint id : SV_VertexID)
       {
         v2f o;
-        o.pos = mul(UNITY_MATRIX_VP, float4( _VertBuffer[_TriBuffer[id]].pos, 1));
+        Vert v = _VertBuffer[_TriBuffer[id]];
+
+        float4 position = ShadowCasterPos(v.pos, -v.nor);
+        o.pos = UnityApplyLinearShadowBias(position);
         return o;
       }
 

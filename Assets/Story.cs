@@ -10,6 +10,9 @@ public class Story : Cycle
   public Monolith monolith;
 
 
+public int storyID;
+
+
   public float innerRadius;
   public float outerRadius;
 
@@ -46,6 +49,13 @@ public class Story : Cycle
     SafeInsert( monolith );
     monolith.story = this;
 
+
+    for( int i =0; i < data.journey.stories.Length; i++ ){
+      if( data.journey.stories[i] == this ){
+        print("IM THIS");
+        storyID = i;
+      }
+    }
   }
 
   public override void OnBirthed(){
@@ -53,6 +63,8 @@ public class Story : Cycle
       pages[i].frameMPB.SetFloat("_Cutoff" , 1);
       pages[i].frame.borderLine.SetPropertyBlock( pages[currentPage].frameMPB );
     }
+
+    monolith.gameObject.SetActive( false );
   }
 
   public void NextPage(){
@@ -186,6 +198,7 @@ public class Story : Cycle
     Debug.Log("EnterOuttter");
     insideOuter=true;
     data.sceneCircle.Set( this );
+    monolith.gameObject.SetActive( true );
   
 
   }
@@ -201,6 +214,8 @@ public class Story : Cycle
 
   public void ExitOuter(){
     insideOuter=false;
+
+    data.sceneCircle.Unset( this );
   }
 
 

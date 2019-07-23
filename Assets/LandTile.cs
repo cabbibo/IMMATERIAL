@@ -15,6 +15,8 @@ public class LandTile : Cycle
   public LandTileVerts verts;
   public LandTileTris  tris;
 
+  public EventTypes.BaseEvent OnSet;
+
 
  
   public override void Create(){
@@ -35,6 +37,8 @@ public class LandTile : Cycle
     tiler._Offset = transform.position;
     tiler.setTile.RebindPrimaryForm( "_VertBuffer" , verts );
     tiler.setTile.YOLO();
+
+    OnSet.Invoke();
   }
 
 

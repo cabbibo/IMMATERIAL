@@ -110,12 +110,12 @@
         float rM  = dot( normalize( v.eye) , refl );
         float3 col = normalize(lDir) * .5 + .5;
 
-        float3 eyeRefl = reflect( normalize(v.eye), fNor );
+        float3 eyeRefl = reflect( normalize(v.eye),v.nor);
         //float3 eyeRefl = refract( normalize(v.eye), fNor , .8 );
 
         float3 tCol = texCUBE( _CubeMap , eyeRefl );
 
-        col = v.nor * .5 + .5;// tCol;//*tCol * tex2D(_ColorMap,float2(rM*.1+.7 - v.debug.y * .1 ,.5 )).rgb;// *(1-rM);//hsv(rM*rM*rM * 2.1,.5,rM);// + normalize(refl) * .5+.5;
+        col = 2*tCol* tex2D(_ColorMap, float2(v.debug.y * .2 + .6 ,0));//-rM;//v.nor * .5 + .5;// tCol;//*tCol * tex2D(_ColorMap,float2(rM*.1+.7 - v.debug.y * .1 ,.5 )).rgb;// *(1-rM);//hsv(rM*rM*rM * 2.1,.5,rM);// + normalize(refl) * .5+.5;
         //col = v.tan * .5 + .5;
 
         //col += hsv(dot(v.eye,v.nor) * -.1,.6,1) * (1-length(col));
@@ -147,7 +147,6 @@
       #pragma fragmentoption ARB_precision_hint_fastest
 
   #include "UnityCG.cginc"
-#include "../Chunks/StructIfDefs.cginc"
 #include "../Chunks/hash.cginc"
 
 sampler2D _MainTex;
@@ -156,17 +155,33 @@ sampler2D _MainTex;
         float2 uv : TEXCOORD1;
       };
 
+            struct Vert{
+          float3 pos;
+          float3 vel;
+          float3 nor;
+          float3 tan;
+          float2 uv;
+          float2 debug;
+        };
 
-      v2f vert(appdata_base v, uint id : SV_VertexID)
+
+        StructuredBuffer<Vert> _VertBuffer;
+        StructuredBuffer<int> _TriBuffer;
+
+
+      v2f vert(appdata_base i, uint id : SV_VertexID)
       {
         v2f o;
-       
-        o.uv =  _TransferBuffer[id].uv;
 
-        float2 debug = _TransferBuffer[id].debug;
+
+        Vert v = _VertBuffer[_TriBuffer[id]];
+       
+        o.uv =  v.uv;
+
+        float2 debug = v.debug;
 
         o.uv = o.uv * (1./6.)+ floor(float2(hash(debug.x*10), hash(debug.x*20)) * 6)/6;
-        o.pos = mul(UNITY_MATRIX_VP, float4(_TransferBuffer[id].pos, 1));
+        o.pos = mul(UNITY_MATRIX_VP, float4(v.pos, 1));
         return o;
       }
 
