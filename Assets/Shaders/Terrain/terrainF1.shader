@@ -127,7 +127,7 @@
             2*noise(v.worldPos* 10 +20 )-1
         ));
 
-        fNor = tex2D(_NormalMap , v.worldPos.xz * .1 );
+        fNor = tex2D(_NormalMap , v.worldPos.xz * .4 );
        // fNor += 2*v.nor;
         
 
@@ -152,7 +152,7 @@ float l = saturate( (20-dif)/20);
 
 
         float grassHeight = (hCol.w * 5 + noise( v.worldPos + float3(0,_Time.y * .2,0) + fNor * _Time.y * .01 ) * .4) / 5;
-        color.xyz =5* tex2D(_ColorMap, float2(  l*.1 + .27 -  floor(grassHeight * 3)*.1  , 0)) * l;
+        color.xyz = 2* tex2D(_ColorMap, float2( reflM , 0)) * l;
 
 
 
@@ -167,7 +167,7 @@ float l = saturate( (20-dif)/20);
         //tCol = dif;
 
         //tCol = grassHeight;
-        return float4( tCol , 1.);
+        return float4( shadow , 0 , 0, 1.);
       }
 
       ENDCG
@@ -194,10 +194,20 @@ float l = saturate( (20-dif)/20);
       #pragma multi_compile_shadowcaster
       #pragma fragmentoption ARB_precision_hint_fastest
       #include "UnityCG.cginc"
-      
-#pragma multi_compile  Enable12Struct Enable16Struct Enable24Struct Enable36Struct
 
-      #include "../Chunks/StructIfDefs.cginc"
+
+      struct Vert{
+      float3 pos;
+      float3 vel;
+      float3 nor;
+      float3 tan;
+      float2 uv;
+      float2 debug;
+    };
+
+
+  StructuredBuffer<Vert> _VertBuffer;
+  StructuredBuffer<int> _TriBuffer;
 
       struct v2f {
         V2F_SHADOW_CASTER;
@@ -207,7 +217,7 @@ float l = saturate( (20-dif)/20);
       v2f vert(appdata_base v, uint id : SV_VertexID)
       {
         v2f o;
-        o.pos = mul(UNITY_MATRIX_VP, float4(_TransferBuffer[id].pos, 1));
+        o.pos = mul(UNITY_MATRIX_VP, float4( _VertBuffer[_TriBuffer[id]].pos, 1));
         return o;
       }
 

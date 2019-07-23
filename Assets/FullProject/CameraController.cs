@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -57,12 +57,7 @@ public class CameraController : Cycle
 
       float tDelta = Time.deltaTime * steal * steal;
 
-      print( CameraHolder.position );
-      print( targetPosition );
-      print( tDelta );
-      print( steal );
-      print( followMoveSpeed );
-      print( followMoveSpeed * tDelta );
+
 
       CameraHolder.position = Vector3.Lerp( CameraHolder.position , targetPosition , followMoveSpeed * tDelta );//subject.position  + Vector3.up * (height - hDelta * 3);
       CameraHolder.rotation = Quaternion.Slerp(CameraHolder.rotation, targetRotation ,  followRotateSpeed * tDelta );

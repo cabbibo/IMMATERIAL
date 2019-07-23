@@ -10,33 +10,42 @@ public class DandelionScene : Cycle
 
   public Dandelion dandelions;
 
-
-  public Life SetPlane;
   public Life SetDandelionsOnPlane;
+  public Life Simulation;
+
+  public bool inScene;
+  public bool _Releasing;
+  public bool _ViolentWind;
 
 
   public override void Create(){
-
-    SafeInsert( SetPlane );
     SafeInsert( SetDandelionsOnPlane );
   }
 
 
   public override void Bind(){
 
+    data.land.BindData( SetDandelionsOnPlane );
+  
+
   }
 
-  public void SceneStart(){
 
 
+  public override void Activate(){
 
-    SetPlane.YOLO();
     SetDandelionsOnPlane.YOLO();
+    Simulation.Activate();
 
   }
 
-  public void SceneEnd(){
+  public override void WhileLiving( float v ){
+
+    if( active == true ){
+    }
 
   }
+
+
 
 }

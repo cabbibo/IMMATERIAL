@@ -232,6 +232,12 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
+  - m_Name: Falling
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -501,7 +507,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions: []
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: -1188735579816032945}
+  m_DstState: {fileID: 0}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
@@ -556,7 +562,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions: []
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: -3858049577508197559}
+  m_DstState: {fileID: 0}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
@@ -660,10 +666,10 @@ AnimatorStateMachine:
     m_Position: {x: 610, y: 550, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 9183088972802518473}
-    m_Position: {x: 70, y: 570, z: 0}
+    m_Position: {x: 450, y: 1090, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4193217711227885179}
-    m_Position: {x: 300, y: 980, z: 0}
+    m_Position: {x: 720, y: 1290, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8671771843087394664}
     m_Position: {x: 732.5283, y: 360.59198, z: 0}
