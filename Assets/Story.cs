@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
+
 public class Story : Cycle
 {
 
@@ -10,7 +14,7 @@ public class Story : Cycle
   public Monolith monolith;
 
 
-public int storyID;
+public int id;
 
 
   public float innerRadius;
@@ -22,10 +26,10 @@ public int storyID;
   public Page[] pages;
   public int currentPage;
 
-  public EventTypes.BaseEvent OnEnterOuter;
-  public EventTypes.BaseEvent OnEnterInner;
-  public EventTypes.BaseEvent OnExitOuter;
-  public EventTypes.BaseEvent OnExitInner;
+  public EventTypes.StoryEvent OnEnterOuter;
+  public EventTypes.StoryEvent OnEnterInner;
+  public EventTypes.StoryEvent OnExitOuter;
+  public EventTypes.StoryEvent OnExitInner;
 
 
   private float dif;
@@ -53,7 +57,7 @@ public int storyID;
     for( int i =0; i < data.journey.stories.Length; i++ ){
       if( data.journey.stories[i] == this ){
         print("IM THIS");
-        storyID = i;
+        id = i;
       }
     }
   }
@@ -199,6 +203,8 @@ public int storyID;
     insideOuter=true;
     data.sceneCircle.Set( this );
     monolith.gameObject.SetActive( true );
+
+    OnEnterOuter.Invoke(this);
   
 
   }
@@ -208,6 +214,8 @@ public int storyID;
     data.inputEvents.OnTap.AddListener( CheckForStart );
     data.inputEvents.OnSwipeLeft.AddListener( NextPage );
     data.inputEvents.OnSwipeRight.AddListener( PreviousPage );
+
+    OnEnterInner.Invoke(this);
     
 
   }
@@ -216,6 +224,7 @@ public int storyID;
     insideOuter=false;
 
     data.sceneCircle.Unset( this );
+    OnExitOuter.Invoke(this);
   }
 
 
@@ -224,6 +233,7 @@ public int storyID;
     data.inputEvents.OnTap.RemoveListener( CheckForStart );
     data.inputEvents.OnSwipeLeft.RemoveListener( NextPage );
     data.inputEvents.OnSwipeRight.RemoveListener( PreviousPage );
+    OnExitInner.Invoke(this);
   }
 
 

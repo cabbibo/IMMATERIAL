@@ -16,7 +16,9 @@ public class Monolith : Cycle
     public void DestroyMe(){
      // print( storyMarkers.Length );
       for( int i = 0; i < storyMarkers.Length; i++ ){
+        Cycles.Remove(storyMarkers[i].GetComponent<StoryMarker>());
         DestroyImmediate(storyMarkers[i]);
+
       }
     }
 
@@ -38,7 +40,10 @@ public class Monolith : Cycle
       storyMarkers = new GameObject[data.journey.stories.Length];
       for( int i = 0; i < data.journey.stories.Length; i++ ){
           storyMarkers[i] = Instantiate( storyMarkerPrefab);
+          
+          SafeInsert(storyMarkers[i].GetComponent<StoryMarker>());
           storyMarkers[i].GetComponent<StoryMarker>().text.text = data.journey.stories[i].gameObject.name;
+          storyMarkers[i].GetComponent<StoryMarker>().id = i;
           storyMarkers[i].transform.parent = transform;
           storyMarkers[i].transform.localPosition = Vector3.zero;
           storyMarkers[i].transform.localPosition += monolith.localScale.x * monolith.right * ( (-.5f + data.journey.stories[i].uv.x) * .7f ); 
@@ -56,7 +61,7 @@ public class Monolith : Cycle
 
       mpb.SetVectorArray("_StoryPositions" , positions );
       mpb.SetInt("_NumStories" , positions.Length );
-      mpb.SetInt("_ThisStory" , story.storyID );
+      mpb.SetInt("_ThisStory" , story.id );
       monolith.GetComponent<MeshRenderer>().SetPropertyBlock( mpb );
     }
 

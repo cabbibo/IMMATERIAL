@@ -20,15 +20,21 @@ public class TransferLifeForm : LifeForm {
   [HideInInspector]public Vector3 up;
   [HideInInspector]public Vector3 forward;
 
+
+  public override void Destroy(){
+    Cycles.Remove( body );
+    Cycles.Remove( transfer );
+  }
   // Use this for initialization
   public override void Create(){
 
+    Destroy();
 
     transformArray = new float[16];
     cam = Camera.main.transform;
 
-    Cycles.Insert(0,body);
-    Cycles.Insert(1,transfer);
+    SafeInsert(body);
+    SafeInsert(transfer);
 
 
   }

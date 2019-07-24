@@ -91,6 +91,8 @@ float4 terrainSampleColor( float4 pos ){
 
 
         void surf (Input IN, inout SurfaceOutputStandard o) {
+
+            
             // Albedo comes from a texture tinted by color
             //fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             o.Emission.xyz = 0;//IN.nor * .5 + .5;// hsv(IN.normal.y * .5,1,1);

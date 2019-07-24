@@ -27,4 +27,8 @@ public class RayEvent : UnityEvent<Ray>{}
 [System.Serializable]
 public class BaseEvent : UnityEvent{}
 
+
+[System.Serializable]
+public class StoryEvent : UnityEvent<Story>{}
+
 }

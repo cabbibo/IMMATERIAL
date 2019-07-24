@@ -68,12 +68,13 @@ public class Cycle : MonoBehaviour{
 
       CheckSelfCycle(c);
 
+
+      if( c.data == null ){ c.data = data; }
+      if( data == null ){ print("fuhhh"); }
+      
       //   print(this);
       c._Create();
 
-
-      if( c.data == null ){ c.data = data; }
-//      if( data == null ){ print("fuhhh"); }
     }
 
 
@@ -312,8 +313,11 @@ public class Cycle : MonoBehaviour{
     SetStates();
     foreach( Cycle c in Cycles ){
 
+      if( c.data == null ){ c.data = data; }
+      if( data == null ){ print("fuhhh"); }
       CheckSelfCycle(c);
       c._Destroy();
+
     }
 
    
