@@ -56,10 +56,12 @@ public int id;
 
     for( int i =0; i < data.journey.stories.Length; i++ ){
       if( data.journey.stories[i] == this ){
-        print("IM THIS");
+//        print("IM THIS");
         id = i;
       }
     }
+
+    dif = 1000;
   }
 
   public override void OnBirthed(){
@@ -69,6 +71,8 @@ public int id;
     }
 
     monolith.gameObject.SetActive( false );
+
+
   }
 
   public void NextPage(){
@@ -216,6 +220,9 @@ public int id;
     data.inputEvents.OnSwipeRight.AddListener( PreviousPage );
 
     OnEnterInner.Invoke(this);
+
+    DoFade(1);
+    print("fadin");
     
 
   }
@@ -225,6 +232,7 @@ public int id;
 
     data.sceneCircle.Unset( this );
     OnExitOuter.Invoke(this);
+    DoFade(0);
   }
 
 
@@ -240,6 +248,12 @@ public int id;
   public void DoFade(float v ){
     pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-2*v);
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
+  
+    pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-2*v);
+    pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
+  
+    print("fadio");
+    print( 1-2*v);
   }
 
   public void DoBetweenFade(){
@@ -249,10 +263,10 @@ public int id;
 
     oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
     pages[currentPage].frameMPB.SetFloat("_Cutoff" ,1-v);
-
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
     oldTransitionPage.frame.borderLine.SetPropertyBlock(oldTransitionPage.frameMPB);
 
+    print("fad btwx");
 
 
   }

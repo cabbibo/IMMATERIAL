@@ -194,6 +194,7 @@ Shader "Scene/Frame" {
         discard;
        }
 col /= _NumberSteps;
+//col = 1;
 
 //if( _Restricted > .5 ){ col = float3(1,0,0);}
             fixed4 color;

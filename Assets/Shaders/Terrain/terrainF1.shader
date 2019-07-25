@@ -87,7 +87,7 @@
 
         UNITY_INITIALIZE_OUTPUT(varyings, o);
 
-        fPos -= float3(0,1,0) * .3  * (1-saturate(.3*length( fPos - _PlayerPosition)));
+        //fPos -= float3(0,1,0) * .3  * (1-saturate(.3*length( fPos - _PlayerPosition)));
 
         o.worldPos = fPos;
 

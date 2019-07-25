@@ -24,7 +24,7 @@ public class StoryMarker : Cycle
 
     public void CheckHit(){
       
-      print(data.inputEvents.hitTag);
+//      print(data.inputEvents.hitTag);
       if( data.inputEvents.hitTag == "StartNode" ){
 
         print("instorio");

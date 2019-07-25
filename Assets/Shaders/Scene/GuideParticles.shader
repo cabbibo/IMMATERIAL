@@ -101,7 +101,7 @@
         //if( d.a < .9 ){discard;}
         if( length(d.xyz) > 1.5 ){discard;}
 
-        if( length(v.tan)> .5){ discard;}
+       // if( length(v.tan)> .5){ discard;}
         
         float3 fNor = normalize(v.nor + 1*sin(length(v.tan) * 30) *normalize(v.tan) );
 
