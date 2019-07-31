@@ -32,6 +32,7 @@ public class Frame : Cycle {
   public override void Create() {
 ///    this.gameObject.tag = "Frame";
     borderLine = GetComponent<LineRenderer>();
+    border = .02f;
 
     if( collider != null ){
       DestroyImmediate( collider.gameObject);

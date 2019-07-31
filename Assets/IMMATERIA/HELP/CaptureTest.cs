@@ -13,6 +13,7 @@ public class CaptureTest : MonoBehaviour {
     int frameRate = 60;
     public int superSize;
     public string folderName;
+    public bool captureVid;
 
     private int startFrameCount;
     public bool capturing;
@@ -38,13 +39,13 @@ public class CaptureTest : MonoBehaviour {
     void Update () {
 
         if( oldFolderName != folderName ){
-        oldFolderName = folderName;
+            oldFolderName = folderName;
 
-        final = folder+ "/" + folderName;
+            final = folder+ "/" + folderName;
 
-        // Create the folder
-        System.IO.Directory.CreateDirectory(final);
-    }
+            // Create the folder
+            System.IO.Directory.CreateDirectory(final);
+        }
 
         if( capturing == true && oCapturing == false ){
             Time.captureFramerate = frameRate;
@@ -56,16 +57,17 @@ public class CaptureTest : MonoBehaviour {
         }
 
         if( capturing == true ){
-
-
-            print( "savingIOmager");
             // Append filename to folder name (format is '0005 shot.png"')
             string name = string.Format("{0}/shot{1:D04}.png", final, Time.frameCount - startFrameCount );
 
             // Capture the screenshot to the specified file.
             ScreenCapture.CaptureScreenshot(name,superSize);
         }
+
+
         oCapturing = capturing;
+
+        if( !captureVid ) capturing = false;
     }
 
 

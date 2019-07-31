@@ -11,6 +11,8 @@ public class CameraController : Cycle
     public Vector3 targetPos;
     public Vector3 targetLookPos;
 
+    public float angle;
+
     public Vector3 pos;
     public Vector3 lookPos;
 
@@ -47,10 +49,15 @@ public class CameraController : Cycle
 
     }
 
+    public void ChangeAngle( Vector2 dif ){
+      angle += dif.x * .001f;
+    }
 
     public void  DoFollow(){
 
-      Vector3 targetPosition = followTarget.position + Vector3.up* heightAbove + followTarget.forward * -radius;
+      Vector3 xy = Vector3.left * Mathf.Sin(angle) - Vector3.forward * Mathf.Cos(angle);
+
+      Vector3 targetPosition = followTarget.position + Vector3.up* heightAbove + xy * radius;
       Quaternion targetRotation = Quaternion.LookRotation( (followTarget.position - CameraHolder.position + Vector3.up) );
 
       float steal = Mathf.Clamp( (Time.time - startFollowTime) / startFollowSpeed , 0 , 1);
@@ -117,6 +124,10 @@ public class CameraController : Cycle
       startFollowSpeed = speed;
       startFollowTime = Time.time;
 
+      Vector3 t1 = CameraHolder.position - Vector3.up * CameraHolder.position.y; 
+      Vector3 t2 = t.position - Vector3.up * t.position.y; 
+      angle = Vector3.Angle(t1,t2);
+
     }
 
     public void SetFollowTarget(){
@@ -124,6 +135,10 @@ public class CameraController : Cycle
       lerping = false;
       
       startFollowTime = Time.time;
+
+       Vector3 t1 = CameraHolder.position - Vector3.up * CameraHolder.position.y; 
+      Vector3 t2 = followTarget.position - Vector3.up * followTarget.position.y; 
+      angle = Vector3.Angle(t1,t2);
     }
 
 

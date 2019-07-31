@@ -19,7 +19,8 @@ public class InputEvents: Cycle {
   public EventTypes.BaseEvent       OnDown;
   public EventTypes.BaseEvent       OnUp;
   public EventTypes.RayEvent        WhileDown;
-  public EventTypes.Vector2Event    WhileDown2;
+  public EventTypes.Vector2Event    WhileDownDelta;
+  public EventTypes.Vector2Event    WhileDownDelta2;
   public EventTypes.BaseEvent       OnDebugTouch;
   
 
@@ -41,6 +42,12 @@ public class InputEvents: Cycle {
 
   public float startTime;
   public float endTime;
+
+  public float swipeSensitivity;
+  public float tapSpeed;
+
+  public float minSwipeTime;
+  public float maxSwipeTime;
   // Use this for initialization
 
   public Vector2 p; 
@@ -108,11 +115,18 @@ public class InputEvents: Cycle {
 
       if( Down == 1 && oDown == 1 ){
         JustDown = 0;
-        whileDown();
+
+        //if( Time.time - startTime > tapSpeed ){
+          whileDown();
+          whileDownDelta();
+        //} 
       }
 
       if( Down2 == 1 && oDown2 == 1 ){
-        whileDown2();
+       // whileDown2();
+        //if( Time.time - startTime > tapSpeed ){
+          whileDownDelta2();
+        //}
       }
 
 
@@ -192,8 +206,12 @@ public class InputEvents: Cycle {
     WhileDown.Invoke( ray );
   }
 
-  void whileDown2(){
-    WhileDown2.Invoke( p2 - oP2 );
+  void whileDownDelta(){
+    WhileDownDelta.Invoke(p - oP);
+  }
+
+  void whileDownDelta2(){
+    WhileDownDelta2.Invoke( p2 - oP2 );
   }
 
 
@@ -204,32 +222,49 @@ public class InputEvents: Cycle {
 
   void onUp(){
     OnUp.Invoke();
+
+
     float difT = endTime - startTime;
     Vector2 difP = endPos - startPos;
 
 
     float ratio = .01f * difP.magnitude / difT;
 
-    if( ratio > 3 ){
+  //  print( ratio );
+//    print( difT );
+
+    if( ratio > swipeSensitivity && difT > minSwipeTime && difT < maxSwipeTime ){
       
-      OnSwipe.Invoke( difP );  
-     if( Mathf.Abs(difP.x) > Mathf.Abs(difP.y) ){
+      OnSwipe.Invoke( difP ); 
+
+      if( Mathf.Abs(difP.x) > Mathf.Abs(difP.y) ){
         OnSwipeHorizontal.Invoke(difP.x);
+        
         if( difP.x < 0 ){
           OnSwipeLeft.Invoke();
         }else{
           OnSwipeRight.Invoke();
         }
-     }else{
-      OnSwipeVertical.Invoke(difP.y);
-      if( difP.x < 0 ){
-        OnSwipeUp.Invoke();
+      
+
       }else{
-        OnSwipeDown.Invoke();
-      }
-     } 
+        OnSwipeVertical.Invoke(difP.y);
+        
+        if( difP.x < 0 ){
+          OnSwipeUp.Invoke();
+        }else{
+          OnSwipeDown.Invoke();
+        }
+      } 
+
+
     }else{
-      OnTap.Invoke();
+
+      print(difP.magnitude);
+      if( difT < tapSpeed && difP.magnitude < .1 ){
+        OnTap.Invoke();
+      }
+
     }
 
 

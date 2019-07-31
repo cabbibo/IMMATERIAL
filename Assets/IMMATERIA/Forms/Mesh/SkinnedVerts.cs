@@ -44,7 +44,10 @@ public class SkinnedVerts : Form {
     Vector3[] verts = m.vertices;
     Vector2[] uvs = m.uv;
     Vector4[] tans = m.tangents;
+    Color[] cols = m.colors;
     Vector3[] nors = m.normals;
+    
+
     BoneWeight[] weights = m.boneWeights;
 
 
@@ -116,7 +119,9 @@ public class SkinnedVerts : Form {
       values[ index++ ] = weights[i].boneIndex3;
 
       // Debug
-      values[ index++ ] = 1;
+      float col = 1;
+      if( i < cols.Length  ){ col = cols[i].r; }
+      values[ index++ ] = col;
 
     }
 

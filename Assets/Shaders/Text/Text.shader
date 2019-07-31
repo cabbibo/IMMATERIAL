@@ -41,11 +41,12 @@
     	  float3 nor;
     	  float3 lock;
     	  float2 uv;
-    	  float2 debug;
+    	  float2 offset;
     	};
 
     	StructuredBuffer<Vert> _VertBuffer;
       StructuredBuffer<int> _TriBuffer;
+
       uniform sampler2D _TextMap;
       uniform sampler2D _ColorMap;
       uniform sampler2D _BackgroundTexture;
@@ -72,7 +73,7 @@
 				float3 fVel 	= _VertBuffer[_TriBuffer[id]].vel;
 				float3 fNor 	= _VertBuffer[_TriBuffer[id]].nor;
         float2 fUV 		= _VertBuffer[_TriBuffer[id]].uv;
-				float2 debug 	= _VertBuffer[_TriBuffer[id]].debug;
+				float2 debug 	= _VertBuffer[_TriBuffer[id]].offset;
 
 				varyings o;
 
@@ -96,10 +97,12 @@
 				fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos -v.nor ) * .9 + .1 ;
 				float d = tex2D(_TextMap,v.uv);
 
-        float smoothing = .2;
-        float lum = smoothstep( 0.4 - smoothing , 0.4 + smoothing , d.x );
+        float smoothing = .1;
+        float lum = smoothstep( 0.9 - smoothing , 0.9 + smoothing , d.x );
 
-        if( d < .4 ){discard;}
+
+
+        if( d < .2 ){discard;}
         float3 bg = tex2Dproj(_BackgroundTexture, v.screenPos );
         float3 c = tex2D(_ColorMap,float2(v.debug.z * 10.1 + .7 ,0) ).xyz;
         
@@ -110,6 +113,7 @@
 
          //c = float3(1,0,0);
         c *= lum;
+
         return float4(  c * 1.4 , lum);
         //return 1;
 

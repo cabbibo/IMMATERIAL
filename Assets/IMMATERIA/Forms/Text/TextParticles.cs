@@ -46,7 +46,7 @@ public int currentMin;
     float[] values = new float[ particles.count * particles.structSize ];
     particles.SetData( values );
 
-    values = new float[ body.verts.count * particles.structSize  ];
+    values = new float[ body.verts.count * body.verts.structSize  ];
     body.verts.SetData( values );
 
   }
@@ -54,6 +54,7 @@ public int currentMin;
   public override void Bind(){
 
     setGlyph.BindForm("_TransferBuffer",body.verts);
+    setGlyph.BindForm("_VertBuffer",particles);
     setGlyph.BindPrimaryForm("_AnchorBuffer",anchor);
 
     setAnchor.BindForm("_VertBuffer",particles);

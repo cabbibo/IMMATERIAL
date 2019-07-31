@@ -150,9 +150,16 @@ public int id;
     started = false;
     data.cameraControls.SetFollowTarget();
     data.textParticles.Release();
+
+        SetColliders( true );
   }
 
 
+  public void SetColliders( bool val ){
+    for( int i = 0; i < pages.Length; i ++ ){
+      pages[i].frame.collider.enabled = val; 
+    }
+  }
 
   public void CheckForStart(){
 
@@ -162,6 +169,7 @@ public int id;
       if (pages[currentPage].frame.collider.Raycast(data.inputEvents.ray, out hit, 100.0f)){
         started = true;
         SetActivePage(); 
+        SetColliders( false );
       }else{
         
       }
@@ -252,8 +260,8 @@ public int id;
     pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-2*v);
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
   
-    print("fadio");
-    print( 1-2*v);
+//    print("fadio");
+//    print( 1-2*v);
   }
 
   public void DoBetweenFade(){
@@ -266,7 +274,7 @@ public int id;
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
     oldTransitionPage.frame.borderLine.SetPropertyBlock(oldTransitionPage.frameMPB);
 
-    print("fad btwx");
+//    print("fad btwx");
 
 
   }

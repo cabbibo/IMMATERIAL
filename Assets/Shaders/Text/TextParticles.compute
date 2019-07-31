@@ -1,4 +1,4 @@
-﻿
+﻿  
 #pragma kernel SetGlyph
 #pragma kernel SetAnchor
 #pragma kernel SetPage
@@ -9,6 +9,15 @@
 #pragma kernel SimulationBasic 
 #pragma kernel Transfer 
 
+struct TransferVert{
+    float3 pos;
+    float3 vel;
+    float3 nor;
+    float3 lockPosition;
+    float2 uv;
+    float2 offset;
+};
+
 struct Vert{
     float3 pos;
     float3 vel;
@@ -16,6 +25,7 @@ struct Vert{
     float3 lockPosition;
     float2 uv;
     float2 offset;
+    float4 debug;
 };
 
 
@@ -31,7 +41,7 @@ struct Anchor{
 
 
 RWStructuredBuffer<Vert> _VertBuffer;
-RWStructuredBuffer<Vert> _TransferBuffer;
+RWStructuredBuffer<TransferVert> _TransferBuffer;
 RWStructuredBuffer<Anchor> _AnchorBuffer;
 
 int _VertBuffer_COUNT;
@@ -70,6 +80,32 @@ int GetID( int id ){
   return (id + _BaseID) % _VertBuffer_COUNT;
 }
 
+bool inCurrent( int id ){
+
+  if( GetID( id ) < _BaseID || GetID( id ) > _TipID ){
+    return false;
+  }else{
+    return true;
+  }
+}
+
+
+bool isInside( int id){
+    // Getting our ID and if we are currently locked or not
+    int dif = _TipID - _BaseID;
+
+    int inBase = _BaseID % _VertBuffer_COUNT;
+
+    int newID = id;
+
+    if( inBase + dif > _VertBuffer_COUNT ){
+      if( newID < inBase ){ newID += _VertBuffer_COUNT; }
+    }
+
+    return (newID >= inBase && newID < inBase + dif);
+
+}
+
 
 float3 getProj( float3 pos , float3 sp , float3 ep ){
   float3 dif = sp-ep;
@@ -106,13 +142,29 @@ void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     int particleID = pID/4;
 
-    int sID = safeID(GetID( particleID )*4 + pID%4,_TransferBuffer_COUNT);
+    int realPID = GetID( particleID );
+    int sID = safeID(realPID*4 + pID%4,_TransferBuffer_COUNT);
     
-    Vert v = _TransferBuffer[sID ];
+    TransferVert v = _TransferBuffer[ sID ];
+
+
+      if( isInside(realPID) ){
+
+        int safe = safeID(realPID,_VertBuffer_COUNT); 
+        Vert v = _VertBuffer[safe];
+
+        v.debug.x = _Time;
+        v.debug.y = 1;
+
+        _VertBuffer[safe] = v;
+
+      }
 
     if( particleID < _AnchorBuffer_COUNT ){
 
       Anchor p = _AnchorBuffer[safeID(particleID,_AnchorBuffer_COUNT)];
+
+    
 
       int idInParticle = pID % 4;
       int row = idInParticle / 2;
@@ -141,8 +193,8 @@ void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
       float2 fOffset = float2(0,0);
 
       fOffset.y += ((float)col - .5) * p.dimensions.y;
-      fOffset.y -= .5*p.dimensions.y;
-      fOffset.y += 1*p.offset.y;
+      fOffset.y -= .5 * p.dimensions.y;
+      fOffset.y += 1 * p.offset.y;
       fOffset.y -= (145./1024.)/4;
       fOffset.x += (float(row) - .5) * p.dimensions.x;
 
@@ -155,7 +207,7 @@ void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
       fUV = float2(x,y);
 
       v.uv = fUV;
-      v.offset = fOffset * _Radius * _Scale;
+      v.offset = fOffset  * _Radius * _Scale;
       v.nor = float3(0,0,1);//p.nor;
     
     }else{
@@ -332,14 +384,7 @@ void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 }
 
-bool inCurrent( int id ){
 
-  if( GetID( id ) < _BaseID || GetID( id ) > _TipID ){
-    return false;
-  }else{
-    return true;
-  }
-}
 
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
@@ -349,29 +394,28 @@ void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
     int sID =safeID(pID,_VertBuffer_COUNT);
     Vert v = _VertBuffer[sID];
 
-    //if( GetID( sID ) )
-
     float3 force = 0;
 
-    //if( inCurrent(pID) ){
-
+    // Getting our ID and if we are currently locked or not
     int dif = _TipID - _BaseID;
 
-    int inBase = _BaseID % _VertBuffer_COUNT;
 
+    bool inside = isInside(pID);
 
-    int newID = pID;
-    if( inBase + dif > _VertBuffer_COUNT ){
-      if( newID < inBase ){ newID += _VertBuffer_COUNT; }
-    }
+    if( inside ){
 
-    if( newID >=  inBase && newID < inBase + dif ){
+      float t = _Time - v.debug.x;
 
-      force += -(v.pos - v.lockPosition) * .01;
+      force += -min((v.pos - v.lockPosition),4) * .003;
+
+      force += curlNoise( v.pos * .4 ) * .002 * min( pow((v.pos - v.lockPosition),4),3)/(t*t*.4+1);
+
     }else{
+     
+      force += curlNoise( v.pos * .1 ) * .001;
+      v.debug.y -= .001;
 
-    force += curlNoise( v.pos * .1 ) * .001;
-  }
+    }
 
   if( length( force ) > 1 ){ force = normalize(force) * 1; }
     //}
@@ -416,11 +460,22 @@ void Transfer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     int pID = threadID + u3GroupID.x * NR_THREADS;
     int sID =safeID(GetID(pID/4)*4 + pID%4,_TransferBuffer_COUNT);
 
-    Vert v = _TransferBuffer[sID];
+    TransferVert v = _TransferBuffer[sID];
 
     int particleID = GetID(pID/4);
 
     Vert p = _VertBuffer[safeID(particleID,_VertBuffer_COUNT)];
+
+
+
+    float radiusMultiplier = 1;
+
+    bool inside = isInside( particleID );
+
+    if( !inside){
+      radiusMultiplier = max(p.debug.y,0); //1/((_Time - p.debug.x) + 1);
+    }
+
 
     int idInParticle = pID % 4;
     int row = idInParticle / 2;
@@ -432,7 +487,7 @@ void Transfer(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     //l = l* (float(col)-.5);
     //u = u* (float(row)-.5);
 
-    float3 fPos = p.pos + ((u*v.offset.y) + (-l*v.offset.x));//*_Radius*_Scale;
+    float3 fPos = p.pos + ((u*v.offset.y) + (-l*v.offset.x)) * radiusMultiplier;//*_Radius*_Scale;
     //float3 fPos = p.pos + ((l) + (u))*_Radius*_Scale;
 
     v.pos = fPos;

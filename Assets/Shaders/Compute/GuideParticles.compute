@@ -242,7 +242,7 @@ void Monolith(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     vert.vel += force * .001 * (1+hash(pID*1021.))/2;
 
    // if( _Emit > .5){
-   vert.life -= .001 * (3+sin(float(pID)));
+   vert.life -= .0003 * (3+sin(float(pID)));
   // if( vert.life < 0 ){ vert.life += 1; }
 //}
    vert.pos += vert.vel;
