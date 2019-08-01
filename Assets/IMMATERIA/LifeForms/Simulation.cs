@@ -13,7 +13,8 @@ public class Simulation : Cycle
   private Binder[] binders;
 
   // Use this for initialization
-  public override void Create(){
+  public override void _Create(){
+
 
     SafeInsert(form);
     SafeInsert(life);
@@ -25,6 +26,9 @@ public class Simulation : Cycle
     for( int i = 0 ; i < binders.Length; i++ ){
       SafeInsert( binders[i] );
     }
+
+    
+    DoCreate();
 
 
   }

@@ -43,6 +43,7 @@
           float3 ro         : TEXCOORD1;
           float3 rd       : TEXCOORD2;
           float3 player     : TEXCOORD3;
+          float3 thisDif : TEXCOORD4;
       };
 
 
@@ -75,6 +76,7 @@
         o.rd = mPos.xyz - _WorldSpaceCameraPos;
 
         o.player = mPos.xyz - _PlayerPosition;
+        o.thisDif = mPos.xyz - _StoryPositions[_ThisStory];
 
         return o;
 
@@ -109,7 +111,9 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
             }
         }
 
-        float thisDif = length(_StoryPositions[_ThisStory] - v.ro);
+        float3 thisDifVec = (_StoryPositions[_ThisStory] - v.ro);
+
+        float thisDif = length(v.thisDif);
 
         // Ray direction
         float3 rd           = v.rd;    
@@ -119,7 +123,7 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
         // Our color starts off at zero,   
         float3 col = tex2D(_ColorMap, float2( (((dif * 6 - _Time.y * .3 + length( tCol) *5 ) % 1) * .4) + length( tCol) * .1 ,0 )).xyz / ( .4 + .2*thisDif *thisDif + dif);
 
-        if( thisDif < .45  - .3* length( tCol)){ col = 1;}
+        if( thisDif < .135 + .005 * sin(_Time.y*4)  ){ col = 1;}
         //if( closestID == _ThisStory ){ col *= 4;}
         float4 color = fixed4( col , 1. );
         return color;

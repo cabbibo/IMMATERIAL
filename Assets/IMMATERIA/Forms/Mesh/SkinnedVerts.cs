@@ -47,8 +47,17 @@ public class SkinnedVerts : Form {
     Color[] cols = m.colors;
     Vector3[] nors = m.normals;
     
-
     BoneWeight[] weights = m.boneWeights;
+
+
+    //print( "LIST");
+    //print( m.vertices.Length);
+    //print( m.uv.Length);
+    //print( m.tangents.Length);
+    //print( m.colors.Length);
+    //print( m.normals.Length);
+    //print( m.triangles.Length);
+    //print( weights.Length);
 
 
     int index = 0;
@@ -61,9 +70,11 @@ public class SkinnedVerts : Form {
     int baseTri;*/
 
     float[] values = new float[count*structSize];
+//    print( values.Length );
+
     for( int i = 0; i < count; i ++ ){
 
-     
+//      print("index : " + i );
       values[ index ++ ] = verts[i].x;
       values[ index ++ ] = verts[i].y;
       values[ index ++ ] = verts[i].z;
@@ -76,9 +87,17 @@ public class SkinnedVerts : Form {
       values[ index ++ ] = nors[i].y;
       values[ index ++ ] = nors[i].z;
 
-      values[ index ++ ] = tans[i].x;
-      values[ index ++ ] = tans[i].y;
-      values[ index ++ ] = tans[i].z;
+      /*if( i < tans.Length ){
+        values[ index ++ ] = tans[i].x;
+        values[ index ++ ] = tans[i].y;
+        values[ index ++ ] = tans[i].z;
+      }else{
+      }*/
+
+
+        values[ index ++ ] = 1;
+        values[ index ++ ] = 0;
+        values[ index ++ ] = 0;
 
       values[ index ++ ] = uvs[i].x;
       values[ index ++ ] = uvs[i].y;
@@ -102,9 +121,9 @@ public class SkinnedVerts : Form {
       values[ index++ ] = nors[i].z;
 
       // bindNor
-      values[ index++ ] = tans[i].x * tans[i].w;
-      values[ index++ ] = tans[i].y * tans[i].w;
-      values[ index++ ] = tans[i].z * tans[i].w;
+      values[ index++ ] = 0;//tans[i].x * tans[i].w;
+      values[ index++ ] = 1;//tans[i].y * tans[i].w;
+      values[ index++ ] = 0;//tans[i].z * tans[i].w;
 
       // bone weights
       values[ index++ ] = weights[i].weight0;
@@ -120,8 +139,9 @@ public class SkinnedVerts : Form {
 
       // Debug
       float col = 1;
-      if( i < cols.Length  ){ col = cols[i].r; }
-      values[ index++ ] = col;
+      //if( i < cols.Length  ){ col = cols[i].r; }
+      
+      values[ index++ ] = 1;
 
     }
 

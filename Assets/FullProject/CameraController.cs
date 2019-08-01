@@ -12,7 +12,7 @@ public class CameraController : Cycle
     public Vector3 targetLookPos;
 
     public float angle;
-
+    public bool swipeFollow;
     public Vector3 pos;
     public Vector3 lookPos;
 
@@ -56,6 +56,10 @@ public class CameraController : Cycle
     public void  DoFollow(){
 
       Vector3 xy = Vector3.left * Mathf.Sin(angle) - Vector3.forward * Mathf.Cos(angle);
+
+      if( !swipeFollow ){
+       xy = -followTarget.forward;
+      }
 
       Vector3 targetPosition = followTarget.position + Vector3.up* heightAbove + xy * radius;
       Quaternion targetRotation = Quaternion.LookRotation( (followTarget.position - CameraHolder.position + Vector3.up) );

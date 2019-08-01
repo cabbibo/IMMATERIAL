@@ -14,8 +14,8 @@ public class TerrainTap : Cycle
    
       transform.position = data.land.Trace( data.inputEvents.ray.origin , data.inputEvents.ray.direction );
       data.playerControls.SetMoveTarget( transform.position );
-      
       data.guideParticles.SetEmitterPosition( transform.position );
+
       data.guideParticles.EmitOn();
       tapTime = Time.time;
     }
@@ -26,9 +26,14 @@ public class TerrainTap : Cycle
 
   public override void WhileLiving(float f){
 
+
+
     if( Time.time - tapTime > emitTime ){
       data.guideParticles.EmitOff();
+    }else{
+     
     }
+
   }
 
 

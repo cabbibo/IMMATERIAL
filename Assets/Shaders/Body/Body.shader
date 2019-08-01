@@ -125,6 +125,7 @@ Vert v = _VertBuffer[_TriBuffer[id + _BaseID]];
             }
             
             float3 DoSkin(){
+
                 return float3( .5 , .3,.2);
             }
 
@@ -135,36 +136,12 @@ Vert v = _VertBuffer[_TriBuffer[id + _BaseID]];
 
       float4 frag(varyings v) : COLOR {
 
-        
-
-        float3 col = 0;
-
-        if( _SubMeshID == 0 ){
-            col = DoEyes();
-        }else if( _SubMeshID == 1 ){
-            col = DoHair();
-        }else if( _SubMeshID == 2 ){
-            col = DoBeltBuckle();
-        }else if( _SubMeshID == 3 ){
-            col = DoBelt();
-        }else if( _SubMeshID == 4 ){
-            col = DoPants();
-        }else if( _SubMeshID == 5 ){
-            col = DoShirtShoes();
-        }else if( _SubMeshID == 6 ){
-            col = DoSocks();
-        }else if( _SubMeshID == 7 ){
-            col = DoSkin();
-        }
-
-        float3 fNor = v.nor;
-
-
-
-        fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5 ;
+                fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5 ;
 float dif = length( v.worldPos - _PlayerPosition );
 
 float l = saturate( (20-dif)/20);
+
+        float3 fNor = v.nor;
         //col.xyz = .4*pow(length(color.xyz),4);
 
         float match = dot( fNor, _WorldSpaceLightPos0 );
@@ -172,11 +149,39 @@ float l = saturate( (20-dif)/20);
         float3 refl = reflect( normalize(v.eye) , fNor );
         float reflM = dot( refl , _WorldSpaceLightPos0 );
 
-        float3 tCol = texCUBE(_CubeMap,refl) * col;
+        float3 tCol = texCUBE(_CubeMap,refl);
+        float3 tCol2 = tex2D( _MainTex , v.uv  );
+
+        float3 col = 0;
+
+        col = tCol * 2;
+        if( _SubMeshID == 0 ){
+            col *= DoEyes();
+        }else if( _SubMeshID == 1 ){
+            col *= DoHair();
+        }else if( _SubMeshID == 2 ){
+            col *= DoBeltBuckle();
+        }else if( _SubMeshID == 3 ){
+            col *= DoBelt();
+        }else if( _SubMeshID == 4 ){
+            col *= DoPants();
+        }else if( _SubMeshID == 5 ){
+            col = DoShirtShoes();
+        }else if( _SubMeshID == 6 ){
+            col = DoSocks();
+        }else if( _SubMeshID == 7 ){
+            col = DoSkin();
+
+
+        }
+
+
+
+
+
 
        // col = tCol * 2 * reflM * reflM;
 
-        col = hsv(match * .3+_Time, 1,1) * match * col * 4;
 
         //tCol *=color;// pow(eyeM,100)  * 20;
         //tCol = 1;

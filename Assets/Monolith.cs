@@ -13,6 +13,7 @@ public class Monolith : Cycle
 
     public float ratio;
 
+
     public void DestroyMe(){
      // print( storyMarkers.Length );
       for( int i = 0; i < storyMarkers.Length; i++ ){
@@ -27,6 +28,8 @@ public class Monolith : Cycle
       DestroyMe();
 
       ratio = (float)Screen.width / (float) Screen.height;
+
+      ratio = 1 / ratio;
 
       transform.position = story.transform.position;
       transform.rotation = story.transform.rotation;

@@ -171,6 +171,7 @@ public class Life : Cycle {
   }
 
   public void BindAttribute( string nameInShader, string attributeName , System.Object obj ){
+   
     BoundAttribute a = new BoundAttribute();
     a.nameInShader = nameInShader;
     a.attributeName = attributeName;
@@ -179,6 +180,9 @@ public class Life : Cycle {
 
     bool replaced = false;
     int id = 0;
+
+//    print( boundAttributes );
+
     foreach( BoundAttribute ba in boundAttributes){
 
       if( ba.nameInShader == nameInShader ){

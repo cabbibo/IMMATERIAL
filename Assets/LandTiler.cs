@@ -100,7 +100,7 @@ public class LandTiler : Cycle
  
   }
 
-  public override void OnBirthed(){
+  public override void OnLive(){
 
     for( int i = 0; i < Tiles.Length; i++ ){
       _Offset = tileObjects[i].transform.position;

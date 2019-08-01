@@ -1,0 +1,72 @@
+﻿#pragma kernel Transfer
+
+struct Vert{
+  float3 pos;
+  float3 vel;
+  float3 nor;
+  float3 og;
+  float2 uv;
+  float2 debug;
+};
+
+
+
+RWStructuredBuffer<Vert> _VertBuffer;
+
+int _VertBuffer_COUNT;
+
+float3 _Offset;
+float _Size;
+
+#include "../Chunks/safeID.cginc"
+#include "../Chunks/hash.cginc"
+
+Texture2D<float4> _HeightMap;
+SamplerState sampler_HeightMap;
+float _MapSize;
+float _MapHeight;
+
+float _Time;
+
+
+
+    float3 worldPos( float3 pos ){
+        float4 c = _HeightMap.SampleLevel(sampler_HeightMap, (pos.xz-.5) * _MapSize  , 0);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+        pos.y =  c.x * _MapHeight;
+        return pos;
+    }
+
+
+    float3 getNormal( float3 pos ){
+
+      float delta = 1;
+      float3 dU = worldPos( pos + float3(delta,0,0) );
+      float3 dD = worldPos( pos + float3(-delta,0,0) );
+      float3 dL = worldPos( pos + float3(0,0,delta) );
+      float3 dR = worldPos( pos + float3(0,0,-delta) );
+
+      return normalize(cross(dU.xyz-dD.xyz , dL.xyz-dR.xyz));
+
+    }
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = safeID( threadID + u3GroupID.x * NR_THREADS , _VertBuffer_COUNT );
+
+  if( pID < _VertBuffer_COUNT ){
+    
+    Vert v = _VertBuffer[pID];
+
+    v.pos = _Offset + float3(1,0,0) * (hash( pID + _Time )-.5) * _Size   + float3(0,0,1) * (hash( pID * 3 + _Time * 2 )-.5) * _Size;
+    v.pos.y = 0;
+
+    v.nor = getNormal( v.pos );
+    v.pos = worldPos(v.pos) ;
+
+    _VertBuffer[pID] =  v;
+
+  }
+
+}

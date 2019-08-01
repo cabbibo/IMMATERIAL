@@ -1,4 +1,6 @@
-﻿
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+
 Shader "Scene/Frame" {
 
   Properties {
@@ -205,6 +207,51 @@ col /= _NumberSteps;
 
       ENDCG
     }
+
+
+    Pass {
+      Tags {
+        "LightMode" = "ShadowCaster"
+      }
+
+      CGPROGRAM
+
+      #pragma target 3.0
+
+      #pragma vertex MyShadowVertexProgram
+      #pragma fragment MyShadowFragmentProgram
+
+      #include "UnityCG.cginc"
+
+    float _Cutoff;
+      float _Hovered;
+      float _Restricted;
+
+struct VertexData {
+  float4 position : POSITION;
+};
+
+float4 MyShadowVertexProgram (VertexData v) : SV_POSITION {
+  return UnityObjectToClipPos(v.position);
+}
+
+half4 MyShadowFragmentProgram () : SV_TARGET {
+
+  float fadeVal = 1-_Cutoff;// 1-saturate((_P - _FadeMin) / (_FadeMax-_FadeMin));
+
+
+        //col *= col
+
+       if(fadeVal < .2 ){
+        discard;
+       }
+  return 1;
+}
+
+
+      ENDCG
+    }
+    
   }
   FallBack "Diffuse"
 }

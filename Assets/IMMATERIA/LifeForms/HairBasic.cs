@@ -26,11 +26,11 @@ public class HairBasic : LifeForm {
       All of this info should be visualizable!
     */
 
-    Cycles.Insert( 0 , SetHairPosition );
-    Cycles.Insert( 1 , HairCollision );
-    Cycles.Insert( 2 , HairConstraint0 );
-    Cycles.Insert( 3 , HairConstraint1 );
-    Cycles.Insert( 4 , Hair );
+    SafePrepend( SetHairPosition );
+    SafePrepend( HairCollision );
+    SafePrepend( HairConstraint0 );
+    SafePrepend( HairConstraint1 );
+    SafePrepend( Hair );
 
     //Cycles.Insert( 4 , Base );
 
@@ -67,9 +67,10 @@ public class HairBasic : LifeForm {
 
   public override void OnBirth(){
 
-  //  print("birthed");
+    print("birthed");
     SetHairPosition.Live();
     SetHairPosition.active = false;
+
   }
 
   public override void Activate(){

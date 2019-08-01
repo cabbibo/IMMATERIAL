@@ -33,10 +33,15 @@ public class LandTile : Cycle
 
 
    public void Set(){
+
+    print("we are setting");
+    position = transform.position;
     
     tiler._Offset = transform.position;
     tiler.setTile.RebindPrimaryForm( "_VertBuffer" , verts );
     tiler.setTile.YOLO();
+
+    print("setio");
 
     OnSet.Invoke();
   }

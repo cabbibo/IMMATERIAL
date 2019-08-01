@@ -25,6 +25,7 @@ public class Data : Cycle
   public Transform player;
 
   public Journey journey;
+  public State state;
 
   public CameraController cameraControls;
   public Character playerControls;

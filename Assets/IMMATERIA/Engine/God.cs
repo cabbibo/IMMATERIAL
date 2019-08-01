@@ -21,6 +21,8 @@ public override void Create(){
         print("DUDE WHERE'S MY DATA");
     }
 
+    Application.targetFrameRate = 30;
+
 
 }
 

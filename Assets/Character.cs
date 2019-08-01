@@ -31,6 +31,13 @@ public class Character : Cycle {
   private Vector3 deltaPos;
   private Quaternion deltaRot;
 
+  public bool rotating;
+  public float angleOffset;
+  public float forwardOffset;
+
+  public Transform moveTargetTransform;
+  public bool movingTowardsTarget;
+
   public override void Create () {
 
     moveTarget = transform.position;
@@ -47,6 +54,15 @@ public class Character : Cycle {
 
 
 
+  public void SwipeTurn( Vector2 delta ){
+    if( delta.magnitude > 10 ){
+      movingTowardsTarget = false;
+    }
+    angleOffset += delta.x * .003f;
+    forwardOffset += delta.y * .004f ;
+    forwardOffset = Mathf.Max( forwardOffset, 0);
+  
+  }
 
 /*
   
@@ -63,11 +79,40 @@ public class Character : Cycle {
     force = Vector3.zero;
 
 
-    //force +=  m_Move  * moveForce * .1f  * runForce;
-      Vector3 dif = moveTarget-transform.position;
 
-    force += dif * .01f * moveForce * (velocity.magnitude+.13f);
+    //force +=  m_Move  * moveForce * .1f  * runForce;
+      
+
+    //moveTarget += dif.magnitude * angleOffset * transform.right * .1f;
+
+   // moveTarget = angleOffset * transform.right * .1f  * (forwardOffset + 1.3f) + forwardOffset * transform.forward * .1f;
+   
+  //  dif = moveTarget;
+
+ //   if( dif.magnitude < .003f ){ dif = Vector3.zero; }
+
+    //if( moveTargetTransform ){ moveTargetTransform.position = moveTarget + transform.position; }
+
+    if( movingTowardsTarget ){
+      Vector3 dif = moveTarget-transform.position;
+      force =  dif * moveForce * (velocity.magnitude + .01f);
+      angleOffset *= .5f;
+      forwardOffset = Mathf.Lerp( forwardOffset  , force.magnitude * .01f , .1f );
+    }else{
+
+      if( Mathf.Abs(angleOffset) < .001f ){
+        angleOffset = 0;
+      }
+      force = angleOffset  * transform.right   + forwardOffset * transform.forward;/// dif * .01f * moveForce;// * (velocity.magnitude+.13f);
+    }
+  
+   // if( force.magnitude < .001f ){ force = Vector3.zero; }
+    force *= .1f;
+   // if( force.magnitude < .01f ){ force = Vector3.zero; }
+
+  
     
+
     velocity += force;
     velocity *= dampening;
 
@@ -75,15 +120,22 @@ public class Character : Cycle {
       velocity = velocity.normalized * maxSpeed;
     }
 
+
+
+
+
     Vector3 m = transform.InverseTransformDirection(velocity);
-    float turn = Mathf.Atan2(m.x, m.z);
+    float turn = Mathf.Atan2(m.x, m.z) * m.magnitude;
     float forward = m.z;
 
-    Rotate(forward , turn);
+    //turn += angleOffset;
+
+    Rotate(forward , turn );
     animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
   
     if( forward < forwardCutoff ){ forward = 0; }
     animator.SetFloat("Forward", forward*runMultiplier, 0.1f, Time.deltaTime);
+
 
 
 if( doTerrain ){
@@ -112,11 +164,23 @@ if( h2 > h ){
     deltaPos = transform.position - oPos;
 
     velocity = deltaPos;
+
+
+    angleOffset *= .9f;
+    forwardOffset *= .98f;
+
   }
 
 
   public void SetMoveTarget( Vector3 p ){
     moveTarget = p;
+    movingTowardsTarget = true;
+  }
+
+  public void SetMoveTarget( Transform p ){
+    moveTargetTransform = p;
+    moveTarget = p.position;
+    movingTowardsTarget = true;
   }
 
 
@@ -127,7 +191,7 @@ if( h2 > h ){
   void Rotate(float f  , float t){
 
     // help the character turn faster (this is in addition to root rotation in the animation)
-    float turnSpeed = Mathf.Lerp(180, 360, f);
+    float turnSpeed =  1000;//Mathf.Lerp(0, 360, f);
     transform.Rotate(0, t * turnSpeed * Time.deltaTime, 0);
   
   }
