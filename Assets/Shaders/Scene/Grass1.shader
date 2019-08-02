@@ -43,7 +43,7 @@
 
 
       float3 _Color;
-      float3 _Player;
+      float3 _PlayerPosition;
       float _FalloffRadius;
       sampler2D _MainTex;
       sampler2D _ColorMap;
@@ -96,14 +96,14 @@
                 float4 tcol = tex2D(_MainTex,v.uv );
         
                 fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos  ) * .9 + .1 ;
-float dif = saturate((_FalloffRadius -  length( v.worldPos - _Player ))/_FalloffRadius);
+float dif = saturate((_FalloffRadius -  length( v.worldPos - _PlayerPosition ))/_FalloffRadius);
                 
         float col =.2*pow(length(tcol.xyz) , 10);
         //color.xyz *= 1* hsv(color.a +v.uv.x *.3+.1+saturate(100*length(v.vel)) * .2 - .4,.3,dif);//col*hsv( v.uv.x * .4 + sin( v.debug.x) * .1 + sin(dif) * 1+ sin(_Time.y) * .1 , .7,dif);
        // color.xyz *= col;
 
-       float vSat =  saturate(40*length(v.vel) + .3);
-       float hue = -saturate(length( v.worldPos - _Player ) * .3) * .1 + .3 + tcol.r   * .1  +saturate(length(v.vel) * 20) * .1 ;
+       float vSat =  saturate(4*length(v.vel) + .3);
+       float hue = -saturate(length( v.worldPos - _PlayerPosition ) * .3) * .2 + .3 + tcol.r   * .1  +saturate(length(v.vel) * 20) * .1 ;
        color.xyz = tex2D(_ColorMap , float2( hue,0 ));;
         color.xyz *=  vSat;
         color.xyz *=  v.uv.y * 1.1;

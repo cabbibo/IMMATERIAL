@@ -9,7 +9,21 @@
     _NormalMap ("NormalMap", 2D) = "white" {}
     _CubeMap( "Cube Map" , Cube )  = "defaulttexture" {}
     
-    [Toggle(Enable12Struct)] _Struct12("12 Struct", Float) = 0
+    _HueBase("_HueBase", Float) = 0
+    _HueSize("_HueSize", Float) = 0
+
+
+    _HairHue("_HairHue", Float) = 0
+    _BeltBuckleHue("_BeltBuckleHue", Float) = 0
+    _BeltHue("_BeltHue", Float) = 0
+    _ShirtShoesHue("_ShirtShoesHue", Float) = 0
+    _SocksHue("_SocksHue", Float) = 0
+    _SkinHue("_SkinHue", Float) = 0
+    _PantsHue("_PantsHue", Float) = 0
+    _EyesHue("_EyesHue", Float) = 0
+
+    
+
   }
 
   SubShader {
@@ -42,8 +56,16 @@
       sampler2D _NormalMap;
       samplerCUBE _CubeMap;
 
+    float _HairHue;
+    float _BeltBuckleHue;
+    float _BeltHue;
+    float _ShirtShoesHue;
+    float _SocksHue;
+    float _SkinHue;
+    float _PantsHue;
+    float _EyesHue;
 
-  StructuredBuffer<Vert> _VertBuffer;
+    StructuredBuffer<Vert> _VertBuffer;
   StructuredBuffer<int> _TriBuffer;
 
 
@@ -52,6 +74,9 @@
     float _MapSize;
     float _MapHeight;
 
+
+float _HueBase;
+float _HueSize;
 
 
   float4 sampleColor( float3 pos ){
@@ -66,6 +91,7 @@
         float3 worldPos : TEXCOORD6;
         float3 debug    : TEXCOORD7;
         float3 closest    : TEXCOORD8;
+        float3 bindPos    : TEXCOORD9;
         UNITY_SHADOW_COORDS(2)
       };
 
@@ -76,6 +102,7 @@ Vert v = _VertBuffer[_TriBuffer[id + _BaseID]];
         float3 fNor   = v.nor;
         float2 fUV    = v.uv;
         float2 debug  = v.debug;
+
 
         varyings o;
 
@@ -90,6 +117,7 @@ Vert v = _VertBuffer[_TriBuffer[id + _BaseID]];
         o.pos = mul(UNITY_MATRIX_VP, float4(fPos,1));
         o.eye = _WorldSpaceCameraPos - fPos;
         o.nor = fNor;
+        o.bindPos = v.bindPos.xyz;
         o.uv =  float2(.9,1)-fUV;
         o.debug = float3(debug.x,debug.y,0);
 
@@ -136,7 +164,7 @@ Vert v = _VertBuffer[_TriBuffer[id + _BaseID]];
 
       float4 frag(varyings v) : COLOR {
 
-                fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5 ;
+                fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos - .01*noise(v.bindPos * 2000 + float3(0,_Time.y,0)) ) * .5 + .5 ;
 float dif = length( v.worldPos - _PlayerPosition );
 
 float l = saturate( (20-dif)/20);
@@ -154,29 +182,47 @@ float l = saturate( (20-dif)/20);
 
         float3 col = 0;
 
-        col = tCol * 2;
-        if( _SubMeshID == 0 ){
-            col *= DoEyes();
+        col = ((floor( (match + noise(v.bindPos * 1000) * .1) * 3)/3) + 2)/2;//tCol * 2;
+
+
+
+        float3 pCol = 0; 
+        float hue = 0;
+       if( _SubMeshID == 0 ){
+            pCol = DoEyes();
+            hue = _EyesHue;
         }else if( _SubMeshID == 1 ){
-            col *= DoHair();
+            pCol = DoHair();
+            hue = _HairHue;
         }else if( _SubMeshID == 2 ){
-            col *= DoBeltBuckle();
+            pCol = DoBeltBuckle();
+            hue = _BeltBuckleHue;
         }else if( _SubMeshID == 3 ){
-            col *= DoBelt();
+            pCol = DoBelt();
+            hue = _BeltHue;
         }else if( _SubMeshID == 4 ){
-            col *= DoPants();
+            pCol = DoPants();
+            hue = _PantsHue;
         }else if( _SubMeshID == 5 ){
-            col = DoShirtShoes();
+            pCol = DoShirtShoes();
+            hue = _ShirtShoesHue;
         }else if( _SubMeshID == 6 ){
-            col = DoSocks();
+            pCol = DoSocks();
+            hue = _SocksHue;
         }else if( _SubMeshID == 7 ){
-            col = DoSkin();
+            pCol = DoSkin();
+            hue = _SkinHue;
 
 
         }
 
+        //col *= tCol *1;
+        col *= tex2D(_ColorMap,float2( hue,0)) * .7 + .3;
 
 
+
+
+        //col *=  length(tCol);
 
 
 
@@ -191,7 +237,8 @@ float l = saturate( (20-dif)/20);
         //tCol = dif;
 
         //tCol = grassHeight;
-        return float4( col.xyz * shadow  , 1.);
+        col *= shadow;//(1-shadow)* (1 + .3 *noise( v.bindPos * 1000));
+        return float4( col.xyz  , 1.);
       }
 
       ENDCG

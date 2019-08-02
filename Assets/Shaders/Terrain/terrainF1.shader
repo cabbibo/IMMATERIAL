@@ -156,7 +156,7 @@ float l = saturate( (20-dif)/20);
 
 
         color = tex2D(_MainTex,v.worldPos.xz * .1);
-        color = tex2D(_ColorMap, float2(color.x * .2 + dif * .03+.6, 0)) * l ;
+        color = tex2D(_ColorMap, float2(color.x * .2 + dif * .01+.6 + grassHeight * .7, 0)) * l ;
 
 
 
