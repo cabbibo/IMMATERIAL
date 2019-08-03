@@ -11,6 +11,8 @@ public class Journey : Cycle
   public int connectedStory;
   public bool inStory;
 
+  public bool startInStory;
+
 
 
   public override void Destroy(){
@@ -34,6 +36,14 @@ public class Journey : Cycle
 
    }
 
+
+   public override void OnLive(){
+    print("so it begins");
+    if( startInStory ){
+      data.player.position = stories[currentStory].transform.position;
+      stories[currentStory].StartStory();
+    }
+   }
 
   public void ConnectMonolith(int id){
     connectedStory = id;

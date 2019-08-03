@@ -30,10 +30,11 @@ public int id;
   public EventTypes.StoryEvent OnEnterInner;
   public EventTypes.StoryEvent OnExitOuter;
   public EventTypes.StoryEvent OnExitInner;
+  public EventTypes.StoryEvent OnStartStory;
 
 
-  private float dif;
-  private float oDif;
+  public float dif;
+  public float oDif;
   public bool started;
 
 
@@ -139,7 +140,7 @@ public int id;
     data.textParticles.PageStart();
     data.cameraControls.SetLerpTarget( pages[currentPage].transform ,pages[currentPage].lerpSpeed);
    
-    if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget.position ); }
+    if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget ); }
 
 
   }   
@@ -157,8 +158,9 @@ public int id;
 
   public void SetColliders( bool val ){
     for( int i = 0; i < pages.Length; i ++ ){
-      pages[i].frame.collider.enabled = val; 
+      pages[i].frame.collider.enabled = false; 
     }
+    pages[0].frame.collider.enabled = val;
   }
 
   public void CheckForStart(){
@@ -167,9 +169,8 @@ public int id;
       RaycastHit hit;
 
       if (pages[currentPage].frame.collider.Raycast(data.inputEvents.ray, out hit, 100.0f)){
-        started = true;
-        SetActivePage(); 
-        SetColliders( false );
+        
+        StartStory();
       }else{
         
       }
@@ -177,6 +178,15 @@ public int id;
 //    print("YA");
   }
   
+  public void StartStory(){
+    print("startzio");
+
+    OnStartStory.Invoke(this);
+    started = true;
+    SetActivePage(); 
+    SetColliders( false );
+  }
+
   public override void WhileLiving( float v){
     
     

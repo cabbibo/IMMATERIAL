@@ -38,6 +38,8 @@ public class Character : Cycle {
   public Transform moveTargetTransform;
   public bool movingTowardsTarget;
 
+  public bool falling;
+
   public override void Create () {
 
     moveTarget = transform.position;
@@ -49,6 +51,10 @@ public class Character : Cycle {
 
   public override void WhileLiving (float v) {
     DoMovement();   
+  }
+
+  public void Fall(){
+    falling = true;
   }
 
 
@@ -79,95 +85,106 @@ public class Character : Cycle {
     force = Vector3.zero;
 
 
+    if( falling ){
+      animator.SetBool("Falling", true);
+      if( movingTowardsTarget ){
+        transform.position = Vector3.Lerp( transform.position , moveTarget , .1f);
+        transform.rotation = Quaternion.Slerp( transform.rotation , moveTargetTransform.rotation , .1f);
+      }
 
-    //force +=  m_Move  * moveForce * .1f  * runForce;
-      
-
-    //moveTarget += dif.magnitude * angleOffset * transform.right * .1f;
-
-   // moveTarget = angleOffset * transform.right * .1f  * (forwardOffset + 1.3f) + forwardOffset * transform.forward * .1f;
-   
-  //  dif = moveTarget;
-
- //   if( dif.magnitude < .003f ){ dif = Vector3.zero; }
-
-    //if( moveTargetTransform ){ moveTargetTransform.position = moveTarget + transform.position; }
-
-    if( movingTowardsTarget ){
-      Vector3 dif = moveTarget-transform.position;
-      force =  dif * moveForce * (velocity.magnitude + .01f);
-      angleOffset *= .5f;
-      forwardOffset = Mathf.Lerp( forwardOffset  , force.magnitude * .01f , .1f );
     }else{
 
-      if( Mathf.Abs(angleOffset) < .001f ){
-        angleOffset = 0;
+
+      //force +=  m_Move  * moveForce * .1f  * runForce;
+        
+
+      //moveTarget += dif.magnitude * angleOffset * transform.right * .1f;
+
+     // moveTarget = angleOffset * transform.right * .1f  * (forwardOffset + 1.3f) + forwardOffset * transform.forward * .1f;
+     
+    //  dif = moveTarget;
+
+   //   if( dif.magnitude < .003f ){ dif = Vector3.zero; }
+
+      //if( moveTargetTransform ){ moveTargetTransform.position = moveTarget + transform.position; }
+
+      if( movingTowardsTarget ){
+        Vector3 dif = moveTarget-transform.position;
+        force =  dif * moveForce * (velocity.magnitude + .01f);
+        angleOffset *= .5f;
+        forwardOffset = Mathf.Lerp( forwardOffset  , force.magnitude * .01f , .1f );
+      }else{
+
+        if( Mathf.Abs(angleOffset) < .001f ){
+          angleOffset = 0;
+        }
+        force = angleOffset  * transform.right   + forwardOffset * transform.forward;/// dif * .01f * moveForce;// * (velocity.magnitude+.13f);
       }
-      force = angleOffset  * transform.right   + forwardOffset * transform.forward;/// dif * .01f * moveForce;// * (velocity.magnitude+.13f);
-    }
-  
-   // if( force.magnitude < .001f ){ force = Vector3.zero; }
-    force *= .1f;
-   // if( force.magnitude < .01f ){ force = Vector3.zero; }
-
-  
     
+     // if( force.magnitude < .001f ){ force = Vector3.zero; }
+      force *= .1f;
+     // if( force.magnitude < .01f ){ force = Vector3.zero; }
 
-    velocity += force;
-    velocity *= dampening;
+    
+      
 
-    if( velocity.magnitude > maxSpeed ){
-      velocity = velocity.normalized * maxSpeed;
+      velocity += force;
+      velocity *= dampening;
+
+      if( velocity.magnitude > maxSpeed ){
+        velocity = velocity.normalized * maxSpeed;
+      }
+
+
+
+
+
+      Vector3 m = transform.InverseTransformDirection(velocity);
+      float turn = Mathf.Atan2(m.x, m.z) * m.magnitude;
+      float forward = m.z;
+
+      //turn += angleOffset;
+
+      Rotate(forward , turn );
+      animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
+    
+      if( forward < forwardCutoff ){ forward = 0; }
+      animator.SetFloat("Forward", forward*runMultiplier, 0.1f, Time.deltaTime);
+
+
+
+      if( doTerrain ){
+        float h = data.land.SampleHeight( transform.position );
+       
+        Vector3 normal = data.land.SampleNormal( transform.position );
+        float d = Vector3.Dot( normal , Vector3.up );
+
+        float h2 = data.land.SampleHeight( transform.position + transform.forward * .5f );
+
+    //    print( (1-d) * 10);
+        animator.SetFloat("Steepness", (1-d) * 10 );
+
+        if( h2 > h ){
+          animator.SetBool( "Uphill" , true);
+        }else{
+          animator.SetBool("Uphill", false);
+        }
+
+
+          transform.position = new Vector3( transform.position.x , h , transform.position.z);
+      }
+
+   //animator.Update(Time.deltaTime);
+
+      deltaPos = transform.position - oPos;
+
+      velocity = deltaPos;
+
+
+      angleOffset *= .9f;
+      forwardOffset *= .98f;
+
     }
-
-
-
-
-
-    Vector3 m = transform.InverseTransformDirection(velocity);
-    float turn = Mathf.Atan2(m.x, m.z) * m.magnitude;
-    float forward = m.z;
-
-    //turn += angleOffset;
-
-    Rotate(forward , turn );
-    animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
-  
-    if( forward < forwardCutoff ){ forward = 0; }
-    animator.SetFloat("Forward", forward*runMultiplier, 0.1f, Time.deltaTime);
-
-
-
-if( doTerrain ){
-    float h = data.land.SampleHeight( transform.position );
-   
-    Vector3 normal = data.land.SampleNormal( transform.position );
-    float d = Vector3.Dot( normal , Vector3.up );
-
-    float h2 = data.land.SampleHeight( transform.position + transform.forward * .5f );
-
-//    print( (1-d) * 10);
-animator.SetFloat("Steepness", (1-d) * 10 );
-
-if( h2 > h ){
-  animator.SetBool( "Uphill" , true);
-}else{
-  animator.SetBool("Uphill", false);
-}
-
-
-    transform.position = new Vector3( transform.position.x , h , transform.position.z);
-}
-
- //animator.Update(Time.deltaTime);
-
-    deltaPos = transform.position - oPos;
-
-    velocity = deltaPos;
-
-
-    angleOffset *= .9f;
-    forwardOffset *= .98f;
 
   }
 

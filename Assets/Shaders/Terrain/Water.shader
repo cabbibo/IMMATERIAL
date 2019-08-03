@@ -115,7 +115,7 @@ SubShader
 
             float3 fPos( float3 pos ){
                 float n = noise( float3(pos.xz*.2+_Time.y*.2,_Time.x));
-                pos.y += n * .3;
+                pos.y += n * .6;
                 return pos;
             }
 
@@ -241,7 +241,7 @@ float smin( float a, float b, float k )
                 n += tex2D(_NoiseTex, v.world.xz * .05  +  difP - (_Time.y* .03)).x;//-_Time,1));
 
                 
-                pDif -=  n*3;
+                pDif -=  n*n*3;
 
 
                 float4 c = tex2Dlod(_HeightMap , float4(v.world.xz * _MapSize,0,0) );
@@ -277,26 +277,16 @@ float smin( float a, float b, float k )
 
                 float shoreLine = saturate(1-floor( (dif - n * .2) * 5));
                 col += saturate(1-floor( (dif - n * .2) * 5));//tex2D(_DepthRampTex,float2(bg.b * .2 + .7,0)  ) + aroundPerson ;//tCol;//refl * .5 + .5;
-                col = length(bg) + aroundPerson + shore +shoreLine;//tCol;//refl * .5 + .5;
+                
+
+                col = length(bg) * float3(0,0.4,1) + shoreLine * saturate( length( bg) *4);//tCol;//refl * .5 + .5;
+               
+
                // col = tex2Dproj(_BackgroundTexture,ComputeGrabScreenPos( mul(UNITY_MATRIX_VP, float4(v.world + v.eye*.9,1)))).rgb;;// + saturate(aroundPerson * (lookup));
                 //col *= bg;// tex2Dproj(_BackgroundTexture, v.rR).rgb;;// + saturate(aroundPerson * (lookup));
 
-                col *= (1-lookup);
+       
 
-
-                //col.xyz = tex2Dproj(_BackgroundTexture, ComputeScreenPos(float4(v.world,1) )).xyz;
-
-
-                float n2 = tex2D(_NoiseTex, v.world.xz * .3 + foamLine * .2 +  difP * - (_Time.y* .03)).x;
-                float fl1 = floor(foamLine * 4+n2*1 ) / 4;
-                //col += 4*tex2D(_DepthRampTex,float2(-saturate(1-fl1) * .3 + 1 ,0));//aw/(pDif*pDif);
-;
-                 //col += 4*tex2D(_DepthRampTex,float2(-saturate(1-10*foamLine) * .3 + 1 ,0))  * (saturate(1-10*foamLine));//aw/(pDif*pDif);
-;
-
-                //col += length(bg) * float3(1,.3,.0)  * saturate(1-length(col) * .3 );
-        
-                //col /= max(1,10.4*pDif) * _PlayerPosition.y * .3;
 
 
                 return float4(col,1);
