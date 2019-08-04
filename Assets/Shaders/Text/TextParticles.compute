@@ -2,6 +2,7 @@
 #pragma kernel SetGlyph
 #pragma kernel SetAnchor
 #pragma kernel SetPage
+#pragma kernel SetPageAtEmitPos
 #pragma kernel SetPageAtCamera
 #pragma kernel SetPageAtPlayer
 #pragma kernel Simulation 
@@ -284,6 +285,25 @@ void SetPage(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 }
 
 
+float3 _EmitPos;
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void SetPageAtEmitPos(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+    int sID =safeID(GetID(pID),_VertBuffer_COUNT);
+    Vert v = _VertBuffer[sID];
+    
+
+    // Need to make sure that its not bigger than anchor count
+    // so doesn't accidently set another letter
+    if(pID <= _AnchorBuffer_COUNT ){ v.pos = _EmitPos; }
+
+    _VertBuffer[sID] = v;
+
+}
+
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
 void SetPageAtCamera(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
@@ -300,6 +320,8 @@ void SetPageAtCamera(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID
     _VertBuffer[sID] = v;
 
 }
+
+
 
 
 #define NR_THREADS 128
@@ -406,7 +428,7 @@ void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
 
       float t = _Time - v.debug.x;
 
-      force += -min((v.pos - v.lockPosition),4) * .003;
+      force += -min((v.pos - v.lockPosition),1000) * .003;
 
       force += curlNoise( v.pos * .4 ) * .002 * min( pow((v.pos - v.lockPosition),4),3)/(t*t*.4+1);
 

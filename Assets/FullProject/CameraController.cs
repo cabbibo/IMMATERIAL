@@ -35,6 +35,10 @@ public class CameraController : Cycle
     public float heightAbove;
     public float radius;
 
+    public override void Create(){
+      //lerping = false;
+    }
+
     public override void WhileLiving( float v ){
 
 

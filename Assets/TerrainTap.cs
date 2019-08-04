@@ -10,7 +10,7 @@ public class TerrainTap : Cycle
    
    public void Tap(){
 
-      if( data.inputEvents.hitTag == "Untagged"){
+      if( data.inputEvents.hitTag == "Untagged" && !data.state.inStory ){
    
       transform.position = data.land.Trace( data.inputEvents.ray.origin , data.inputEvents.ray.direction );
       data.playerControls.SetMoveTarget( transform.position );

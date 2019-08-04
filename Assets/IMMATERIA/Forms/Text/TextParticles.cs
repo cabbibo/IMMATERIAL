@@ -9,6 +9,8 @@ public class TextParticles : LifeForm{
 
   public Body body;
 
+  public Vector3 emitterPosition;
+
   public Life setAnchor;
   public Life setGlyph;
   public Life setPage;
@@ -62,6 +64,7 @@ public int currentMin;
 
     setPage.BindForm("_AnchorBuffer",anchor);
     setPage.BindForm("_VertBuffer",particles);
+    setPage.BindAttribute("_EmitPos" , "emitterPosition" , this );
 
     simulate.BindPrimaryForm("_VertBuffer",particles);
 
@@ -148,7 +151,15 @@ public int currentMin;
 
 
   public void PageStart(){
+    emitterPosition = data.player.position;
     setPage.YOLO();
+  }
+
+  public void SpawnFromCamera(){
+
+    emitterPosition = data.camera.position;
+    setPage.YOLO();
+
   }
 
 

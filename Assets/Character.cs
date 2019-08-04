@@ -38,6 +38,13 @@ public class Character : Cycle {
   public Transform moveTargetTransform;
   public bool movingTowardsTarget;
 
+  public bool lerping;
+  public float lerpSpeed;
+  public float lerpStartTime;
+  public Transform lerpTarget;
+  private Vector3 startLerpPos;
+  private Quaternion startLerpRot;
+
   public bool falling;
 
   public override void Create () {
@@ -55,6 +62,7 @@ public class Character : Cycle {
 
   public void Fall(){
     falling = true;
+    animator.SetBool("Falling", true);
   }
 
 
@@ -85,12 +93,17 @@ public class Character : Cycle {
     force = Vector3.zero;
 
 
-    if( falling ){
-      animator.SetBool("Falling", true);
-      if( movingTowardsTarget ){
-        transform.position = Vector3.Lerp( transform.position , moveTarget , .1f);
-        transform.rotation = Quaternion.Slerp( transform.rotation , moveTargetTransform.rotation , .1f);
-      }
+    if( lerping ){
+
+      float v = Mathf.Clamp((Time.time - lerpStartTime)/lerpSpeed, 0 , 1);
+
+      print( v );
+
+      v = v * v * (3 - 2 * v);
+      
+      transform.position  = Vector3.Lerp(startLerpPos , lerpTarget.position , v);
+      transform.rotation  = Quaternion.Slerp(startLerpRot , lerpTarget.rotation , v);
+    
 
     }else{
 
@@ -198,6 +211,15 @@ public class Character : Cycle {
     moveTargetTransform = p;
     moveTarget = p.position;
     movingTowardsTarget = true;
+  }
+
+  public void SetLerpTarget( Transform p , float speed ){
+    lerping = true;
+    lerpTarget = p;
+    lerpStartTime = Time.time;
+    lerpSpeed = speed;
+    startLerpRot = transform.rotation;
+    startLerpPos = transform.position;
   }
 
 

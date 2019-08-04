@@ -13,9 +13,7 @@ public class Story : Cycle
   public Vector2 uv;
   public Monolith monolith;
 
-
-public int id;
-
+  public int id;
 
   public float innerRadius;
   public float outerRadius;
@@ -25,6 +23,11 @@ public int id;
    
   public Page[] pages;
   public int currentPage;
+
+  public bool hardcoded;
+  public bool cantUnstart;
+  public bool spawnFromCamera;
+
 
   public EventTypes.StoryEvent OnEnterOuter;
   public EventTypes.StoryEvent OnEnterInner;
@@ -42,6 +45,7 @@ public int id;
   public float transitionSpeed;
   public float transitionStartTime;
   public Page oldTransitionPage;
+  public bool fast;
   
   public override void Create(){
 
@@ -78,7 +82,7 @@ public int id;
 
   public void NextPage(){
 
-    if( started ){
+    if( started && transitioning == false ){
 
       currentPage ++;
       
@@ -105,7 +109,7 @@ public int id;
 
   public void PreviousPage(){
     
-    if( started ){
+    if( started && transitioning == false ){
 
       currentPage --;
       
@@ -121,27 +125,45 @@ public int id;
          pages[currentPage+1].OnEnd.Invoke();
 
       }else{
-        
-        transitioning = true;
-        transitionSpeed = pages[0].lerpSpeed;
-        transitionStartTime = Time.time;
-        oldTransitionPage = pages[currentPage+1];
+        if( !cantUnstart ){
+          transitioning = true;
+          transitionSpeed = pages[0].lerpSpeed;
+          transitionStartTime = Time.time;
+          oldTransitionPage = pages[currentPage+1];
 
-        pages[currentPage+1].OnEnd.Invoke();
-        currentPage = 0;
-        Release();
+          pages[currentPage+1].OnEnd.Invoke();
+          currentPage = 0;
+          Release();
+        }else{
+          currentPage ++;
+        }
       }
     }
 
   }
 
   public void SetActivePage(){
+
     data.textParticles.Set( pages[currentPage].text );
-    data.textParticles.PageStart();
+
+    if( spawnFromCamera ){
+      data.textParticles.SpawnFromCamera();
+    }else{
+      data.textParticles.PageStart();
+    }
+    
     data.cameraControls.SetLerpTarget( pages[currentPage].transform ,pages[currentPage].lerpSpeed);
    
     if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget ); }
+    if( pages[currentPage].lerpTarget ){ 
+      print("setting Lerp target");
+      print(pages[currentPage].lerpSpeed);
 
+      data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , pages[currentPage].lerpSpeed ); }
+
+    if( pages[currentPage].moveTarget &&  pages[currentPage].lerpTarget ){
+      Debug.LogError("this page has multiple targets");
+    }
 
   }   
 
@@ -149,10 +171,18 @@ public int id;
 
 
     started = false;
+
+    data.state.inStory = false;
+
     data.cameraControls.SetFollowTarget();
     data.textParticles.Release();
 
-        SetColliders( true );
+    SetColliders( true );
+
+    if( hardcoded ){
+      ExitInner();
+      ExitOuter();
+    }
   }
 
 
@@ -180,11 +210,21 @@ public int id;
   
   public void StartStory(){
     print("startzio");
+ 
+    if( hardcoded ){
+      EnterOuter();
+      EnterInner();
+      DoFade( 1 );
+    }
+
+    data.state.inStory = true;
 
     OnStartStory.Invoke(this);
     started = true;
     SetActivePage(); 
     SetColliders( false );
+
+
   }
 
   public override void WhileLiving( float v){
@@ -192,6 +232,8 @@ public int id;
     
     oDif = dif;
     dif = (transform.position - data.player.position).magnitude;
+
+    if( !hardcoded ){
 
     if( dif < outerRadius && oDif >= outerRadius ){
       EnterOuter();
@@ -208,14 +250,29 @@ public int id;
     if( dif >= innerRadius && oDif < innerRadius ){
       ExitInner();
     }
+    }
 
     if( insideOuter && !insideInner ){
       DoFade( 1-((dif - innerRadius) / (outerRadius-innerRadius)));
     }
 
+
+
     if( transitioning ){
       DoBetweenFade();
     }
+
+
+    #if UNITY_EDITOR 
+       if( !Application.isPlaying){ 
+
+        for( int i = 0; i < pages.Length; i++ ){
+          pages[i].frameMPB.SetFloat("_Cutoff" , 0);
+          pages[i].frame.borderLine.SetPropertyBlock(pages[i].frameMPB);
+ 
+        }
+      }
+    #endif
 
   }
 

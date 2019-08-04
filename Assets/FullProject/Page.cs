@@ -10,6 +10,7 @@ public class Page : Cycle
     public TextAnchor text;
     public float lerpSpeed;
     public Transform moveTarget;
+    public Transform lerpTarget;
     public MaterialPropertyBlock frameMPB;
 
     public EventTypes.BaseEvent  OnStart;

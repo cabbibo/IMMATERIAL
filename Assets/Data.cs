@@ -18,8 +18,6 @@ public class Data : Cycle
 {
     
 
-  public bool bookActive;
-  public bool inStory;
   
   public Transform camera;
   public Transform player;
