@@ -47,6 +47,9 @@ public class Character : Cycle {
 
   public bool falling;
 
+  public GameObject OnGroundBook;
+  public GameObject InHandBook;
+
   public override void Create () {
 
     moveTarget = transform.position;
@@ -62,9 +65,20 @@ public class Character : Cycle {
   }
 
   public void Fall(){
-    print("FAll");
     falling = true;
     animator.SetBool("Falling", true);
+    animator.SetBool("FallAsleep", false);
+    animator.SetBool("GetUp", false);
+  }
+
+  public void OnPickUp(){
+    print("WHAHJAa");
+    OnGroundBook.SetActive(false);
+    InHandBook.SetActive(true);
+    animator.SetBool("PickUp", false);
+  }
+  public void PickUp(){
+    animator.SetBool("PickUp", true);
   }
 
 
@@ -72,10 +86,12 @@ public class Character : Cycle {
     falling = false;
     animator.SetBool("FallAsleep", true);
     animator.SetBool("Falling", false);
+    animator.SetBool("GetUp", false);
   }
 
-    public void GetUp(){
+  public void GetUp(){
     animator.SetBool("FallAsleep", false);
+    animator.SetBool("Falling", false);
     animator.SetBool("GetUp", true);
   }
 
@@ -88,7 +104,7 @@ public class Character : Cycle {
     if( delta.magnitude > 10 ){
       movingTowardsTarget = false;
     }
-    angleOffset += delta.x * .003f;
+    angleOffset -= delta.x * .003f;
     forwardOffset += delta.y * .004f ;
     forwardOffset = Mathf.Max( forwardOffset, 0);
   
@@ -120,6 +136,8 @@ public class Character : Cycle {
       transform.position  = Vector3.Lerp(startLerpPos , lerpTarget.position , v);
       transform.rotation  = Quaternion.Slerp(startLerpRot , lerpTarget.rotation , v);
     
+      animator.SetFloat("Turn", 0, 0.1f, Time.deltaTime);
+      animator.SetFloat("Forward", 0, 0.1f, Time.deltaTime);
 
     }else{
 
@@ -221,16 +239,19 @@ public class Character : Cycle {
   public void SetMoveTarget( Vector3 p ){
     moveTarget = p;
     movingTowardsTarget = true;
+    lerping = false;
   }
 
   public void SetMoveTarget( Transform p ){
     moveTargetTransform = p;
     moveTarget = p.position;
     movingTowardsTarget = true;
+    lerping = false;
   }
 
   public void SetLerpTarget( Transform p , float speed ){
     lerping = true;
+    movingTowardsTarget = false;
     lerpTarget = p;
     lerpStartTime = Time.time;
     lerpSpeed = speed;

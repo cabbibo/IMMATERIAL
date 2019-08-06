@@ -41,6 +41,8 @@ public class LandTiler : Cycle
   }
   }
 
+
+
   public override void Create(){
 
     //print("OnCreate");
@@ -163,5 +165,24 @@ public class LandTiler : Cycle
     Tiles[i].Set();
   }
 
+  public void ToggleWater(){
+    for( int i = 0; i < Tiles.Length; i++ ){
+      Tiles[i].water.active = !Tiles[i].water.active;
+    } 
+  }
+
+
+public void ToggleWaterOff(){
+    for( int i = 0; i < Tiles.Length; i++ ){
+      Tiles[i].water.active = false;
+    } 
+  }
+
+
+public void ToggleWaterOn(){
+    for( int i = 0; i < Tiles.Length; i++ ){
+      Tiles[i].water.active = true;
+    } 
+  }
 
 }

@@ -151,7 +151,7 @@ public int currentMin;
 
 
   public void PageStart(){
-    emitterPosition = data.player.position;
+    emitterPosition = data.soul.position;
     setPage.YOLO();
   }
 

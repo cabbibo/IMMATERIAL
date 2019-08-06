@@ -14,6 +14,8 @@ public class LandTile : Cycle
   public Body body;
   public LandTileVerts verts;
   public LandTileTris  tris;
+  
+  public ReRender water;
 
   public EventTypes.BaseEvent OnSet;
 
@@ -22,6 +24,7 @@ public class LandTile : Cycle
   public override void Create(){
 
     SafeInsert(body);
+    SafeInsert(water);
 
 //    print(verts);
 

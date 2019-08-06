@@ -36,6 +36,7 @@ public class Story : Cycle
   public EventTypes.StoryEvent OnExitOuter;
   public EventTypes.StoryEvent OnExitInner;
   public EventTypes.StoryEvent OnStartStory;
+  public EventTypes.StoryEvent OnEndStory;
 
 
   public float dif;
@@ -48,7 +49,16 @@ public class Story : Cycle
   public float transitionStartTime;
   public Page oldTransitionPage;
   public bool fast;
+
+  public void SpawnFromCamera(){
+    spawnFromCamera = true;
+  }
   
+
+  public void SpawnFromPlayer(){
+    spawnFromCamera = false;
+  }
+
   public override void Create(){
 
 
@@ -89,13 +99,13 @@ public class Story : Cycle
       currentPage ++;
       
       if( currentPage < pages.Length ){
-        SetActivePage();
+
         transitioning = true;
-
         transitionSpeed = pages[currentPage].lerpSpeed;
-
         if( fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
+
+        SetActivePage();
         oldTransitionPage = pages[currentPage-1];
         pages[currentPage].OnStart.Invoke();
         pages[currentPage-1].OnEnd.Invoke();
@@ -121,13 +131,16 @@ public class Story : Cycle
       currentPage --;
       
       if( currentPage >= 0 ){
-        SetActivePage();
+
 
         transitioning = true;
         transitionSpeed = pages[currentPage].lerpSpeed;
 
         if( fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
+
+        SetActivePage();
+
         oldTransitionPage = pages[currentPage+1];
 
          pages[currentPage].OnStart.Invoke();
@@ -155,28 +168,34 @@ public class Story : Cycle
 
   public void SetActivePage(){
 
-    data.textParticles.Set( pages[currentPage].text );
-
-    if( spawnFromCamera ){
-      data.textParticles.SpawnFromCamera();
-    }else{
-      data.textParticles.PageStart();
-    }
     
-    data.cameraControls.SetLerpTarget( pages[currentPage].transform ,pages[currentPage].lerpSpeed);
+    data.textParticles.Release();
+    
+    data.cameraControls.SetLerpTarget( pages[currentPage].transform , transitionSpeed );
    
     if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget ); }
     if( pages[currentPage].lerpTarget ){ 
       print("setting Lerp target");
-      print(pages[currentPage].lerpSpeed);
+      print(transitionSpeed);
 
-      data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , pages[currentPage].lerpSpeed ); }
+      data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , transitionSpeed ); }
 
     if( pages[currentPage].moveTarget &&  pages[currentPage].lerpTarget ){
       Debug.LogError("this page has multiple targets");
     }
 
   }   
+
+
+  public void OnLockPage(){
+     data.textParticles.Set( pages[currentPage].text );
+
+    if( spawnFromCamera ){
+      data.textParticles.SpawnFromCamera();
+    }else{
+      data.textParticles.PageStart();
+    }
+  }
 
   public void Release(){
 
@@ -187,8 +206,12 @@ public class Story : Cycle
 
     data.cameraControls.SetFollowTarget();
     data.textParticles.Release();
+    //data.cameraControls.lerping = false;
+    data.playerControls.lerping = false;
 
     SetColliders( true );
+
+    OnEndStory.Invoke( this );
 
     if( hardcoded ){
       ExitInner();
@@ -232,6 +255,11 @@ public class Story : Cycle
 
     OnStartStory.Invoke(this);
     started = true;
+
+      transitioning = true;
+        transitionSpeed = pages[currentPage].lerpSpeed;
+        if( fast ){ transitionSpeed = 1; }
+        transitionStartTime = Time.time;
     SetActivePage(); 
     SetColliders( false );
 
@@ -345,7 +373,10 @@ public class Story : Cycle
   public void DoBetweenFade(){
 
     float v = (Time.time - transitionStartTime) / transitionSpeed;
-    if( v > 1 ){ transitioning = false; }
+    if( v > 1 ){ 
+      transitioning = false;
+      OnLockPage();
+    }
 
     oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
     pages[currentPage].frameMPB.SetFloat("_Cutoff" ,1-v);

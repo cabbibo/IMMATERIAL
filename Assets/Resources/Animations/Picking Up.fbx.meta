@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: ced240b167fafb54cb54c8d92072d562
+guid: 89f4830b637b5cf42adfdefcf0095d51
 ModelImporter:
   serializedVersion: 25
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: getupo
+    second: pickupstand
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -35,14 +35,14 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: getupo
+      name: pickupstand
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 342
+      lastFrame: 296
       wrapMode: 0
       orientationOffsetY: 0
-      level: -0.1
+      level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
@@ -51,14 +51,22 @@ ModelImporter:
       loopBlendOrientation: 0
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
-      keepOriginalOrientation: 1
+      keepOriginalOrientation: 0
       keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
       heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.4038946
+        functionName: OnPickUp
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 722b12f9ed031a048ba9b9af5a5b8b00,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

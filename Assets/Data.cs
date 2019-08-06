@@ -29,12 +29,14 @@ public class Data : Cycle
   public Character playerControls;
   public InputEvents inputEvents;
   public Land land;
+  public LandTiler tiler;
   public SceneCircle sceneCircle;
   public Book book;
 
   public TextParticles textParticles;
   public GuideParticles guideParticles;
   public GuideParticles monolithParticles;
+  public TerrainTap  terrainTap;
 
   //public Terrain terrain;
 
@@ -65,6 +67,9 @@ public class Data : Cycle
     if( book != null ){ SafePrepend(book); }
     if( guideParticles != null ){ SafePrepend(guideParticles); }
     if( monolithParticles != null ){ SafePrepend(monolithParticles); }
+    if( tiler != null ){ SafePrepend(tiler); }
+    if( terrainTap != null ){ SafePrepend(terrainTap); }
+    if( state != null ){ SafePrepend(state); }
   }
 
 
