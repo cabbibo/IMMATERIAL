@@ -29,6 +29,8 @@ public class Story : Cycle
   public bool spawnFromCamera;
 
 
+
+
   public EventTypes.StoryEvent OnEnterOuter;
   public EventTypes.StoryEvent OnEnterInner;
   public EventTypes.StoryEvent OnExitOuter;
@@ -89,7 +91,10 @@ public class Story : Cycle
       if( currentPage < pages.Length ){
         SetActivePage();
         transitioning = true;
+
         transitionSpeed = pages[currentPage].lerpSpeed;
+
+        if( fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
         oldTransitionPage = pages[currentPage-1];
         pages[currentPage].OnStart.Invoke();
@@ -97,6 +102,8 @@ public class Story : Cycle
       }else{
         transitioning = true;
         transitionSpeed = pages[0].lerpSpeed;
+
+        if( fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
         oldTransitionPage = pages[currentPage-1];
         pages[currentPage-1].OnEnd.Invoke();
@@ -118,6 +125,8 @@ public class Story : Cycle
 
         transitioning = true;
         transitionSpeed = pages[currentPage].lerpSpeed;
+
+        if( fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
         oldTransitionPage = pages[currentPage+1];
 
@@ -128,6 +137,8 @@ public class Story : Cycle
         if( !cantUnstart ){
           transitioning = true;
           transitionSpeed = pages[0].lerpSpeed;
+          
+        if( fast ){ transitionSpeed = 1; }
           transitionStartTime = Time.time;
           oldTransitionPage = pages[currentPage+1];
 

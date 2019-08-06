@@ -58,12 +58,28 @@ public class Character : Cycle {
 
   public override void WhileLiving (float v) {
     DoMovement();   
+    animator.Update(Time.deltaTime); 
   }
 
   public void Fall(){
+    print("FAll");
     falling = true;
     animator.SetBool("Falling", true);
   }
+
+
+  public void FallAsleep(){
+    falling = false;
+    animator.SetBool("FallAsleep", true);
+    animator.SetBool("Falling", false);
+  }
+
+    public void GetUp(){
+    animator.SetBool("FallAsleep", false);
+    animator.SetBool("GetUp", true);
+  }
+
+
 
 
 
@@ -97,7 +113,7 @@ public class Character : Cycle {
 
       float v = Mathf.Clamp((Time.time - lerpStartTime)/lerpSpeed, 0 , 1);
 
-      print( v );
+//      print( v );
 
       v = v * v * (3 - 2 * v);
       

@@ -22,6 +22,10 @@ public class InputEvents: Cycle {
   public EventTypes.Vector2Event    WhileDownDelta;
   public EventTypes.Vector2Event    WhileDownDelta2;
   public EventTypes.BaseEvent       OnDebugTouch;
+
+  public bool fakeSwipeLeft;
+  public bool fakeSwipeRight;
+  public bool fakeTapCenter;
   
 
   public Vector3 RayOrigin;
@@ -67,6 +71,20 @@ public class InputEvents: Cycle {
   
    // Update is called once per frame
   public override void WhileLiving ( float v ){
+
+    if( fakeSwipeLeft ){ 
+
+      OnSwipeLeft.Invoke();
+      fakeSwipeLeft = !fakeSwipeLeft;
+
+    }
+
+     if( fakeSwipeRight ){ 
+
+      OnSwipeRight.Invoke();
+      fakeSwipeRight = !fakeSwipeRight;
+
+    }
 
     oP = p;
     oDown = Down;
