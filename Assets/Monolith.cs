@@ -33,8 +33,8 @@ public class Monolith : Cycle
 
       ratio = 1 / ratio;
 
-      transform.position = story.transform.position;
-      transform.rotation = story.transform.rotation;
+      //transform.position = story.transform.position;
+      //transform.rotation = story.transform.rotation;
 
       float size = 2;
       monolith.localScale = new Vector3( size, size * ratio , size / 7 );

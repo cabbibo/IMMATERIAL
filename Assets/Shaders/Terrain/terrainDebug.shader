@@ -95,7 +95,7 @@ float4 terrainSampleColor( float4 pos ){
             
             // Albedo comes from a texture tinted by color
             //fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-            o.Emission.xyz = 0;//IN.nor * .5 + .5;// hsv(IN.normal.y * .5,1,1);
+            o.Emission.xyz = _Color * (IN.nor * .5 + .5);// hsv(IN.normal.y * .5,1,1);
 
             //if( ((IN.worldPosition.y * .3)+ noise( IN.worldPosition * .2 ) * .1)  % 1 < .8 ){ discard; }
             //IN.color.w * 1;//float3(1,1,1);//c.rgb;

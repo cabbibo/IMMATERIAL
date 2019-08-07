@@ -57,6 +57,9 @@ public class Character : Cycle {
     deltaRot = Quaternion.identity;
     oPos = Vector3.zero;
     velocity = Vector3.zero;
+
+
+    animator.Play("Grounded");
   }
 
   public override void WhileLiving (float v) {
@@ -105,7 +108,7 @@ public class Character : Cycle {
       movingTowardsTarget = false;
     }
     angleOffset -= delta.x * .003f;
-    forwardOffset += delta.y * .004f ;
+    forwardOffset -= delta.y * .004f ;
     forwardOffset = Mathf.Max( forwardOffset, 0);
   
   }

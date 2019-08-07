@@ -10,7 +10,7 @@ public class Simulation : Cycle
   public Life life;
   
 
-  private Binder[] binders;
+  public Binder[] binders;
 
   // Use this for initialization
   public override void _Create(){
