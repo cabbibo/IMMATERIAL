@@ -60,9 +60,9 @@ void CircleOnTerrain (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupI
 
     v.pos = _SetLocation + v.og * _Radius;
     v.pos.y = 0;
-    v.nor = -getNormal( v.pos );
+    v.nor = getNormal( v.pos );
     v.pos = worldPos(v.pos) ;
-    v.pos += v.nor * .15;
+    v.pos -= v.nor * .15;
 
     _VertBuffer[pID] = v;
 

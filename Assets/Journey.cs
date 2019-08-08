@@ -41,6 +41,9 @@ public class Journey : Cycle
     print("so it begins");
     if( startInStory ){
       data.player.position = stories[currentStory].transform.position;
+
+      stories[currentStory].EnterOuter();
+      stories[currentStory].EnterInner();
       stories[currentStory].StartStory();
     }
    }

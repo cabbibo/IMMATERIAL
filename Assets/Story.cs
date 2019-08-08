@@ -378,10 +378,12 @@ public class Story : Cycle
       OnLockPage();
     }
 
+  if( oldTransitionPage ){
     oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
+    oldTransitionPage.frame.borderLine.SetPropertyBlock(oldTransitionPage.frameMPB);
+  }
     pages[currentPage].frameMPB.SetFloat("_Cutoff" ,1-v);
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
-    oldTransitionPage.frame.borderLine.SetPropertyBlock(oldTransitionPage.frameMPB);
 
 //    print("fad btwx");
 

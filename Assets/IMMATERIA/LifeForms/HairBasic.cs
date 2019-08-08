@@ -85,5 +85,9 @@ public class HairBasic : LifeForm {
     transformArray = HELP.GetMatrixFloats( transform.localToWorldMatrix );
   }
 
+  public void Set(){
+    SetHairPosition.YOLO();
+  }
+
 
 }
