@@ -26,7 +26,6 @@ public class LandTiler : Cycle
   private float t; // tile
 
   public void DestroyMe(){
-    print("Destry");
     if( Tiles != null ){
     for( int i=0; i < Tiles.Length; i++ ){
 

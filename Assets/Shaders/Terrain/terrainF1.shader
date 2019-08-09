@@ -8,6 +8,7 @@
     _ColorMap ("ColorMap", 2D) = "white" {}
     _NormalMap ("NormalMap", 2D) = "white" {}
     _CubeMap( "Cube Map" , Cube )  = "defaulttexture" {}
+    _Debug("DEBUG",float) = 0
     
     [Toggle(Enable12Struct)] _Struct12("12 Struct", Float) = 0
   }
@@ -42,6 +43,7 @@
 
       float3 _Color;
       float3 _PlayerPosition;
+      bool _Debug;
       sampler2D _MainTex;
       sampler2D _ColorMap;
       sampler2D _NormalMap;
@@ -171,6 +173,7 @@ float l = saturate( (20-dif)/20);
         //tCol = dif;
 
         //tCol = grassHeight;
+        if( _Debug != 0 ){ color.xyz = v.nor * .5 + .5; }
         return float4( color.xyz * shadow  , 1.);
       }
 

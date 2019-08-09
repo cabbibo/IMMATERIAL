@@ -243,7 +243,7 @@ public class Story : Cycle
   }
   
   public void StartStory(){
-    print("startzio");
+//    print("startzio");
  
     if( hardcoded ){
       EnterOuter();
@@ -317,7 +317,7 @@ public class Story : Cycle
 
   public void EnterOuter(){
   
-    Debug.Log("EnterOuttter");
+    //Debug.Log("EnterOuttter");
     insideOuter=true;
     data.sceneCircle.Set( this );
     monolith.gameObject.SetActive( true );
@@ -327,7 +327,7 @@ public class Story : Cycle
 
   }
   public void EnterInner(){
-    Debug.Log("EnterInnerrr");
+    //Debug.Log("EnterInnerrr");
     insideInner=true;
     data.inputEvents.OnTap.AddListener( CheckForStart );
     data.inputEvents.OnSwipeLeft.AddListener( NextPage );
@@ -336,7 +336,7 @@ public class Story : Cycle
     OnEnterInner.Invoke(this);
 
     DoFade(1);
-    print("fadin");
+//    print("fadin");
     
 
   }

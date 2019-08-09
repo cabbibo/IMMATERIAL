@@ -24,12 +24,12 @@ public class Hair: Form {
     lineDebugMaterial.SetBuffer("_VertBuffer", _buffer);
     lineDebugMaterial.SetInt("_Count",count);
     lineDebugMaterial.SetInt("_NumVertsPerHair",numVertsPerHair);
-    //Graphics.DrawProceduralNow(MeshTopology.Lines, count  * 2 );
+    Graphics.DrawProceduralNow(MeshTopology.Lines, count  * 2 );
 
     debugMaterial.SetPass(0);
     debugMaterial.SetBuffer("_VertBuffer", _buffer);
     debugMaterial.SetInt("_Count",count);
-    Graphics.DrawProceduralNow(MeshTopology.Triangles, count * 3 * 2 );
+    Graphics.DrawProceduralNow(MeshTopology.Triangles, count  * 2 );
 
   }
 

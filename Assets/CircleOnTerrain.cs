@@ -26,7 +26,6 @@ public class CircleOnTerrain : Cycle
     SafeInsert(body);
     SafeInsert(life);
 
-    life.active = false;
 
     verts = (SceneCircleVerts)(body.verts);
 

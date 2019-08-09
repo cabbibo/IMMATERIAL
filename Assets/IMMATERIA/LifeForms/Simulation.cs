@@ -8,6 +8,8 @@ public class Simulation : Cycle
   public string nameInBuffer;
   public Form form;
   public Life life;
+
+  public bool skipFormBind;
   
 
   public Binder[] binders;
@@ -16,7 +18,7 @@ public class Simulation : Cycle
   public override void _Create(){
 
 
-    SafeInsert(form);
+    if( !skipFormBind) SafeInsert(form);
     SafeInsert(life);
 
     if( binders == null ){

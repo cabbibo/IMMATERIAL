@@ -46,6 +46,7 @@ public class Life : Cycle {
   }
 
   public virtual void FindKernel(){
+    //DebugThis("TEST");
     kernel = shader.FindKernel( kernelName );
   }
 

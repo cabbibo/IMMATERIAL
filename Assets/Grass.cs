@@ -23,7 +23,6 @@ public class Grass : Simulation
 
     public void Set(){
 
-      print( "have been sett");
       life.YOLO();
       hair.Activate();
     }

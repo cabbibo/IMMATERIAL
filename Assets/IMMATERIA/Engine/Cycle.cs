@@ -310,7 +310,6 @@ public class Cycle : MonoBehaviour{
 
   protected void DoDestroy(){
    
-    SetStates();
     foreach( Cycle c in Cycles ){
 
       if( c.data == null ){ c.data = data; }
@@ -322,6 +321,8 @@ public class Cycle : MonoBehaviour{
 
    
     Destroy();
+    
+    SetStates();
   }
 
 
@@ -444,7 +445,7 @@ void SetStates(){
     Helpers
   */
   public void DebugThis( string s ){
-    print( "Object Name : " + this.gameObject.name +"     || Script Name : "+this.GetType()+ "     || Message: " + s );
+     print( "Object Name : " + this.gameObject.name +"     || Script Name : "+this.GetType()+ "     || Message: " + s );
   }
 
   public void CheckSelfCycle(Cycle c){

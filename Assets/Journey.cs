@@ -16,7 +16,6 @@ public class Journey : Cycle
 
 
   public override void Destroy(){
-    print("hi ");
 
     for( int i = 0; i < stories.Length; i++ ){
         stories[i].OnEnterOuter.RemoveListener(OnStoryEnter);
@@ -38,7 +37,7 @@ public class Journey : Cycle
 
 
    public override void OnLive(){
-    print("so it begins");
+//    print("so it begins");
     if( startInStory ){
       data.player.position = stories[currentStory].transform.position;
 

@@ -10,7 +10,7 @@ public class TransformBuffer : Form
   [HideInInspector]public float[] values;
   private float[] tmpVals;
 
-  public override void SetStructSize(){ structSize = 16; }
+  public override void SetStructSize(){ structSize = 32; }
   public override void SetCount(){ count = transforms.Length; }
 
   public override void Embody(){
@@ -21,9 +21,14 @@ public class TransformBuffer : Form
   public void SetInfo(){
   
     for( int i = 0; i < transforms.Length; i++ ){
+      tmpVals = HELP.GetMatrixFloats(transforms[i].localToWorldMatrix);
+      for( int j = 0; j < 16; j++ ){
+        values[i * 32 + j ] = tmpVals[j];
+      }
+
       tmpVals = HELP.GetMatrixFloats(transforms[i].worldToLocalMatrix);
       for( int j = 0; j < 16; j++ ){
-        values[i * 16 + j ] = tmpVals[j];
+        values[i * 32 + j + 16 ] = tmpVals[j];
       }
     }
 
@@ -34,7 +39,7 @@ public class TransformBuffer : Form
   public override void WhileLiving( float v ){
 
     if( dynamic ){
-      print("setting");
+//      print("setting");
       SetInfo();
     }
   }
