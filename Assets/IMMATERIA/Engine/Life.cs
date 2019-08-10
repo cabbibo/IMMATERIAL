@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+
+using System;
 using UnityEngine;
+using UnityEditor;//.EditorGUI;
 
 
 public class Life : Cycle {
@@ -46,8 +49,17 @@ public class Life : Cycle {
   }
 
   public virtual void FindKernel(){
-    //DebugThis("TEST");
-    kernel = shader.FindKernel( kernelName );
+    //DebugThis("TEST");try
+        try{
+            // Do something that can throw an exception
+
+          kernel = shader.FindKernel( kernelName );
+        }
+        catch (Exception e)
+        {
+            DebugThis("Your Kernel name couldn't be found");
+            EditorGUIUtility.PingObject(this.gameObject);
+        }
   }
 
   public virtual void GetNumThreads(){

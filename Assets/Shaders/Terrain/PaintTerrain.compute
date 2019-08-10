@@ -17,6 +17,10 @@ RWStructuredBuffer<Vert> _VectorBuffer;
 int _VectorBuffer_COUNT;
 float _Delta;
 
+
+float _Reset;
+
+
 float4x4 _Transform;
 float4x4 _oTransform;
 float3 _DeltaPos;
@@ -26,9 +30,10 @@ float3 _PaintPosition;
 float3 _PaintDirection;
 float _PaintSize;
 float _PaintOpacity;
-float _NormalOrHeight;
+int _Brush;
 
 
+float weight[5] =  {0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216};
 
 Texture2D<float4> _HeightMap;
 SamplerState sampler_HeightMap;
@@ -37,16 +42,34 @@ float _MapHeight;
 
 
     float3 worldPos( float3 pos ){
-        float4 c = _HeightMap.SampleLevel(sampler_HeightMap, (pos.xz) * _MapSize , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+        float4 c = _HeightMap.SampleLevel(sampler_HeightMap, (pos.xz) * _MapSize + .5 /1024  , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
         pos.y = _MapHeight * c.x;//* sin(.1 *length(pos.xz)) ;//c.x * 1000;//_MapHeight;
         return pos;
     }
 
 
 
+    Texture2D<float4> _TextureReset;
+SamplerState sampler_TextureReset;
+
+
+    float3 worldPosTexture( float3 pos ){
+        float4 c = _TextureReset.SampleLevel(sampler_TextureReset, (pos.xz) * _MapSize + .5 /1024  , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+        pos.y = _MapHeight * c.x;//* sin(.1 *length(pos.xz)) ;//c.x * 1000;//_MapHeight;
+        return pos;
+    }
+
+    float4 getTexture( float3 pos ){
+       float4 c = _TextureReset.SampleLevel(sampler_TextureReset, (pos.xz) * _MapSize  + .5 /1024 , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+       return c;
+    }
+
+
+
+
     float3 getNormal( float3 pos ){
 
-      float delta = 1;
+      float delta = .01;
       float3 dU = worldPos( pos + float3(delta,0,0) );
       float3 dD = worldPos( pos + float3(-delta,0,0) );
       float3 dL = worldPos( pos + float3(0,0,delta) );
@@ -69,9 +92,63 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 
     // paint direction
-    if(_NormalOrHeight == 0){
+    if(_Brush == 0){
 
-      float3 newVal = float3(_PaintDirection.x , 0 , _PaintDirection.z) * _PaintOpacity;
+  
+      float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
+      v.pos.y += lerp( _PaintOpacity , 0 , l );
+
+      if( v.pos.y > _MapHeight ){ v.pos.y = _MapHeight; }
+    
+
+    // RaiseHeight
+    }else if( _Brush == 1 ){
+  
+      float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
+      v.pos.y -= lerp( _PaintOpacity , 0 , l );
+
+      if( v.pos.y < 0 ){ v.pos.y = 0; }
+    
+    // Flatten
+    }else if( _Brush == 2 ){
+
+      float3 delta = float3(1,0,0);
+      float3 l1 = worldPos( v.pos + delta.xyy* _PaintSize * .1 );
+      float3 l2 = worldPos( v.pos - delta.xyy* _PaintSize * .1 );
+      float3 l3 = worldPos( v.pos + delta.yyx* _PaintSize * .1 );
+      float3 l4 = worldPos( v.pos - delta.yyx* _PaintSize * .1 );
+
+
+
+      float3 ave = (l1 + l2 + l3 + l4) / 4;
+      
+      float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
+      //v.pos.y = lerp(  ave.y,v.pos.y  , l * _PaintOpacity);// lerp( _PaintOpacity , 0 , l );
+
+      if( length( v.pos - _PaintPosition) < _PaintSize ){
+        v.pos.y = lerp( v.pos.y ,ave.y , _PaintOpacity  * length(v.pos - _PaintPosition ) / _PaintSize );
+      }
+      if( v.pos.y < 0 ){ v.pos.y = 0; }
+      if( v.pos.y > _MapHeight ){ v.pos.y = _MapHeight; }
+
+// Raise Grass
+    }else if( _Brush == 3 ){
+
+      float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
+      v.debug += .04*lerp( _PaintOpacity , 0 , l );
+      v.debug = saturate(v.debug);
+// lower Grass
+    }else if( _Brush == 4 ){
+
+      float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
+      v.debug -= .04*lerp( _PaintOpacity , 0 , l );
+      v.debug = saturate(v.debug);
+
+// lower Grass
+    }else{
+
+
+        float3 newVal = float3(_PaintDirection.x , 0 , _PaintDirection.z) * _PaintOpacity;
 
       float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
       newVal = lerp( newVal , float3(0,0,0) , l );
@@ -84,36 +161,27 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     //  v.pos = worldPos( v.pos );
 
-        // RaiseHeight
-    }else if( _NormalOrHeight == 1 ){
-  
-      float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
-      v.pos.y += lerp( _PaintOpacity , 0 , l );
-
-      if( v.pos.y > _MapHeight ){ v.pos.y = _MapHeight; }
-    
-// LowerHeight
-    }else if( _NormalOrHeight == 2 ){
-      
-      float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
-      v.pos.y -= lerp( _PaintOpacity , 0 , l );
-      if( v.pos.y < 0 ){ v.pos.y = 0; }
-
-// Raise Grass
-    }else if( _NormalOrHeight == 3 ){
-
-      float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
-      v.debug += .04*lerp( _PaintOpacity , 0 , l );
-      v.debug = saturate(v.debug);
-// lower Grass
-    }else{
-
-      float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
+     /* float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
       v.debug -= .04*lerp( _PaintOpacity , 0 , l );
-      v.debug = saturate(v.debug);
+      v.debug = saturate(v.debug);*/
     }
 
     v.nor = getNormal( v.pos );
+
+    if( _Reset == 1 ){
+      v.pos = worldPosTexture(v.pos);
+      v.debug = 0;
+      v.tang = 0;
+    }
+
+
+    if( _Reset == 2 ){
+
+      float4 tCol = getTexture( v.pos );
+      v.pos.y = _MapHeight * tCol.x;
+      v.debug = tCol.w;
+      v.tang = float3( tCol.y , 0 ,tCol.z) * 2 - 1;
+    }
     _VectorBuffer[sID] = v;
 
 }

@@ -42,7 +42,7 @@ public class CircleOnTerrain : Cycle
 
   public void Set(){
 
-    print("set");
+    //print("set");
     
     set = transform.position;
 

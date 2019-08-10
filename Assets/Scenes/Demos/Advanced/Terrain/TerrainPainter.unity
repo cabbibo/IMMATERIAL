@@ -296,7 +296,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 435546391}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.37779748, y: -0.024847329, z: 3.85343}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1031886257}
@@ -381,8 +381,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0.14523049, y: -0.6593901, z: 0.13194036, w: -0.7257442}
-  m_LocalPosition: {x: -1.3678722, y: 0.70627403, z: 3.6858013}
+  m_LocalRotation: {x: -0.14065379, y: -0.82623035, z: 0.2356449, w: -0.49196693}
+  m_LocalPosition: {x: -3.112152, y: 29.757301, z: 960.89905}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1453663114}
@@ -416,6 +416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   superSize: 2
   folderName: test1
+  captureVid: 0
   capturing: 0
 --- !u!1 &964205743
 GameObject:
@@ -501,12 +502,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 964205743}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -28.413258, y: 30.826284, z: 18.87276}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 41.719627, y: 26.13221, z: 215.47913}
+  m_LocalScale: {x: 5.555555, y: 5.555555, z: 5.555555}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_Father: {fileID: 2067185580}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1031886253
 GameObject:
@@ -830,7 +831,12 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: EventTypes+RayEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  WhileDown2:
+  WhileDownDelta:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: EventTypes+Vector2Event, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  WhileDownDelta2:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: EventTypes+Vector2Event, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
@@ -840,8 +846,11 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: EventTypes+BaseEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  RayOrigin: {x: -1.361341, y: 0.69709694, z: 3.6911056}
-  RayDirection: {x: -0.5245814, y: 0.7370929, z: -0.42603806}
+  fakeSwipeLeft: 0
+  fakeSwipeRight: 0
+  fakeTapCenter: 0
+  RayOrigin: {x: -3.1032329, y: 29.747137, z: 960.90405}
+  RayDirection: {x: -0.61856604, y: 0.70491064, z: -0.34709805}
   Down: 0
   oDown: 0
   Down2: 0
@@ -852,6 +861,10 @@ MonoBehaviour:
   endPos: {x: 0, y: 0}
   startTime: 0
   endTime: 0
+  swipeSensitivity: 0
+  tapSpeed: 0
+  minSwipeTime: 0
+  maxSwipeTime: 0
   p: {x: 0, y: 0}
   oP: {x: 0, y: 0}
   vel: {x: 0, y: 0}
@@ -859,6 +872,7 @@ MonoBehaviour:
   oP2: {x: 0, y: 0}
   vel2: {x: 0, y: 0}
   touchID: 0
+  hitTag: Untagged
 --- !u!4 &1366077941
 Transform:
   m_ObjectHideFlags: 0
@@ -1028,8 +1042,8 @@ MonoBehaviour:
   Cycles:
   - {fileID: 1631102100}
   - {fileID: 1366077940}
-  - {fileID: 1750621659}
   - {fileID: 2067185579}
+  AllInEditMode: 1
 --- !u!114 &1631102100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1059,24 +1073,33 @@ MonoBehaviour:
   debug: 0
   active: 0
   data: {fileID: 1631102100}
-  Cycles: []
-  Camera: {fileID: 963194228}
-  Player: {fileID: 1031886257}
-  Text: {fileID: 0}
-  Controls: {fileID: 0}
-  PlayerControls: {fileID: 0}
-  Events: {fileID: 1366077940}
-  Island: {fileID: 1750621659}
-  CameraForward: {x: 0.91877353, y: -0.3848007, z: 0.08822563}
-  CameraUp: {x: 0.38303697, y: 0.9229997, z: 0.036800027}
-  CameraRight: {x: 0.0955929, y: 0.000017181039, z: -0.9954206}
-  CameraPosition: {x: -1.3678722, y: 0.70627403, z: 3.6858013}
-  PlayerForward: {x: 0, y: 0, z: 1}
-  PlayerUp: {x: 0, y: 1, z: 0}
-  PlayerRight: {x: 1, y: 0, z: 0}
-  PlayerPosition: {x: 0.37779748, y: -0.024847329, z: 3.85343}
-  PlayerSoul: {x: 11.3974695, y: 0.77981937, z: 2.246051}
-  Soul: {fileID: 0}
+  Cycles:
+  - {fileID: 1750621659}
+  camera: {fileID: 0}
+  player: {fileID: 0}
+  journey: {fileID: 0}
+  state: {fileID: 0}
+  cameraControls: {fileID: 0}
+  playerControls: {fileID: 0}
+  inputEvents: {fileID: 0}
+  land: {fileID: 1750621659}
+  tiler: {fileID: 0}
+  sceneCircle: {fileID: 0}
+  book: {fileID: 0}
+  textParticles: {fileID: 0}
+  guideParticles: {fileID: 0}
+  monolithParticles: {fileID: 0}
+  terrainTap: {fileID: 0}
+  cameraForward: {x: 0, y: 0, z: 0}
+  cameraUp: {x: 0, y: 0, z: 0}
+  cameraRight: {x: 0, y: 0, z: 0}
+  cameraPosition: {x: 0, y: 0, z: 0}
+  playerForward: {x: 0, y: 0, z: 0}
+  playerUp: {x: 0, y: 0, z: 0}
+  playerRight: {x: 0, y: 0, z: 0}
+  playerPosition: {x: 0, y: 0, z: 0}
+  playerSoul: {x: 0, y: 0, z: 0}
+  soul: {fileID: 0}
 --- !u!1 &1638269110
 GameObject:
   m_ObjectHideFlags: 0
@@ -1216,7 +1239,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1750621658}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.06601084, y: -4.420573, z: 8.572939}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1233,8 +1256,8 @@ GameObject:
   - component: {fileID: 2067185580}
   - component: {fileID: 2067185579}
   - component: {fileID: 2067185578}
-  - component: {fileID: 2067185577}
   - component: {fileID: 2067185581}
+  - component: {fileID: 2067185577}
   m_Layer: 0
   m_Name: Painter
   m_TagString: Untagged
@@ -1305,7 +1328,7 @@ MonoBehaviour:
   dying: 0
   died: 0
   destroyed: 0
-  debug: 1
+  debug: 0
   active: 0
   data: {fileID: 1631102100}
   Cycles: []
@@ -1351,28 +1374,34 @@ MonoBehaviour:
   - {fileID: 2067185578}
   - {fileID: 2067185577}
   - {fileID: 2067185581}
-  - {fileID: 2067185581}
-  - {fileID: 2067185581}
-  - {fileID: 2067185581}
-  - {fileID: 2067185581}
-  - {fileID: 2067185581}
-  - {fileID: 2067185581}
-  - {fileID: 2067185581}
-  - {fileID: 2067185581}
   nameInBuffer: 
   form: {fileID: 2067185578}
   life: {fileID: 2067185577}
+  skipFormBind: 0
+  binders: []
+  options:
+  - Raise
+  - Lower
+  - Flatten
+  - GrassHeight
+  - WindDirection
+  brushType: 0
   painting: 0
   verts: {fileID: 2067185578}
   tris: {fileID: 2067185581}
   windDebugMat: {fileID: 0}
-  grassDebugMat: {fileID: 0}
+  grassDebugMat: {fileID: 2100000, guid: ca4236765f966cb428d9559a217ef952, type: 2}
   planeDebugMat: {fileID: 2100000, guid: 119b1545de2150e4da9d9a23ea9b34b9, type: 2}
-  paintPosition: {x: 0, y: 0, z: 0}
-  paintDirection: {x: 0, y: 0, z: 0}
-  paintSize: 1
-  paintOpacity: 1
+  drawPlane: 1
+  drawGrass: 1
+  drawWind: 0
+  startTexture: {fileID: 2800000, guid: b7f9c6fde95b7a845acf1b86e1449a3f, type: 3}
+  paintPosition: {x: 41.719627, y: 26.13221, z: 215.47913}
+  paintDirection: {x: -0.9384922, y: 0.160754, z: 0.30559868}
+  paintSize: 5.555555
+  paintOpacity: 0.43103448
   normalOrHeight: 1
+  reset: 0
   paintTip: {fileID: 964205747}
 --- !u!4 &2067185580
 Transform:
@@ -1382,9 +1411,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2067185576}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.9289594, y: 0.08102443, z: 9.686358}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 964205747}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1414,7 +1444,7 @@ MonoBehaviour:
   dying: 0
   died: 0
   destroyed: 0
-  debug: 1
+  debug: 0
   active: 0
   data: {fileID: 1631102100}
   Cycles: []

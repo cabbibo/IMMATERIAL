@@ -26,7 +26,7 @@ public class KelpBunch : Cycle
   }
 
   public override void Activate(){
-    print("activado");
+//    print("activado");
     Set();
     body.showBody = true;
   }
