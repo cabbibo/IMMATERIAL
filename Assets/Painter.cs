@@ -19,13 +19,18 @@ public class Painter : Simulation
   public Material planeDebugMat;
 
 
+  public int undoBufferSize;
+  public int currentUndoLocation;
+  public List<Color[]> undoBuffer;
+
   public bool drawPlane;
   public bool drawGrass;
   public bool drawWind;
 
   public string safeName;
 
-  public Texture startTexture;
+  public Texture2D startTexture;
+  public Texture2D undoTexture;
 
 
   public Vector3 paintPosition;
@@ -43,8 +48,36 @@ public class Painter : Simulation
 
   public override void Create(){
     SafeInsert( tris );
+
+    if( undoBuffer == null ){ 
+      undoBuffer = new List<Color[]>(); 
+    }//.Clone();
+  
+    if( undoTexture == null ){
+
+      undoTexture = new Texture2D(startTexture.width, startTexture.height);
+
+      Graphics.CopyTexture(startTexture, undoTexture);
+    }
+
   }
 
+
+
+
+  // Only Recreate if its not the correct size;
+  public override void OnLive(){
+    if( undoBuffer.Count != undoBufferSize ){
+      undoBuffer = new List<Color[]>(undoBufferSize);
+
+      Color[] colors = ExtractColors();
+      for(int i = 0; i < undoBufferSize;i++ ){
+
+//        print( i );
+        undoBuffer.Add(colors);
+      }
+    }
+  }
   public override void Bind(){
 
     life.BindPrimaryForm("_VectorBuffer", verts);
@@ -55,6 +88,7 @@ public class Painter : Simulation
     life.BindAttribute("_Brush", "brushType" , this);
     life.BindAttribute("_Reset", "reset" , this);
     life.BindAttribute("_TextureReset", "startTexture" , this);
+    life.BindAttribute("_UndoTexture", "undoTexture" , this);
 
     data.BindLandData(life);
 
@@ -106,20 +140,28 @@ public class Painter : Simulation
 
 
 public void ResetToOriginal(){
+  reset = 2;
+  life.YOLO();
+  reset = 0;
+}
+
+
+public void ResetToUndo(){
+  reset = 3;
+  life.YOLO();
+  reset = 0;
+}
+
+
+
+public void ResetToFlat(){
   reset = 1;
   life.YOLO();
   reset = 0;
 }
 
 
-public void ResetToFlat(){
-  reset = 2;
-  life.YOLO();
-  reset = 0;
-}
-
-   public void Save(){
-
+  public Color[] ExtractColors(){
     float[] values = verts.GetData();
 
     Color[] colors =  new Color[verts.count];
@@ -139,6 +181,26 @@ public void ResetToFlat(){
 
     }
 
+    return colors;
+
+  }
+   public void Save(){
+
+    Debug.Log("SAVE");
+    Color[] colors = ExtractColors();
+
+     for( int i = undoBuffer.Count-1; i > 0; i-- ){
+      undoBuffer[i] = undoBuffer[i-1];
+     }
+
+     undoBuffer[0] = colors;
+
+     currentUndoLocation = 0;
+
+
+
+
+
     data.land.heightMap.SetPixels(colors,0);
     data.land.heightMap.Apply(true);
 
@@ -146,7 +208,43 @@ public void ResetToFlat(){
 
   }
 
+  public void Undo(){
+    currentUndoLocation ++;
+    if( currentUndoLocation >= undoBuffer.Count-1 ){
+      Debug.Log( "At Oldest");
+    }else{
+      MakeUndoTexture( undoBuffer[currentUndoLocation] );
+    }
+  }
 
+
+  public void Redo(){
+
+
+    currentUndoLocation --;
+    if( currentUndoLocation < 0 ){
+      Debug.Log( "AT NEWEST");
+    }else{
+      MakeUndoTexture( undoBuffer[currentUndoLocation] );
+    }
+
+  }
+
+
+  public void MakeUndoTexture(Color[] c){
+    undoTexture.SetPixels(c,0);
+    undoTexture.Apply(true);
+    ResetToUndo();
+    
+
+
+    Color[] colors = ExtractColors();
+
+    data.land.heightMap.SetPixels(colors,0);
+    data.land.heightMap.Apply(true);
+
+    SaveTextureAsPNG( data.land.heightMap , "Assets/" + safeName + ".png");
+  }
 
 
 
@@ -179,7 +277,7 @@ public void SetBrushOpacity(Slider s){
    {
        byte[] _bytes =_texture.EncodeToPNG();
        System.IO.File.WriteAllBytes(_fullPath, _bytes);
-       Debug.Log(_bytes.Length/1024  + "Kb was saved as: " + _fullPath);
+//       Debug.Log(_bytes.Length/1024  + "Kb was saved as: " + _fullPath);
    }
 
 

@@ -66,6 +66,10 @@ public class CameraController : Cycle
       }
 
       Vector3 targetPosition = followTarget.position + Vector3.up* heightAbove + xy * radius;
+
+      float h = data.land.SampleHeight( targetPosition );
+
+      if( targetPosition.y < h + 2 ){ targetPosition = new Vector3( targetPosition.x , h + 2 , targetPosition.z);}
       Quaternion targetRotation = Quaternion.LookRotation( (followTarget.position - CameraHolder.position + Vector3.up) );
 
       float steal = Mathf.Clamp( (Time.time - startFollowTime) / startFollowSpeed , 0 , 1);

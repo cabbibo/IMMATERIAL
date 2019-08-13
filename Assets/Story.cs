@@ -272,6 +272,7 @@ public class Story : Cycle
     oDif = dif;
     dif = (transform.position - data.player.position).magnitude;
 
+
     if( !hardcoded ){
 
     if( dif < outerRadius && oDif >= outerRadius ){
@@ -317,7 +318,7 @@ public class Story : Cycle
 
   public void EnterOuter(){
   
-    //Debug.Log("EnterOuttter");
+    Debug.Log("EnterOuttter");
     insideOuter=true;
     data.sceneCircle.Set( this );
     monolith.gameObject.SetActive( true );

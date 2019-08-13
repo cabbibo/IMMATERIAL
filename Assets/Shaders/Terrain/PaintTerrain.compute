@@ -49,7 +49,12 @@ float _MapHeight;
 
 
 
-    Texture2D<float4> _TextureReset;
+Texture2D<float4> _UndoTexture;
+SamplerState sampler_UndoTexture;
+
+
+
+Texture2D<float4> _TextureReset;
 SamplerState sampler_TextureReset;
 
 
@@ -63,6 +68,13 @@ SamplerState sampler_TextureReset;
        float4 c = _TextureReset.SampleLevel(sampler_TextureReset, (pos.xz) * _MapSize  + .5 /1024 , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
        return c;
     }
+
+
+       float4 getUndoTexture( float3 pos ){
+       float4 c = _UndoTexture.SampleLevel(sampler_UndoTexture, (pos.xz) * _MapSize  + .5 /1024 , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+       return c;
+    }
+
 
 
 
@@ -169,7 +181,7 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     v.nor = getNormal( v.pos );
 
     if( _Reset == 1 ){
-      v.pos = worldPosTexture(v.pos);
+      v.pos = float3( v.pos.x , 0 , v.pos.z);
       v.debug = 0;
       v.tang = 0;
     }
@@ -182,6 +194,19 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
       v.debug = tCol.w;
       v.tang = float3( tCol.y , 0 ,tCol.z) * 2 - 1;
     }
+
+
+       if( _Reset == 3 ){
+
+      float4 tCol = getUndoTexture( v.pos );
+      v.pos.y = _MapHeight * tCol.x;
+      v.debug = tCol.w;
+      v.tang = float3( tCol.y , 0 ,tCol.z) * 2 - 1;
+    }
+
+
+
     _VectorBuffer[sID] = v;
+
 
 }

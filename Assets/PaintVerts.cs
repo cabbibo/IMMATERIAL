@@ -12,9 +12,9 @@ public class PaintVerts : Form
   }
 
   public override void SetCount(){
-    print(data);
+    //print(data);
     //width = data.land.heightMap.width;
-    print( width );
+    //print( width );
     count = width * width;
     size = data.land.size;
   }

@@ -100,9 +100,11 @@ varyings vert (uint id : SV_VertexID){
       float4 t = terrainSampleColor( v.pos );
 
 
-float3 dir = float3( 0, v.debug , 0);
+float3 dir = float3( 0, v.debug , 0); 
 
-float3 yVal = normalize( cross( dir , float3(1,0,0) ));
+float3 viewDir = UNITY_MATRIX_IT_MV[2].xyz;
+
+float3 yVal = normalize( cross( dir , viewDir ));
 
   if( alternate == 0 ){ extra =  -yVal * .1; uv = float2(0,0); }
   if( alternate == 1 ){ extra =  +yVal  * .1; uv = float2(1,0); }
@@ -111,6 +113,7 @@ float3 yVal = normalize( cross( dir , float3(1,0,0) ));
 
       o.worldPos = v.pos.xyz + float3(0,_Up,0) +extra * _Size;
       o.debug = dir;
+      o.uv = uv * v.debug.x * 3;
 
       o.pos = mul (UNITY_MATRIX_VP, float4(o.worldPos,1.0f));
 
@@ -125,7 +128,7 @@ float3 yVal = normalize( cross( dir , float3(1,0,0) ));
 
 //Pixel function returns a solid color for each point.
 float4 frag (varyings v) : COLOR {
-   return float4(v.debug * .5 + .5,1 );
+   return float4(v.uv,1,1 );
     return 1;
 }
 

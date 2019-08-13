@@ -12,6 +12,7 @@
      {
          Painter test = (Painter)target;
  HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+
              if (Event.current.type == EventType.MouseDrag && Event.current.button == 0)
              {
 
@@ -28,6 +29,8 @@
              if (Event.current.type == EventType.MouseUp)
              {
               test.Save();
+ Debug.Log("Event Type : "  + Event.current.type );
+ 
              }
          
          
@@ -39,7 +42,7 @@
 
 EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();
         GUILayout.Label("PaintSize : " + test.paintSize);
-        test.paintSize = GUILayout.HorizontalSlider(test.paintSize, 0.0F, 100.0F);
+        test.paintSize = GUILayout.HorizontalSlider(test.paintSize, 0.0F, 1000.0F);
        
      
         GUILayout.Label("Paint Opacity: " + test.paintOpacity);
@@ -56,6 +59,16 @@ EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();
         {
           test.ResetToFlat();
           test.Save();
+        }
+
+        if (GUILayout.Button("UNDO"))
+        {
+          test.Undo();
+        }
+
+        if (GUILayout.Button("REDO"))
+        {
+          test.Redo();
         }
 
        
