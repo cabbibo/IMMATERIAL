@@ -9,17 +9,7 @@ using UnityEngine;
 public class Story : Cycle
 {
 
-
-  public Vector2 uv;
-  public Monolith monolith;
-
   public int id;
-
-  public float innerRadius;
-  public float outerRadius;
-
-  public bool insideInner;
-  public bool insideOuter;
    
   public Page[] pages;
   public int currentPage;
@@ -27,20 +17,6 @@ public class Story : Cycle
   public bool hardcoded;
   public bool cantUnstart;
   public bool spawnFromCamera;
-
-
-
-
-  public EventTypes.StoryEvent OnEnterOuter;
-  public EventTypes.StoryEvent OnEnterInner;
-  public EventTypes.StoryEvent OnExitOuter;
-  public EventTypes.StoryEvent OnExitInner;
-  public EventTypes.StoryEvent OnStartStory;
-  public EventTypes.StoryEvent OnEndStory;
-
-
-  public float dif;
-  public float oDif;
   public bool started;
 
 
@@ -61,24 +37,10 @@ public class Story : Cycle
 
   public override void Create(){
 
-
-    uv =new Vector2( transform.position.x * data.land.size , transform.position.z * data.land.size);
-    dif = 10000000;
     for( int i = 0; i < pages.Length; i ++ ){
       SafeInsert(pages[i]);
     }
-    SafeInsert( monolith );
-    monolith.story = this;
 
-
-    for( int i =0; i < data.journey.stories.Length; i++ ){
-      if( data.journey.stories[i] == this ){
-//        print("IM THIS");
-        id = i;
-      }
-    }
-
-    dif = 1000;
   }
 
   public override void OnBirthed(){
@@ -86,10 +48,20 @@ public class Story : Cycle
       pages[i].frameMPB.SetFloat("_Cutoff" , 1);
       pages[i].frame.borderLine.SetPropertyBlock( pages[currentPage].frameMPB );
     }
+  }
 
-    monolith.gameObject.SetActive( false );
+   public void CheckForStart(){
 
+    if( !started ){
+      RaycastHit hit;
 
+      if (pages[currentPage].frame.collider.Raycast(data.inputEvents.ray, out hit, 100.0f)){
+        
+        StartStory();
+      }else{
+        
+      }
+    }
   }
 
   public void NextPage(){
@@ -211,14 +183,7 @@ public class Story : Cycle
 
     SetColliders( true );
 
-    OnEndStory.Invoke( this );
-
-    if( hardcoded ){
-      ExitInner();
-      ExitOuter();
-    }
   }
-
 
   public void SetColliders( bool val ){
     for( int i = 0; i < pages.Length; i ++ ){
@@ -227,39 +192,19 @@ public class Story : Cycle
     pages[0].frame.collider.enabled = val;
   }
 
-  public void CheckForStart(){
-
-    if( !started ){
-      RaycastHit hit;
-
-      if (pages[currentPage].frame.collider.Raycast(data.inputEvents.ray, out hit, 100.0f)){
-        
-        StartStory();
-      }else{
-        
-      }
-    }
-//    print("YA");
-  }
+  
   
   public void StartStory(){
-//    print("startzio");
- 
-    if( hardcoded ){
-      EnterOuter();
-      EnterInner();
-      DoFade( 1 );
-    }
+
 
     data.state.inStory = true;
 
-    OnStartStory.Invoke(this);
     started = true;
 
-      transitioning = true;
-        transitionSpeed = pages[currentPage].lerpSpeed;
-        if( fast ){ transitionSpeed = 1; }
-        transitionStartTime = Time.time;
+    transitioning = true;
+    transitionSpeed = pages[currentPage].lerpSpeed;
+    if( fast ){ transitionSpeed = 1; }
+    transitionStartTime = Time.time;
     SetActivePage(); 
     SetColliders( false );
 
@@ -268,96 +213,12 @@ public class Story : Cycle
 
   public override void WhileLiving( float v){
     
-    
-    oDif = dif;
-    dif = (transform.position - data.player.position).magnitude;
-
-
-    if( !hardcoded ){
-
-    if( dif < outerRadius && oDif >= outerRadius ){
-      EnterOuter();
-    }
-
-    if( dif < innerRadius && oDif >= innerRadius ){
-      EnterInner();
-    }
-
-    if( dif >= outerRadius && oDif < outerRadius ){
-      ExitOuter();
-    }
-
-    if( dif >= innerRadius && oDif < innerRadius ){
-      ExitInner();
-    }
-    }
-
-    if( insideOuter && !insideInner ){
-      DoFade( 1-((dif - innerRadius) / (outerRadius-innerRadius)));
-    }
-
-
-
     if( transitioning ){
       DoBetweenFade();
     }
 
-
-    #if UNITY_EDITOR 
-       if( !Application.isPlaying){ 
-
-        for( int i = 0; i < pages.Length; i++ ){
-          pages[i].frameMPB.SetFloat("_Cutoff" , 0);
-          pages[i].frame.borderLine.SetPropertyBlock(pages[i].frameMPB);
- 
-        }
-      }
-    #endif
-
   }
 
-  public void EnterOuter(){
-  
-    Debug.Log("EnterOuttter");
-    insideOuter=true;
-    data.sceneCircle.Set( this );
-    monolith.gameObject.SetActive( true );
-
-    OnEnterOuter.Invoke(this);
-  
-
-  }
-  public void EnterInner(){
-    //Debug.Log("EnterInnerrr");
-    insideInner=true;
-    data.inputEvents.OnTap.AddListener( CheckForStart );
-    data.inputEvents.OnSwipeLeft.AddListener( NextPage );
-    data.inputEvents.OnSwipeRight.AddListener( PreviousPage );
-
-    OnEnterInner.Invoke(this);
-
-    DoFade(1);
-//    print("fadin");
-    
-
-  }
-
-  public void ExitOuter(){
-    insideOuter=false;
-
-    data.sceneCircle.Unset( this );
-    OnExitOuter.Invoke(this);
-    DoFade(0);
-  }
-
-
-  public void ExitInner(){
-    insideInner=false;
-    data.inputEvents.OnTap.RemoveListener( CheckForStart );
-    data.inputEvents.OnSwipeLeft.RemoveListener( NextPage );
-    data.inputEvents.OnSwipeRight.RemoveListener( PreviousPage );
-    OnExitInner.Invoke(this);
-  }
 
 
   public void DoFade(float v ){
@@ -374,7 +235,7 @@ public class Story : Cycle
   public void DoBetweenFade(){
 
     float v = (Time.time - transitionStartTime) / transitionSpeed;
-    if( v > 1 ){ 
+    if( v > 1 && started ){ 
       transitioning = false;
       OnLockPage();
     }

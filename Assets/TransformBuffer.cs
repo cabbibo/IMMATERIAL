@@ -38,8 +38,7 @@ public class TransformBuffer : Form
 
   public override void WhileLiving( float v ){
 
-    if( dynamic ){
-//      print("setting");
+    if( dynamic && active ){
       SetInfo();
     }
   }

@@ -58,7 +58,7 @@ Material:
     m_Floats:
     - _BaseHue: 0.1
     - _BumpScale: 1
-    - _Cutoff: 0
+    - _Cutoff: 1.1111111e+11
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _FadeMax: 0

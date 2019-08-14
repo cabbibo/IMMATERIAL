@@ -5,7 +5,7 @@ using UnityEngine;
 public class Journey : Cycle
 {
 
-  public Story[] stories;
+  public StorySetter[] stories;
 
   public int currentStory;
   public int connectedStory;
@@ -17,41 +17,37 @@ public class Journey : Cycle
 
   public override void Destroy(){
 
-    for( int i = 0; i < stories.Length; i++ ){
-        stories[i].OnEnterOuter.RemoveListener(OnStoryEnter);
-        stories[i].OnExitOuter.RemoveListener(OnStoryExit);
-      }
-
-
   }
+
+
    public override void Create(){
 
 
       for( int i = 0; i < stories.Length; i++ ){
         SafeInsert( stories[i] );
-        stories[i].OnEnterOuter.AddListener(OnStoryEnter);
-        stories[i].OnExitOuter.AddListener(OnStoryExit);
       }
 
    }
 
 
    public override void OnLive(){
-//    print("so it begins");
     if( startInStory ){
+
       data.player.position = stories[currentStory].transform.position;
 
-      stories[currentStory].EnterOuter();
-      stories[currentStory].EnterInner();
+      stories[currentStory].perimeter.EnterOuter();
+      stories[currentStory].perimeter.EnterInner();
+
       stories[currentStory].StartStory();
     }
+
    }
 
   public void ConnectMonolith(int id){
     connectedStory = id;
     Shader.SetGlobalInt("_ConnectedStory" , connectedStory );
     data.monolithParticles._Emit = 1;
-    data.monolithParticles._EmitterPosition = stories[id].monolith.transform.position;
+    //data.monolithParticles._EmitterPosition = stories[id].monolith.transform.position;
   }
 
   public void DisconnectMonolith(int id){

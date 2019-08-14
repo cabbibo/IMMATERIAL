@@ -200,7 +200,7 @@ public class Life : Cycle {
 
       if( ba.nameInShader == nameInShader ){
         boundAttributes[id] = a;
-        DebugThis( ba.nameInShader + " is being rebound" );
+        //DebugThis( ba.nameInShader + " is being rebound" );
         replaced = true;
         break;
       }

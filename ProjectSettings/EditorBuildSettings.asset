@@ -21,6 +21,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Stories/Dandelion.unity
     guid: b3d3b4f0c7fcb473497eb96ac69381a0
   - enabled: 1
-    path: Assets/Scenes/FullTests/Full.unity
+    path: Assets/Scenes/Full.unity
     guid: 2f5c6ecdd0e28484d90cf39b0681200b
   m_configObjects: {}

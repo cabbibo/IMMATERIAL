@@ -44,7 +44,7 @@ public class SceneCircle : Cycle
   }
 
 
-  public void Set( Story story ){
+  public void Set( PerimeterChecker story ){
     set = story.transform.position;
     inner = story.innerRadius;
     outer = story.outerRadius;
@@ -65,7 +65,7 @@ public class SceneCircle : Cycle
   }
 
 
-  public void Unset( Story story ){
+  public void Unset(PerimeterChecker story ){
 
      setTime = Time.time;
     setting = 0;

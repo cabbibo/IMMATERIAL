@@ -27,6 +27,8 @@ public class Monolith : Cycle
 
     public override void Create(){
 
+      print( "WHA : " + this.gameObject );
+
       DestroyMe();
 
       ratio = (float)Screen.width / (float) Screen.height;

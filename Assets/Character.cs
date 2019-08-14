@@ -50,6 +50,8 @@ public class Character : Cycle {
   public GameObject OnGroundBook;
   public GameObject InHandBook;
 
+  public bool canMove;
+
   public override void Create () {
 
     moveTarget = transform.position;
@@ -57,7 +59,6 @@ public class Character : Cycle {
     deltaRot = Quaternion.identity;
     oPos = Vector3.zero;
     velocity = Vector3.zero;
-
 
     animator.Play("Grounded");
   }
@@ -195,31 +196,62 @@ public class Character : Cycle {
 
       //turn += angleOffset;
 
+canMove = true;
+float d = 1;
+
+ if( doTerrain ){
+        float h = data.land.SampleHeight( transform.position );
+        float h2 = data.land.SampleHeight( transform.position + transform.forward * .5f );
+
+        Vector3 normal = data.land.SampleNormal( transform.position );
+        d = Vector3.Dot( normal , Vector3.up );
+
+
+    if( h2 > h && d < .9 ){
+    canMove = false;
+    }
+
+}
+
       Rotate(forward , turn );
       animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
     
-      if( forward < forwardCutoff ){ forward = 0; }
-      animator.SetFloat("Forward", forward*runMultiplier, 0.1f, Time.deltaTime);
+if( canMove ){
 
+
+  if( forward < forwardCutoff ){ forward = 0; }
+  animator.SetFloat("Forward", forward*runMultiplier, 0.1f, Time.deltaTime);
+}else{
+  //forward = 0;
+  animator.SetFloat("Forward", forward*runMultiplier * d * d * d, 0.1f, Time.deltaTime);
+}
 
 
       if( doTerrain ){
         float h = data.land.SampleHeight( transform.position );
        
         Vector3 normal = data.land.SampleNormal( transform.position );
-        float d = Vector3.Dot( normal , Vector3.up );
+        //float d = Vector3.Dot( normal , Vector3.up );
 
         float h2 = data.land.SampleHeight( transform.position + transform.forward * .5f );
 
     //    print( (1-d) * 10);
-        animator.SetFloat("Steepness", (1-d) * 10 );
+        animator.SetFloat("Steepness", (1-d) * 4 );
 
+        //bool falling = false;
         if( h2 > h ){
           animator.SetBool( "Uphill" , true);
         }else{
           animator.SetBool("Uphill", false);
+        
+          if( (1-d) * 10 > 1 ){
+           // falling = true;
+            transform.position += velocity;//*(1+(1-d) * 10);
+          }
         }
 
+
+        //if( falling ){ h -= .5f; }
 
           transform.position = new Vector3( transform.position.x , h , transform.position.z);
       }
