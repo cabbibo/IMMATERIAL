@@ -100,7 +100,7 @@ varyings vert (uint id : SV_VertexID){
       float4 t = terrainSampleColor( v.pos );
 
 
-float3 dir = float3( 0, v.debug , 0); 
+float3 dir = float3( 0, v.debug - .1 , 0); 
 
 float3 viewDir = UNITY_MATRIX_IT_MV[2].xyz;
 

@@ -191,7 +191,7 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
       float4 tCol = getTexture( v.pos );
       v.pos.y = _MapHeight * tCol.x;
-      v.debug = tCol.w;
+      v.debug = tCol.w -.1;
       v.tang = float3( tCol.y , 0 ,tCol.z) * 2 - 1;
     }
 
@@ -200,7 +200,7 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
       float4 tCol = getUndoTexture( v.pos );
       v.pos.y = _MapHeight * tCol.x;
-      v.debug = tCol.w;
+      v.debug = tCol.w-.1;
       v.tang = float3( tCol.y , 0 ,tCol.z) * 2 - 1;
     }
 

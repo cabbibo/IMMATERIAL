@@ -11,6 +11,9 @@ public class Painter : Simulation
  public int brushType;
 
 
+  public string terrainPath;
+
+
   public bool painting;
   public PaintVerts verts;
   public PaintTris tris;
@@ -40,6 +43,7 @@ public class Painter : Simulation
   public float paintSize;
   public float paintOpacity;
   public float normalOrHeight;
+private Color[] colors;
 
 
   public float reset;
@@ -70,7 +74,7 @@ public class Painter : Simulation
     if( undoBuffer.Count != undoBufferSize ){
       undoBuffer = new List<Color[]>(undoBufferSize);
 
-      Color[] colors = ExtractColors();
+     ExtractColors();
       for(int i = 0; i < undoBufferSize;i++ ){
 
 //        print( i );
@@ -161,10 +165,10 @@ public void ResetToFlat(){
 }
 
 
-  public Color[] ExtractColors(){
+  public void ExtractColors(){
     float[] values = verts.GetData();
 
-    Color[] colors =  new Color[verts.count];
+    colors =  new Color[verts.count];
     for( int i = 0; i < verts.count; i ++ ){
       
       // extracting height
@@ -175,19 +179,29 @@ public void ResetToFlat(){
       float z = values[ i * verts.structSize + 8 ] * .5f + .5f;
 
 
-      float a = values[ i * verts.structSize + 11 ];
+      float a = Mathf.Clamp( values[ i * verts.structSize + 11 ], .1f , .9999f);
 
       colors[i] = new Color( h,x,z,a);
 
     }
 
-    return colors;
-
   }
    public void Save(){
 
-    Debug.Log("SAVE");
-    Color[] colors = ExtractColors();
+    ExtractColors();
+    propogateUndoBuffer();
+    UpdateLand();
+
+
+   //string pathToImage = terrainPath+ safeName + ".png";
+   //SaveTextureAsPNG( data.land.heightMap , pathToImage);
+     //  UpdateLand();
+
+   // string pathToImage = terrainPath+ safeName + ".png";
+   // SaveTextureAsPNG( data.land.heightMap , pathToImage);
+    
+
+   /* Color[] colors = ExtractColors();
 
      for( int i = undoBuffer.Count-1; i > 0; i-- ){
       undoBuffer[i] = undoBuffer[i-1];
@@ -204,9 +218,160 @@ public void ResetToFlat(){
     data.land.heightMap.SetPixels(colors,0);
     data.land.heightMap.Apply(true);
 
-    SaveTextureAsPNG( data.land.heightMap , "Assets/" + safeName + ".png");
+    SaveTextureAsPNG( data.land.heightMap , "Assets/" + safeName + ".png");*/
 
   }
+
+  public void UltraSave(){
+
+    
+    //Save();
+
+    ExtractColors();
+    propogateUndoBuffer();
+    UpdateLand();
+
+    string pathToImage = terrainPath+ "safe.png";
+    SaveTextureAsPNG( data.land.heightMap , pathToImage);
+    
+    //string pathToImage = terrainPath + "safe.png";
+    //SaveTextureAsPNG( data.land.heightMap , pathToImage);
+
+  }
+
+
+
+  public void propogateUndoBuffer(){
+
+     for( int i = undoBuffer.Count-1; i > 0; i-- ){
+      undoBuffer[i] = undoBuffer[i-1];
+     }
+
+     undoBuffer[0] = colors;
+
+     currentUndoLocation = 0;
+
+  }
+
+  /*IEnumerator SafeEncode()
+  {  
+
+      string pathToImage = terrainPath+ safeName + ".png";
+
+    
+        if(System.IO.File.Exists(pathToImage)) {
+            System.IO.File.Delete(pathToImage);
+        }
+   
+
+        SaveTextureAsPNG( data.land.heightMap , pathToImage);
+ 
+        // wait until screen is captured
+        float startTime = Time.time;
+        while(false == System.IO.File.Exists(pathToImage)) {
+   
+            // tried too long to save the file ?
+            if(Time.time - startTime > 5.0f) {
+                yield break;
+            }
+            yield return null;
+        }
+
+
+  }
+
+  IEnumerator UltraSafeEncode()
+  {  
+
+    string pathToImage = terrainPath+ "safe.png";
+    
+        if(System.IO.File.Exists(pathToImage)) {
+            System.IO.File.Delete(pathToImage);
+        }
+   
+
+        SaveTextureAsPNG( data.land.heightMap , pathToImage);
+ 
+        // wait until screen is captured
+        float startTime = Time.time;
+        while(false == System.IO.File.Exists(pathToImage)) {
+   
+            // tried too long to save the file ?
+            if(Time.time - startTime > 5.0f) {
+                yield break;
+            }
+            yield return null;
+        }
+
+
+  }*/
+
+  public void UpdateLand(){
+
+
+        data.land.heightMap.SetPixels(colors,0);
+        data.land.heightMap.Apply(true);
+
+
+  }
+
+  void DoEncode(string pathToImage ){
+   
+
+
+
+ 
+
+ 
+  }
+
+/*
+
+   IEnumerator UltraSafe()
+  {
+
+    Color[] colors = ExtractColors();
+
+     for( int i = undoBuffer.Count-1; i > 0; i-- ){
+      undoBuffer[i] = undoBuffer[i-1];
+     }
+
+     undoBuffer[0] = colors;
+
+     currentUndoLocation = 0;
+
+
+
+
+
+        data.land.heightMap.SetPixels(colors,0);
+        data.land.heightMap.Apply(true);
+
+
+
+        string pathToImage = + safeName + ".png";
+ 
+        if(System.IO.File.Exists(pathToImage)) {
+            System.IO.File.Delete(pathToImage);
+        }
+   
+
+
+        SaveTextureAsPNG( data.land.heightMap , "Assets/" + safeName + ".png");
+ 
+        // wait until screen is captured
+        float startTime = Time.time;
+        while(false == System.IO.File.Exists(pathToImage)) {
+   
+            // tried too long to save the file ?
+            if(Time.time - startTime > 5.0f) {
+                yield break;
+            }
+            yield return null;
+        }
+
+ 
+  }*/
 
   public void Undo(){
     currentUndoLocation ++;
@@ -235,15 +400,17 @@ public void ResetToFlat(){
     undoTexture.SetPixels(c,0);
     undoTexture.Apply(true);
     ResetToUndo();
-    
+  
 
+    ExtractColors();
 
-    Color[] colors = ExtractColors();
 
     data.land.heightMap.SetPixels(colors,0);
     data.land.heightMap.Apply(true);
 
     SaveTextureAsPNG( data.land.heightMap , "Assets/" + safeName + ".png");
+
+
   }
 
 
@@ -277,7 +444,7 @@ public void SetBrushOpacity(Slider s){
    {
        byte[] _bytes =_texture.EncodeToPNG();
        System.IO.File.WriteAllBytes(_fullPath, _bytes);
-//       Debug.Log(_bytes.Length/1024  + "Kb was saved as: " + _fullPath);
+       Debug.Log(_bytes.Length/1024  + "Kb was saved as: " + _fullPath);
    }
 
 

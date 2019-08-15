@@ -55,11 +55,16 @@ EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();
           test.Save();
         }
 
-         if (GUILayout.Button("Reset To Flat"))
+        if (GUILayout.Button("Set To Current"))
+        {
+          test.UltraSave();
+        }
+
+         /*if (GUILayout.Button("Reset To Flat"))
         {
           test.ResetToFlat();
           test.Save();
-        }
+        }*/
 
         if (GUILayout.Button("UNDO"))
         {

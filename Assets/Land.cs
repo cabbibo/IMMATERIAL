@@ -10,6 +10,8 @@ public class Land : Cycle {
   public float tileSize;
   public Texture2D heightMap;
 
+  public Texture2D startTexture;
+
   public int traceSteps;
   public float traceDist;
 
@@ -18,6 +20,12 @@ public class Land : Cycle {
 
   public override void Create(){
 
+    heightMap = new Texture2D(1024,1024);
+
+    heightMap.wrapMode = TextureWrapMode.Clamp;
+    Graphics.CopyTexture( startTexture , heightMap);
+
+   // heightMap.Apply();
 
     Shader.SetGlobalTexture("_HeightMap", heightMap);
     Shader.SetGlobalFloat("_TerrainSize", size);

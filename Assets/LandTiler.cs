@@ -22,6 +22,8 @@ public class LandTiler : Cycle
 
   public GameObject[]  tileObjects;
 
+  public bool constantUpdate;
+
   private float hT; // halfTile
   private float t; // tile
 
@@ -118,6 +120,8 @@ public class LandTiler : Cycle
 
 //    print(data.playerPosition);
 
+
+
     for( int i = 0; i < Tiles.Length; i++ ){
 
 
@@ -152,9 +156,14 @@ public class LandTiler : Cycle
 
       _Offset = tileObjects[i].transform.position;
 
-      //_Offset = tileObjects[i].transform.position;
-      if( oPos != tileObjects[i].transform.position ){
+
+      if( constantUpdate ){
         OffsetTile(i);
+      }else{
+        //_Offset = tileObjects[i].transform.position;
+        if( oPos != tileObjects[i].transform.position ){
+          OffsetTile(i);
+        }
       }
     }
     
