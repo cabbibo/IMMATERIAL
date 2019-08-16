@@ -170,7 +170,7 @@ void Set (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id 
 
     //float4 vals = _HeightMap.SampleLevel(sampler_HeightMap, (base.pos.xz-.5) * _MapSize  , 0);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
         
-    vert.length = _HairLength;// * base.debug.y;//base.uv.y),2);//((sin(float(bID)*10000)+ _HairVariance) / _HairVariance ) * _HairLength;
+    vert.length = _HairLength * base.debug.y;//base.uv.y),2);//((sin(float(bID)*10000)+ _HairVariance) / _HairVariance ) * _HairLength;
 
     _VertBuffer[pID] = vert;
 
@@ -208,10 +208,25 @@ bool isTip = ((pID % _NumVertsPerHair) == _NumVertsPerHair-1);
 
     float2 xz = 1*normalize( vert.pos.xz - _PlayerPosition.xz ) / (.1 + pow(length(vert.pos.xz - _PlayerPosition.xz), 10));
 
+float limp = 1;
+
+if( limp < .5 ){
     force += float3(xz.x , 0 , xz.y );
     force += curlNoise( vert.pos * 3 + float3(0,_Time * .3,0) ) * 1;
     force += float3(0,vert.uv.x,0);
+}else{
+  //force -= float3(0,vert.uv.x,0)*2;
+  float3 wp = worldPos( vert.pos );
+  if( vert.pos.y-.1 > wp.y ){
+    force += -1*bN * 1;
 
+    force += curlNoise( vert.pos  + float3(0,_Time * .3,0) ) * .1;
+  force -= float3(0,vert.uv.x,0)*2;
+    }else{
+
+  force += float3(0,.1,0);
+    }
+}
     for( int i = 0; i < _Pullers_COUNT; i++ ){
       float3 dif = mul(_Pullers[i].localToWorld , float4(0,0,0,1)).xyz - vert.pos;
 
@@ -246,7 +261,7 @@ bool isTip = ((pID % _NumVertsPerHair) == _NumVertsPerHair-1);
           }
 
           float noiseForce =  clamp(snoise( vert.pos * .1 + float3(0,_Time * .4,0)),0,1);
-            force += (_Time - vert.ateTime ) * 10 *normalize(dif) / (.3 + length(dif));
+           // force += (_Time - vert.ateTime ) * 10 *normalize(dif) / (.3 + length(dif));
           }else{
             force -= normalize(dif);
 
@@ -325,7 +340,7 @@ bool isTip = ((pID % _NumVertsPerHair) == _NumVertsPerHair-1);
 
     if( _Delta  < .1 && tb == false ){
 
-      float dampening =.9;//_Dampening;//.99999;// - vert.life * .01;
+      float dampening =.95;//_Dampening;//.99999;// - vert.life * .01;
       float3 next = vert.pos + vel  * dampening + force * .001;
 
       vert.oPos = vert.pos;

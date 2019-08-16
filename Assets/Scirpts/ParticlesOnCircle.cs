@@ -13,6 +13,10 @@ public class ParticlesOnCircle: Particles {
 
   public IndexForm tris;
 
+  public enum NoiseType {MiddleBand, CenterOut, Even,OuterRing };
+
+  public NoiseType noiseType;
+
 
   /*struct Vert{
     public Vector3 pos;
@@ -81,9 +85,21 @@ public class ParticlesOnCircle: Particles {
 
    
 
+      if( noiseType == NoiseType.MiddleBand ){
+
       float Y = 1-((1-uv0.y) + (1-uv1.y) + (1-uv2.y) ) / 3;
       area = Mathf.Clamp( Mathf.Min( Y * 2,( 1- Y )) * 4.5f  ,0 , 4);//((1-uv0.y) + (1-uv1.y) + (1-uv2.y) ) / 3;
       area *= area*area*area;// * area * area*area;
+}else if( noiseType == NoiseType.CenterOut ){
+
+  }else if( noiseType == NoiseType.Even ){
+    float Y = 1-((1-uv0.y) + (1-uv1.y) + (1-uv2.y) ) / 3;
+    area = Y;
+  }else if( noiseType == NoiseType.OuterRing ){
+    float Y = 1-((1-uv0.y) + (1-uv1.y) + (1-uv2.y) ) / 3;
+    area = Y*Y;
+  }
+
 
 
       triangleAreas[i] = area;

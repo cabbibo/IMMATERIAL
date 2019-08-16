@@ -7,7 +7,7 @@ public class Monolith : Cycle
 
     public GameObject storyMarkerPrefab;
     public Transform monolith;
-    public Story story;
+    //public Story story;
 
     public bool isBook;
 
@@ -67,7 +67,7 @@ public class Monolith : Cycle
 
       mpb.SetVectorArray("_StoryPositions" , positions );
       mpb.SetInt("_NumStories" , positions.Length );
-      mpb.SetInt("_ThisStory" , story.id );
+      //mpb.SetInt("_ThisStory" , story.id );
       monolith.GetComponent<MeshRenderer>().SetPropertyBlock( mpb );
       
       if( isBook ){ transform.rotation = Quaternion.AngleAxis(90,Vector3.right);}

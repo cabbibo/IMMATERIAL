@@ -83,7 +83,7 @@ fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
 
                 float4 tCol = tex2D(_MainTex, v.uv *   float2( 6,(lookupVal)* 1 ));
                 if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .5 ){ discard;}
-                fixed4 col =   tex2D(_ColorMap , float2( length(tCol) * .4 + (1-shadow  * .05)+ .27 + lookupVal* lookupVal * .1 , 0) );//* 20-10;//*tCol* lookupVal*4;//* 10 - 1;
+                fixed4 col =   tex2D(_ColorMap , float2( length(tCol) * .6 + (1-shadow  * .05)+ .0 + lookupVal* lookupVal * .1 , 0) );//* 20-10;//*tCol* lookupVal*4;//* 10 - 1;
                 return col;
             }
 

@@ -33,12 +33,6 @@ public class StorySetter : Cycle
     }
 
 
-   /* for( int i =0; i < data.journey.stories.Length; i++ ){
-      if( data.journey.stories[i] == this ){
-        id = i;
-      }
-    }*/
-
     perimeter.OnEnterOuter.AddListener(CheckWhichStory);
     perimeter.OnEnterOuter.AddListener(EnterOuter);
     perimeter.OnEnterInner.AddListener(EnterInner);

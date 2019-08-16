@@ -7,6 +7,8 @@
     _ColorMap ("Color Map", 2D) = "white" {}
     _CubeMap( "Cube Map" , Cube )  = "defaulttexture" {}
 
+    _HueStart ("HueStart", Float) = 0
+
   }
     SubShader
     {
@@ -37,6 +39,8 @@ Tags { "RenderType"="Opaque" }
             sampler2D _MainTex;
             sampler2D _ColorMap;
       samplerCUBE _CubeMap;
+
+            float _HueStart;
 
             struct v2f { 
               float4 pos : SV_POSITION; 
@@ -95,7 +99,7 @@ float3 refl = reflect( normalize(_WorldSpaceCameraPos-v.worldPos) , v.nor);
                 float3 cCol = texCUBE(_CubeMap,refl);;// * color;
 
                // if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .5 ){ discard;}
-                fixed4 col = float4( cCol , 1 ) * 2 * shadow * v.uv.x * 1.4 * tex2D(_ColorMap , float2( -length(tCol) * .2 * v.uv.x * v.uv.x * v.uv.x  - val * .1  + sin( v.kelpID) * .02 + .3, 0) );// * saturate(20*-val);//* 20-10;//*tCol* lookupVal*4;//* 10 - 1;
+                fixed4 col = float4( cCol , 1 ) * 2 * shadow * v.uv.x * 1.4 * tex2D(_ColorMap , float2( -length(tCol) * .2 * v.uv.x * v.uv.x*v.uv.x* .5 - val * .1  + sin( v.kelpID) * .02 +  _HueStart, 0) );// * saturate(20*-val);//* 20-10;//*tCol* lookupVal*4;//* 10 - 1;
                 
                 //if( v.uv.x >.83){ col = 1;}
                 return col;
