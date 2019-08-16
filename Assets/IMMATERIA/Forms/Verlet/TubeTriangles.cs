@@ -26,12 +26,12 @@ public class TubeTriangles : IndexForm {
     for( int j = 0; j < length-1; j++   ){
     for( int k = 0; k < width; k++    ){
 
-        int bID = i * width * length;
+        int bID = i * (width+1) * length;
 
-        int id1 = j * width + k;
-        int id2 = j * width + ((k+1)%width);
-        int id3 = (j+1) * width + k;
-        int id4 = (j+1) * width + ((k+1)%width);
+        int id1 = j * (width+1) + k;
+        int id2 = j * (width+1) + ((k+1));
+        int id3 = (j+1) * (width+1) + k;
+        int id4 = (j+1) * (width+1) + ((k+1));
 
         values[ index ++ ] = bID + id1;
         values[ index ++ ] = bID + id2;

@@ -246,14 +246,14 @@ void BellLessTransfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_Group
 
     int pID = threadID + u3GroupID.x * NR_THREADS;
 
-    int particleID = pID / ( _TubeLength * _TubeWidth);
+    int particleID = pID / ( _TubeLength * (_TubeWidth+1));
 
-    int idInTube = pID % ( _TubeLength * _TubeWidth);
-    int row = idInTube / _TubeWidth;
-    int col = pID % _TubeWidth;
+    int idInTube = pID % ( _TubeLength * (_TubeWidth+1));
+    int row = idInTube / (_TubeWidth+1);
+    int col = pID % (_TubeWidth+1);
 
     float rowVal =  (float(row) / float(_TubeLength)) * .95;
-    float colVal =  (float(col)/float(_TubeWidth)) ;
+    float colVal =  (float(col%_TubeWidth)/float(_TubeWidth)) ;
 
     float3 upPos; float3 doPos;
 
@@ -270,7 +270,7 @@ void BellLessTransfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_Group
     float3 outVec = (sin(angle) *x - cos(angle) * y);// * r;
     float3 fPos = pos + outVec * r * (.1 + rowVal* rowVal);
 
-    float2 fUV = float2( rowVal , colVal );
+    float2 fUV = float2( rowVal , colVal + col / _TubeWidth );
     float3 fNor = normalize( outVec );
     float3 fTan = normalize(cross(fNor,d));
 

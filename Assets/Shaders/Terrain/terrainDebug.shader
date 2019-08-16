@@ -28,7 +28,7 @@ Shader "Debug/Terrain" {
 
 
         struct Input {
-            float2 uv_MainTex;
+            float2 uv_MainTex;// : TEXCOORD;
             float3 worldPosition;
             float4 color : TEXCOORD3;
             float3 nor : TEXCOORD4;
@@ -37,6 +37,9 @@ Shader "Debug/Terrain" {
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
+
+        float3 _PlayerPosition;
+
 sampler2D _HeightMap;
 float _MapSize;
 float _MapHeight;
@@ -83,6 +86,7 @@ float4 terrainSampleColor( float4 pos ){
         void vert (inout appdata_full v,out Input o) {
                 UNITY_INITIALIZE_OUTPUT(Input,o);
                 o.nor = terrainGetNormal( v.vertex );
+                //o.uv = v.texcoord.xy;
                 o.worldPosition = terrainWorldPos( v.vertex ) - float4(0,0,_Vertical,0);
                 v.vertex = terrainNewPos( v.vertex )- float4(0,0,_Vertical,0);//mul( unity_WorldToObject, worldPos);
                 o.color = terrainSampleColor( v.vertex );
@@ -93,9 +97,16 @@ float4 terrainSampleColor( float4 pos ){
         void surf (Input IN, inout SurfaceOutputStandard o) {
 
             
+            float3 dif = IN.worldPosition - _PlayerPosition;
+
+            float l = max(length( dif ) - 80,0);
             // Albedo comes from a texture tinted by color
             //fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-            o.Emission.xyz = _Color * (IN.nor * .5 + .5);// hsv(IN.normal.y * .5,1,1);
+
+            float3 c1 = 0;
+            float3 c2 = _Color.xyz* saturate(max( max( sin( IN.worldPosition.x ),0) , max( sin( IN.worldPosition.z ),0)) - .5)*2;// * sin(IN.worldPosition.z));
+
+            o.Emission.xyz = lerp( 0 , c2 , l * .1);//_Color * (IN.nor * .5 + .5)  - l;// hsv(IN.normal.y * .5,1,1);
 
             //if( ((IN.worldPosition.y * .3)+ noise( IN.worldPosition * .2 ) * .1)  % 1 < .8 ){ discard; }
             //IN.color.w * 1;//float3(1,1,1);//c.rgb;

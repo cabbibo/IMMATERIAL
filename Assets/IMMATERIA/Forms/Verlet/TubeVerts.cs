@@ -13,7 +13,7 @@ public class TubeVerts: Form {
 
   public override void SetCount(){
     numTubes = hair.numHairs;
-    count = numTubes * width * length;
+    count = numTubes * (width+1) * length;
   }
 
 }

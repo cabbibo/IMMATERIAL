@@ -13,7 +13,7 @@ float3 worldPos( float3 pos ){
 
 float3 getNormal( float3 pos ){
 
-  float delta = 1;
+  float delta = .4;
   float3 dU = worldPos( pos + float3(delta,0,0) );
   float3 dD = worldPos( pos + float3(-delta,0,0) );
   float3 dL = worldPos( pos + float3(0,0,delta) );

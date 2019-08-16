@@ -54,7 +54,7 @@ int _Dimensions;
 
 float3 terrainWorldPos( float4 pos ){
     float3 wp = mul( unity_ObjectToWorld, pos ).xyz;
-    float4 c = tex2Dlod(_HeightMap , float4(( wp.xz ) * _MapSize + .5 /1024 ,0,0) );
+    float4 c = tex2Dlod(_HeightMap , float4(( wp.xz ) * _MapSize - .5 /1024 ,0,0) );
     wp.xyz += float3(0,1,0) * c.r * _MapHeight;
     return wp;
 }

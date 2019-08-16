@@ -20,6 +20,7 @@
           float3 eye      : TEXCOORD2;
           float3 debug    : TEXCOORD3;
           float2 uv       : TEXCOORD4;
+          float2 uv2       : TEXCOORD6;
           float id        : TEXCOORD5;
       };
 
@@ -54,6 +55,7 @@ varyings vert (uint id : SV_VertexID){
       o.eye = _WorldSpaceCameraPos - o.worldPos;
       o.nor =v.nor;
       o.uv = v.uv;
+      o.uv2 = uv;
       o.id = base;
       o.pos = mul (UNITY_MATRIX_VP, float4(o.worldPos,1.0f));
 

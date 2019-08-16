@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class CameraController : Cycle
 {
@@ -10,6 +11,8 @@ public class CameraController : Cycle
 
     public Vector3 targetPos;
     public Vector3 targetLookPos;
+
+    public bool followSceneCamera;
 
     public float angle;
     public bool swipeFollow;
@@ -50,6 +53,17 @@ public class CameraController : Cycle
       if( following ){
         DoFollow();
       }
+
+
+      #if UNITY_EDITOR 
+      if(followSceneCamera){
+        CameraHolder.rotation =  SceneView.lastActiveSceneView.camera.transform.rotation;
+        CameraHolder.position =  SceneView.lastActiveSceneView.camera.transform.position;
+        SceneView.lastActiveSceneView.camera.nearClipPlane = Camera.main.nearClipPlane;
+        SceneView.lastActiveSceneView.camera.farClipPlane = Camera.main.farClipPlane;
+        SceneView.lastActiveSceneView.camera.fieldOfView = Camera.main.fieldOfView;
+      }
+      #endif
 
     }
 
