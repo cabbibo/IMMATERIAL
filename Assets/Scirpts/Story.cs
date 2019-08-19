@@ -174,7 +174,7 @@ public class Story : Cycle
 
     started = false;
 
-    data.state.inStory = false;
+    data.state.inPages = false;
 
     data.cameraControls.SetFollowTarget();
     data.textParticles.Release();
@@ -197,7 +197,7 @@ public class Story : Cycle
   public void StartStory(){
 
 
-    data.state.inStory = true;
+    data.state.inPages = true;
 
     started = true;
 

@@ -58,22 +58,37 @@ public class Cycle : MonoBehaviour{
 
     Create();
 
+
+
+for (int i = Cycles.Count - 1; i >= 0; i--){
+    if (Cycles[i] == null ){
+        Cycles.RemoveAt(i);
+    }
+}
+
+
+
     foreach( Cycle c in Cycles ){
 
       if( c == null ){
         DebugThis( "SOME CYCLE NULL");
+       // Cycles.Remove( c );
+
+      }else{
+
+
+
+        CheckSelfCycle(c);
+
+
+        if( c.data == null ){ c.data = data; }
+        if( data == null ){ print("fuhhh"); }
+        
+        //   print(this);
+        c._Create();
+
       }
-
-
-
-      CheckSelfCycle(c);
-
-
-      if( c.data == null ){ c.data = data; }
-      if( data == null ){ print("fuhhh"); }
-      
-      //   print(this);
-      c._Create();
+    
 
     }
 
@@ -310,13 +325,25 @@ public class Cycle : MonoBehaviour{
 
   protected void DoDestroy(){
    
+for (int i = Cycles.Count - 1; i >= 0; i--){
+    if (Cycles[i] == null ){
+        Cycles.RemoveAt(i);
+    }
+}
+
     foreach( Cycle c in Cycles ){
 
-      if( c.data == null ){ c.data = data; }
-      if( data == null ){ print("fuhhh"); }
-      CheckSelfCycle(c);
-      c._Destroy();
+      if( c == null ){
 
+        DebugThis("Some Cycle Null");
+      }else{
+
+        if( c.data == null ){ c.data = data; }
+        if( data == null ){ print("fuhhh"); }
+        CheckSelfCycle(c);
+        c._Destroy();
+
+      }
     }
 
    

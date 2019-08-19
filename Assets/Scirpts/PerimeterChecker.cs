@@ -68,6 +68,9 @@ public class PerimeterChecker : Cycle
 
   public void EnterOuter(){
 
+    data.state.lastTimeStoryVisited = Time.time;
+    data.state.inStory = true;
+
     insideOuter=true;
     data.sceneCircle.Set( this );
 
@@ -91,6 +94,10 @@ public class PerimeterChecker : Cycle
 
 
   public void ExitInner(){
+
+    data.state.lastTimeStoryVisited = Time.time;
+    data.state.inStory = false;
+
     insideInner=false;
     OnExitInner.Invoke();
   }

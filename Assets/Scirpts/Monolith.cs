@@ -19,10 +19,14 @@ public class Monolith : Cycle
     public void DestroyMe(){
      // print( storyMarkers.Length );
       for( int i = 0; i < storyMarkers.Length; i++ ){
+
+        if( storyMarkers[i] ){
         Cycles.Remove(storyMarkers[i].GetComponent<StoryMarker>());
         DestroyImmediate(storyMarkers[i]);
-
+}
       }
+
+      Cycles.Clear();
     }
 
     public override void Create(){
@@ -43,8 +47,8 @@ public class Monolith : Cycle
       monolith.localPosition = Vector3.up * size * ratio * .4f;
 
 
-      storyMarkers = new GameObject[data.journey.stories.Length];
-      for( int i = 0; i < data.journey.stories.Length; i++ ){
+      storyMarkers = new GameObject[data.journey.monoStories.Length];
+      for( int i = 0; i < data.journey.monoStories.Length; i++ ){
           storyMarkers[i] = Instantiate( storyMarkerPrefab);
           
           SafeInsert(storyMarkers[i].GetComponent<StoryMarker>());
@@ -60,7 +64,7 @@ public class Monolith : Cycle
 
       MaterialPropertyBlock mpb = new MaterialPropertyBlock();
 
-      Vector4[] positions = new Vector4[data.journey.stories.Length ];
+      Vector4[] positions = new Vector4[data.journey.monoStories.Length ];
       for(int i = 0; i < positions.Length; i++ ){
         positions[i] = storyMarkers[i].transform.position;
       }

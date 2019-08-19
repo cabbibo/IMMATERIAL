@@ -222,6 +222,8 @@ public void ResetToFlat(){
 
   public void Load(){
 
+    print("wait why am I loading");
+
     string path = terrainPath + "safe";
     Saveable.Load( verts , path );
 

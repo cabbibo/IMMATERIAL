@@ -148,6 +148,7 @@ public class Land : Cycle {
     BinaryFormatter bf = new BinaryFormatter();
     FileStream stream = new FileStream(Application.dataPath + "/"+name+".dna",FileMode.Open);
     float[] data = bf.Deserialize(stream) as float[];
+    stream.Close();
 
     print(data.Length);
 

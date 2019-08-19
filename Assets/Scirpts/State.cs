@@ -11,9 +11,12 @@ public class State : Cycle
   public bool[] storiesVisited;
 
   public int currentStory;
+
+  public float lastTimeStoryVisited;
   
   public bool inStory;
   public bool inBook;
+  public bool inPages;
 
 
 
@@ -23,6 +26,9 @@ public class State : Cycle
       storiesVisited = new bool[ data.journey.stories.Length ];
     }
   }
+
+
+
   
 
 }

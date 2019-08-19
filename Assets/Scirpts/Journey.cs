@@ -7,6 +7,9 @@ public class Journey : Cycle
 
   public StorySetter[] stories;
 
+  public MonolithStorySetter[] monoStories;
+  public StorySetter[] nonMonoStories;
+
   public int currentStory;
   public int connectedStory;
   public bool inStory;
@@ -23,9 +26,33 @@ public class Journey : Cycle
    public override void Create(){
 
 
+      int numMonoStories = 0;
+
       for( int i = 0; i < stories.Length; i++ ){
         SafeInsert( stories[i] );
+        if( stories[i] is MonolithStorySetter ){
+          numMonoStories ++;
+        }
       }
+
+      int monoIndex = 0;
+      int nonMonoIndex = 0;
+
+      print( numMonoStories );
+
+      monoStories = new MonolithStorySetter[ numMonoStories ];
+      nonMonoStories = new StorySetter[ stories.Length - numMonoStories ];
+
+      for( int i = 0; i < stories.Length; i++ ){
+        if( stories[i] is MonolithStorySetter ){
+          monoStories[monoIndex] = (MonolithStorySetter)stories[i];
+          monoIndex ++;
+        }else{
+          nonMonoStories[nonMonoIndex] = stories[i];
+          nonMonoIndex ++;
+        }
+      }
+
 
    }
 
