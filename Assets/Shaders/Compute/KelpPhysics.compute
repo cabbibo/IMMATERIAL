@@ -31,6 +31,10 @@ float _HairVariance;
 float3 _HandL;
 float3 _HandR;
 
+
+
+float3 _PlayerPosition;
+
 struct Vert{
   float3 pos;
   float3 oPos;
@@ -78,6 +82,7 @@ float _NoiseForce;
 float _NoiseSpeed;
 float _NoiseSize;
 float _Dampening;
+
 
 RWStructuredBuffer<Vert> _VertBuffer;
 RWStructuredBuffer<Base> _BaseBuffer;
@@ -172,13 +177,22 @@ void Set (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id 
     //vert.pos  = bP + bN * l *(length(s)/3)* _HairLength;
     vert.uv = float2( l , float(bID)/float(_BaseBuffer_COUNT));
     //vert.oPos = vert.pos;//base.pos + base.nor * l + _HairLength;
-    vert.pos = base.pos - base.nor * l * _HairLength;
+
+   float4 vals = _HeightMap.SampleLevel(sampler_HeightMap, (base.pos.xz-.5) * _MapSize  , 0);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+ 
+    vert.debug.x = vals.w * _HairLength  + hash( float(bID)) * .1 * _HairLength;//((sin(float(bID)*10000)+ _HairVariance) / _HairVariance ) * _HairLength;
+
+
+
+      float dist = length(vert.pos - _PlayerPosition);
+      
+       
+    vert.pos = base.pos - base.nor * l * (vert.debug.x/(.5+.1*dist));
     vert.oPos = vert.pos;
 
 
-    float4 vals = _HeightMap.SampleLevel(sampler_HeightMap, (base.pos.xz-.5) * _MapSize  , 0);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
         
-    vert.debug.x = vals.w * _HairLength  + hash( float(bID)) * .1 * _HairLength;//((sin(float(bID)*10000)+ _HairVariance) / _HairVariance ) * _HairLength;
+ //   vert.debug.x = vals.w * _HairLength  + hash( float(bID)) * .1 * _HairLength;//((sin(float(bID)*10000)+ _HairVariance) / _HairVariance ) * _HairLength;
 
     _VertBuffer[pID] = vert;
 
@@ -186,8 +200,6 @@ void Set (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id 
   
 }
 
-
-float3 _PlayerPosition;
 
 
 [numthreads(NR_THREADS,1,1)]
@@ -350,11 +362,13 @@ void Constraint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
       float l = length( dif );// * ((4+n)/4);
 
       float difference = 0;
+
+      float dist = length(v1.pos - _PlayerPosition);
       
       // We want to make sure that l isn't zero, 
       // or we will get some NaNs
       if( l > 0.001 ){
-        difference = (((v1.debug.x)/float(_NumVertsPerHair))-l)/l;//((s*v1.debug.x/float(_NumVertsPerHair)) - l ) / l;
+        difference = (((v1.debug.x/(.5+.1*dist))/float(_NumVertsPerHair))-l)/l;//((s*v1.debug.x/float(_NumVertsPerHair)) - l ) / l;
       }
 
       // Here is where the actual verlet goes down!

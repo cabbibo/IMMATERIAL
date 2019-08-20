@@ -8,12 +8,34 @@ public class LandTiler : Cycle
   public LandTile[] Tiles;
 
   public float tileSize;
-  public int numTiles;
-  public int tileDimensions;
+
 
   public Life setTile;
 
+
+
   public GameObject landTilePrefab;
+
+  public GameObject midQualityTilePrefab;
+  public GameObject lowQualityTilePrefab;
+
+
+
+  public int numTiles;
+  public int tileDimensions;
+  public int lowTileDimensions;
+  public int midTileDimensions;
+
+  public int idX;
+  public int idY;
+
+  public int oIDX;
+  public int oIDY;
+
+  public int currentCenterX;
+  public int currentCenterY;
+
+
 
 
 
@@ -51,24 +73,27 @@ public class LandTiler : Cycle
     //print( landTilePrefab.GetComponent<LandTile>() );
     //print( landTilePrefab.GetComponent<LandTile>().verts );
 
+    currentCenterX = 1;
+    currentCenterY = 1;
     Cycles.Clear();
 
+    tileSize = 1/(numTiles *data.land.size);
 
       DestroyMe();
 
-        Tiles = new LandTile[numTiles * numTiles ];
-        tileObjects = new GameObject[numTiles * numTiles ];
+        Tiles = new LandTile[3 * 3 ];
+        tileObjects = new GameObject[3 * 3 ];
 
-        t = tileSize  * numTiles;
+        t = tileSize  * 3;
         hT = t/2;
   
-        Tiles = new LandTile[numTiles * numTiles ];
+        Tiles = new LandTile[3 * 3 ];
         
         
-        for( int i = 0; i < numTiles; i++ ){
-          for( int j = 0; j < numTiles; j++ ){
+        for( int i = 0; i < 3; i++ ){
+          for( int j = 0; j < 3; j++ ){
 
-            int id = i * numTiles + j;
+            int id = i * 3 + j;
             GameObject g = Instantiate( landTilePrefab );
             g.transform.parent = transform;
             tileObjects[id] = g;
@@ -88,10 +113,10 @@ public class LandTiler : Cycle
       for( int i = 0; i < Tiles.Length; i++ ){
         _ID = i;
 
-        _Offset = Vector3.left * (i%numTiles) * tileSize;
-        _Offset += Vector3.forward * (float)(i/numTiles) * tileSize;
+        _Offset = -Vector3.left * ((i%3)+.5f) * tileSize;
+        _Offset += Vector3.forward * ((float)(i/3) + .5f) * tileSize;
 
-        tileObjects[i].transform.position = data.playerPosition + _Offset;
+        tileObjects[i].transform.position = Vector3.zero + _Offset;
     }
   }
 
@@ -119,8 +144,36 @@ public class LandTiler : Cycle
     Vector3 oPos;
 
 //    print(data.playerPosition);
+    oIDX = idX;
+    oIDY = idY;
 
 
+    idX = (int)Mathf.Floor(data.playerPosition.x / tileSize );
+    idY = (int)Mathf.Floor(data.playerPosition.z / tileSize );
+
+
+    if( currentCenterX != idX ){
+      if( idX > currentCenterX ){
+        ShiftLeft();
+      }else{
+        ShiftRight();
+      }
+    }
+
+
+     if( currentCenterY != idY ){
+      if( idY > currentCenterY ){
+        ShiftForward();
+      }else{
+        ShiftBack();
+      }
+    }
+
+
+
+
+
+/*
 
     for( int i = 0; i < Tiles.Length; i++ ){
 
@@ -165,8 +218,69 @@ public class LandTiler : Cycle
           OffsetTile(i);
         }
       }
-    }
+    }*/
     
+  }
+
+
+  void ShiftLeft(){
+
+currentCenterX ++;
+
+    for( int i = 0; i < 3*3; i++ ){
+
+       if( tileObjects[i].transform.position.x - data.player.position.x < -hT ){ 
+        tileObjects[i].transform.position -= Vector3.left * t; 
+        OffsetTile(i);
+    
+      }
+    }
+
+
+  }
+  void ShiftRight(){
+
+    currentCenterX --;
+
+    for( int i = 0; i < 3*3; i++ ){
+
+      if( tileObjects[i].transform.position.x - data.player.position.x > hT ){ 
+        tileObjects[i].transform.position += Vector3.left * t; 
+        OffsetTile(i);
+      }
+    }
+
+
+  }
+
+  void ShiftBack(){
+
+currentCenterY --;
+
+    for( int i = 0; i < 3*3; i++ ){
+
+      if( tileObjects[i].transform.position.z - data.player.position.z > hT ){ 
+        tileObjects[i].transform.position -= Vector3.forward * t; 
+        OffsetTile(i);
+      }
+    }
+
+
+  }
+
+  void ShiftForward(){
+
+
+currentCenterY ++;
+     for( int i = 0; i < 3*3; i++ ){
+
+      if( tileObjects[i].transform.position.z - data.player.position.z < -hT ){ 
+        tileObjects[i].transform.position += Vector3.forward * t; 
+        OffsetTile(i);
+      }
+    }
+
+
   }
 
   public void OffsetTile(int i ){

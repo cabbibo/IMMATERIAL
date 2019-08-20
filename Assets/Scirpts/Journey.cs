@@ -5,6 +5,9 @@ using UnityEngine;
 public class Journey : Cycle
 {
 
+  public bool NOSTORIES;
+
+
   public StorySetter[] stories;
 
   public MonolithStorySetter[] monoStories;
@@ -24,6 +27,8 @@ public class Journey : Cycle
 
 
    public override void Create(){
+
+    if( !NOSTORIES ){
 
 
       int numMonoStories = 0;
@@ -52,6 +57,13 @@ public class Journey : Cycle
           nonMonoIndex ++;
         }
       }
+
+
+    }else{
+
+      Cycles.Clear();
+       SafeInsert( stories[0] );
+    }
 
 
    }

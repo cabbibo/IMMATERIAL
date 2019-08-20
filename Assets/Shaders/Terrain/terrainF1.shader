@@ -10,6 +10,7 @@
     _CubeMap( "Cube Map" , Cube )  = "defaulttexture" {}
     _Debug("DEBUG",float) = 0
     _HueStart("_HueStart",float) = 0
+    _PlayerFalloff("_PlayerFalloff",float) = 0
     
     [Toggle(Enable12Struct)] _Struct12("12 Struct", Float) = 0
   }
@@ -46,6 +47,7 @@
       float3 _PlayerPosition;
       bool _Debug;
       float _HueStart;
+      float _PlayerFalloff;
       sampler2D _MainTex;
       sampler2D _ColorMap;
       sampler2D _NormalMap;
@@ -146,7 +148,7 @@
         fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos)  ;
 float dif = length( v.worldPos - _PlayerPosition );
 
-float l = saturate( (20-dif)/20);
+float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
         color.xyz = .4*pow(length(color.xyz),4);
 
         float match = dot( fNor, _WorldSpaceLightPos0 );
