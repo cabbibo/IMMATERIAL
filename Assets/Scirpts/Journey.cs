@@ -66,6 +66,12 @@ public class Journey : Cycle
       stories[currentStory].perimeter.EnterInner();
 
       stories[currentStory].StartStory();
+
+      // Unless we start in the first story, we are going to want our character to
+      // have landeded insted of falling
+      if( currentStory != 0){
+        data.playerControls.animator.Play("Grounded");
+      }
     }
 
    }

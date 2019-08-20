@@ -27,7 +27,7 @@ static void FakeSwipeLeft()
 
    // Add a menu item named "Do Something with a Shortcut Key" to MyMenu in the menu bar
 // and give it a shortcut (ctrl-g on Windows, cmd-g on macOS).
-[MenuItem("IMMATERIA/Fake Swipe Left %q")]
+[MenuItem("IMMATERIA/Fake Swipe Left %e")]
 static void FakeSwipeRight()
 {
   GameObject.Find("Input").GetComponent<InputEvents>().fakeSwipeLeft = true;

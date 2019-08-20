@@ -17,6 +17,8 @@ RWStructuredBuffer<Vert> _VertBuffer;
 float _Emit;
 float3 _EmitterPosition;
 
+float3 _PlayerPosition;
+
 int _VertBuffer_COUNT;
 int _SkeletonBuffer_COUNT;
 
@@ -113,11 +115,11 @@ void Flow(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 
   if( length( vert.pos) == 0 ){
-     vert.pos = _EmitterPosition+ float3(0,5,0) * hash( float(pID*37)) + float3(30,0,0) * hash( float(pID))- float3(0,0,1000) * hash( float(pID * 32));
+     vert.pos = _EmitterPosition+ float3(0,5,0) * hash( float(pID*37)) + float3(120,0,0) * hash( float(pID))- float3(0,0,1000) * hash( float(pID * 32));
   }
 
   if( vert.pos.z  - _EmitterPosition.z < -30 ){
-    vert.pos = _EmitterPosition+ float3(0,5,0) * hash( float(pID*37)) + float3(30,0,0) * hash( float(pID))+ float3(0,0,20) * hash( float(pID * 32));
+    vert.pos = _EmitterPosition+ float3(0,5,0) * hash( float(pID*37)) + float3(120,0,0) * hash( float(pID))+ float3(0,0,100) * hash( float(pID * 32));
     vert.axis = normalize( float3( hash(float(pID * 20)),hash(float(pID * 42)),hash(float(pID * 32))));
     vert.life = 1;
   }else{
@@ -126,6 +128,11 @@ void Flow(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     force -= float3(0,0,1);
     force += curlNoise( vert.pos * .1 ) * .2;
 
+    float3 dif =vert.pos - _PlayerPosition;
+    float l = length( dif );
+    if( l < 3 ){
+      force += normalize(dif) * (3-l) * 2;
+    }
     vert.vel += force;
     vert.pos += vert.vel * .01;
     vert.vel *= .8;

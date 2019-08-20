@@ -31,10 +31,13 @@ public class KelpBunch : Cycle
 //    print("activado");
     Set();
     body.showBody = true;
+    //circle.body.active = true;
   }
 
   public override void Deactivate(){
+    print("what");
     body.showBody = false;
+  //  circle.body.active = false;
   }
 
   public override void WhileLiving(float v){

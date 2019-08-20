@@ -15,17 +15,21 @@ public class SeaOfStars : Simulation
 
   public override void Bind(){
     data.land.BindData(life);
+    data.BindPlayerData(life);
     life.BindAttribute("_Emit","_Emit",this);
     life.BindAttribute("_EmitterPosition","_EmitterPosition",this);
   }
 
   public override void Activate(){
+    print("ACTIVADO");
       life.active = true;
       body.transfer.active = true;
       body.showBody = true;
   }
 
   public override void Deactivate(){
+      
+    print( "Deactivado");
       life.active = false;
       body.transfer.active = false;
       body.showBody = false;

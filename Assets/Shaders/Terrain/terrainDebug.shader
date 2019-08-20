@@ -87,6 +87,7 @@ float4 terrainSampleColor( float4 pos ){
                 UNITY_INITIALIZE_OUTPUT(Input,o);
                 o.nor = terrainGetNormal( v.vertex );
                 //o.uv = v.texcoord.xy;
+
                 o.worldPosition = terrainWorldPos( v.vertex ) - float4(0,0,_Vertical,0);
                 v.vertex = terrainNewPos( v.vertex )- float4(0,0,_Vertical,0);//mul( unity_WorldToObject, worldPos);
                 o.color = terrainSampleColor( v.vertex );
@@ -94,22 +95,25 @@ float4 terrainSampleColor( float4 pos ){
 
 
 
-        void surf (Input IN, inout SurfaceOutputStandard o) {
+        void surf (Input v, inout SurfaceOutputStandard o) {
 
             
-            float3 dif = IN.worldPosition - _PlayerPosition;
+            float3 dif = v.worldPosition - _PlayerPosition;
 
             float l = max(length( dif ) - 80,0);
             // Albedo comes from a texture tinted by color
-            //fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+            //fixed4 c = tex2D (_MainTex, v.uv_MainTex) * _Color;
+ float3 viewDir = UNITY_MATRIX_IT_MV[2].xyz;
+            //float3 viewDir  = mul(unity_CameraToWorld, float4(0,0,1,0));//UNITY_MATRIX_IT_MV[2].xyz;
 
+                float m = dot( normalize(viewDir) , normalize(v.nor * 4  + float3(1,0,0) * sin(6* v.worldPosition.x + sin( v.worldPosition.y) * 30) + float3(1,0,0) * sin(6*v.worldPosition.z)));
             float3 c1 = 0;
-            float3 c2 = _Color.xyz* saturate(max( max( sin( IN.worldPosition.x ),0) , max( sin( IN.worldPosition.z ),0)) - .5)*2;// * sin(IN.worldPosition.z));
+            float3 c2 = _Color.xyz* saturate(max( max( sin( v.worldPosition.x ),0) , max( sin( v.worldPosition.z ),0)) - .9)*2;// * sin(v.worldPosition.z));
 
-            o.Emission.xyz = lerp( 0 , c2 , l * .1);//_Color * (IN.nor * .5 + .5)  - l;// hsv(IN.normal.y * .5,1,1);
+            o.Emission.xyz =lerp( 0 , c2 , l * .1);//_Color * (v.nor * .5 + .5)  - l;// hsv(v.normal.y * .5,1,1);
 
-            //if( ((IN.worldPosition.y * .3)+ noise( IN.worldPosition * .2 ) * .1)  % 1 < .8 ){ discard; }
-            //IN.color.w * 1;//float3(1,1,1);//c.rgb;
+            //if( ((v.worldPosition.y * .3)+ noise( v.worldPosition * .2 ) * .1)  % 1 < .8 ){ discard; }
+            //v.color.w * 1;//float3(1,1,1);//c.rgb;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;

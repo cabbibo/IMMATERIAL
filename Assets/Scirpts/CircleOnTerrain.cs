@@ -43,14 +43,23 @@ public class CircleOnTerrain : Cycle
 
   }
 
+  public override void Activate(){
+
+    body.active = true;
+    body.mpb.SetFloat("_Radius", radius);
+  }
+
+  public override void Deactivate(){
+
+    body.active = false;
+  }
+
   public void Set(){
 
     //print("set");
     
     set = transform.position;
 
-    body.active = true;
-    body.mpb.SetFloat("_Radius", radius);
 
     life.YOLO();
 

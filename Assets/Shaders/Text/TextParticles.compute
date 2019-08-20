@@ -428,7 +428,7 @@ void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
 
       float t = _Time - v.debug.x;
 
-      force += -min((v.pos - v.lockPosition),1000) * .003;
+      force += -min((v.pos - v.lockPosition),1000) * .01;
 
       force += curlNoise( v.pos * .4 ) * .002 * min( pow((v.pos - v.lockPosition),4),3)/(t*t*.4+1);
 

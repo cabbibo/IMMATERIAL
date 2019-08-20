@@ -5,6 +5,7 @@
     _MainTex ("Sprite Texture", 2D) = "white" {}
     _ColorMap ("Color Map", 2D) = "white" {}
     _CubeMap( "Cube Map" , Cube )  = "defaulttexture" {}
+        _HueStart("Hue start", float ) = 1
   }
 
     SubShader {
@@ -39,6 +40,9 @@
         uniform sampler2D _MainTex;
         uniform sampler2D _ColorMap;
         uniform samplerCUBE _CubeMap;
+
+
+        float _HueStart;
     
         float3 _Color;
     
@@ -117,7 +121,7 @@
 
         float3 tCol = texCUBE( _CubeMap , eyeRefl );
 
-        col = 2*tCol*tCol* tex2D(_ColorMap, float2(length(v.player.xz) * .04+ .6 + rM * .1 ,0)) / (.4 + ( .1 * length( v.player.xz)));//-rM;//v.nor * .5 + .5;// tCol;//*tCol * tex2D(_ColorMap,float2(rM*.1+.7 - v.debug.y * .1 ,.5 )).rgb;// *(1-rM);//hsv(rM*rM*rM * 2.1,.5,rM);// + normalize(refl) * .5+.5;
+        col = 2*tCol*tCol* tex2D(_ColorMap, float2(max(length(v.player.xz) * .003 , -.2) + _HueStart + rM * .1 ,0)) / (.4 + ( .05 * length( v.player.xz)));//-rM;//v.nor * .5 + .5;// tCol;//*tCol * tex2D(_ColorMap,float2(rM*.1+.7 - v.debug.y * .1 ,.5 )).rgb;// *(1-rM);//hsv(rM*rM*rM * 2.1,.5,rM);// + normalize(refl) * .5+.5;
         //col = v.tan * .5 + .5;
 
         //col += hsv(dot(v.eye,v.nor) * -.1,.6,1) * (1-length(col));

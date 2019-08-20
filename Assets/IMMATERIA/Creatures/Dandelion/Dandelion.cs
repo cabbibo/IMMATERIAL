@@ -13,9 +13,9 @@ public class Dandelion : LifeForm {
 
   public override void Create(){
 
-    Cycles.Insert( 0 , force     );
-    Cycles.Insert( 1 , constrain );
-    Cycles.Insert( 2 , verts     );
+    SafeInsert( force     );
+    SafeInsert( constrain );
+    SafeInsert( verts     );
 
   }
 

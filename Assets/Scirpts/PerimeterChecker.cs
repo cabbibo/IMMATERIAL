@@ -25,8 +25,12 @@ public class PerimeterChecker : Cycle
   public float oDif;
   public bool started;
 
+  public bool hardCoded;
+
 
   public override void OnGestated(){
+
+    print("this happened + " + gameObject.name );
     ExitInner();
     ExitOuter();
   }
@@ -35,31 +39,33 @@ public class PerimeterChecker : Cycle
 
   public override void WhileLiving( float v){
     
-    
-    oDif = dif;
-    dif = (transform.position - data.player.position).magnitude;
+   
+    if( !hardCoded ){ 
+
+      oDif = dif;
+      dif = (transform.position - data.player.position).magnitude;
+
+      if( dif < outerRadius && oDif >= outerRadius ){
+        EnterOuter();
+      }
+
+      if( dif < innerRadius && oDif >= innerRadius ){
+        EnterInner();
+      }
+
+      if( dif >= outerRadius && oDif < outerRadius ){
+        ExitOuter();
+      }
+
+      if( dif >= innerRadius && oDif < innerRadius ){
+        ExitInner();
+      }
+      
+      if( insideOuter && !insideInner ){
+        DoFade( 1-((dif - innerRadius) / (outerRadius-innerRadius)));
+      }
 
 
-    
-
-    if( dif < outerRadius && oDif >= outerRadius ){
-      EnterOuter();
-    }
-
-    if( dif < innerRadius && oDif >= innerRadius ){
-      EnterInner();
-    }
-
-    if( dif >= outerRadius && oDif < outerRadius ){
-      ExitOuter();
-    }
-
-    if( dif >= innerRadius && oDif < innerRadius ){
-      ExitInner();
-    }
-    
-    if( insideOuter && !insideInner ){
-      DoFade( 1-((dif - innerRadius) / (outerRadius-innerRadius)));
     }
 
 

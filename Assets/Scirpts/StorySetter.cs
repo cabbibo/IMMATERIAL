@@ -79,6 +79,8 @@ public class StorySetter : Cycle
   }
 
   public void ExitOuter(){
+
+    print("StorySetter exiting outer : " + gameObject.name );
     stories[currentStory].DoFade(0);
     perimeter.OnDoFade.RemoveListener(stories[currentStory].DoFade);
   }

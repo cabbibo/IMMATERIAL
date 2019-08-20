@@ -9,6 +9,7 @@
     _NormalMap ("NormalMap", 2D) = "white" {}
     _CubeMap( "Cube Map" , Cube )  = "defaulttexture" {}
     _Debug("DEBUG",float) = 0
+    _HueStart("_HueStart",float) = 0
     
     [Toggle(Enable12Struct)] _Struct12("12 Struct", Float) = 0
   }
@@ -44,6 +45,7 @@
       float3 _Color;
       float3 _PlayerPosition;
       bool _Debug;
+      float _HueStart;
       sampler2D _MainTex;
       sampler2D _ColorMap;
       sampler2D _NormalMap;
@@ -141,7 +143,7 @@
 
         float eyeM = abs(dot(fNor, normalize(v.eye)));
     
-        fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .9 + .1 ;
+        fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos)  ;
 float dif = length( v.worldPos - _PlayerPosition );
 
 float l = saturate( (20-dif)/20);
@@ -157,8 +159,10 @@ float l = saturate( (20-dif)/20);
         color.xyz = tex2D(_ColorMap, float2( reflM * reflM  * .2 + .6 + dif * .03, 0)) * l ;
 
 
+
+
         color = tex2D(_MainTex,v.worldPos.xz * .1);
-        color = tex2D(_ColorMap, float2(color.x * .2 + dif * .01+.6 + grassHeight * .7, 0)) * l ;
+        color = tex2D(_ColorMap, float2(color.x * .2 + dif * .01+.6 + grassHeight * .7 - shadow * .3 + _HueStart, 0)) * l ;
 
 
 
@@ -174,7 +178,7 @@ float l = saturate( (20-dif)/20);
 
         //tCol = grassHeight;
         if( _Debug != 0 ){ color.xyz = v.nor * .5 + .5; }
-        return float4( color.xyz * shadow  , 1.);
+        return float4( color.xyz * (shadow * .5 + .5)  , 1.);
       }
 
       ENDCG
