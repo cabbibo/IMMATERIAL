@@ -93,11 +93,13 @@ float3 _PlayerPosition;
                     float v2 = clamp( (_InnerRadius / _OuterRadius)-v.uv.y , 0 ,1) ;
                     
                     float v3 = clamp( (v.uv.y -.9)*20 , 0 , 1 ); 
-                    if( length(col) < .3 + 2*fade  + 10*v2 + v3){ discard; }
+                    if( length(col) < .3 + 2*fade  + v3){ discard; }
               
 
 
                 col /= (.5+ .1*dif);
+
+
 
 
                 return float4(col,1);
@@ -199,7 +201,9 @@ float _SetTime;
                 
                     float v2 = clamp( (_InnerRadius / _OuterRadius)-v.uv.y , 0 ,1) ;
                     float v3 = clamp( (v.uv.y -.9)*20 , 0 , 1 ); 
-                    if( length(col) < .3 + 2*fade  + 10*v2 + v3){ discard; }
+                    if( length(col) < .3 + 2*fade   + v3){ discard; }
+
+
               
 
         SHADOW_CASTER_FRAGMENT(i)

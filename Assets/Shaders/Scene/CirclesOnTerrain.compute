@@ -25,6 +25,11 @@ float _OuterRadius;
 
 
 
+
+float3 polarToXY( float r , float a ){
+  return float3( r * cos(a) ,0, r*sin(a));
+}
+
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
 void SceneCircle(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
@@ -34,11 +39,14 @@ void SceneCircle(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     
     Vert v = _VertBuffer[pID];
 
-    v.pos = _SetLocation + v.og * _OuterRadius;
+ float radius=length(v.og.xz);
+ float angle=atan2(v.og.z, v.og.x);
+
+    v.pos = _SetLocation + polarToXY( (radius * (_OuterRadius-_InnerRadius) + _InnerRadius), angle);
     v.pos.y = 0;
     v.nor = -getNormal( v.pos );
     v.pos = worldPos(v.pos) ;
-    v.pos += v.nor * .15;
+    v.pos += v.nor * .35;
 
     _VertBuffer[pID] = v;
 

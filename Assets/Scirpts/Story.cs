@@ -26,6 +26,8 @@ public class Story : Cycle
   public Page oldTransitionPage;
   public bool fast;
 
+  public bool forward;
+
   public void SpawnFromCamera(){
     spawnFromCamera = true;
   }
@@ -64,10 +66,20 @@ public class Story : Cycle
     }
   }
 
+  public void SetAllEvents(){
+    for( int i = 0; i < currentPage-1; i++ ){
+      print("WHATsss");
+      pages[i].OnStartEnter.Invoke();
+      pages[i].OnEndExit.Invoke();
+    }
+
+  }
+
   public void NextPage(){
 
     if( started && transitioning == false ){
 
+      forward = true;
       currentPage ++;
       
       if( currentPage < pages.Length ){
@@ -79,18 +91,21 @@ public class Story : Cycle
 
         SetActivePage();
         oldTransitionPage = pages[currentPage-1];
-        pages[currentPage].OnStart.Invoke();
-        pages[currentPage-1].OnEnd.Invoke();
+        //pages[currentPage].OnStartEnter.Invoke();
+        pages[currentPage-1].OnEndExit.Invoke();
+
       }else{
+        
         transitioning = true;
         transitionSpeed = pages[0].lerpSpeed;
 
         if( fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
         oldTransitionPage = pages[currentPage-1];
-        pages[currentPage-1].OnEnd.Invoke();
+        pages[currentPage-1].OnEndExit.Invoke();
         currentPage = 0;
         Release();
+      
       }
     }
 
@@ -100,6 +115,7 @@ public class Story : Cycle
     
     if( started && transitioning == false ){
 
+      forward = false;
       currentPage --;
       
       if( currentPage >= 0 ){
@@ -115,8 +131,8 @@ public class Story : Cycle
 
         oldTransitionPage = pages[currentPage+1];
 
-         pages[currentPage].OnStart.Invoke();
-         pages[currentPage+1].OnEnd.Invoke();
+         //pages[currentPage].OnEndEnter.Invoke();
+         pages[currentPage+1].OnStartExit.Invoke();
 
       }else{
         if( !cantUnstart ){
@@ -127,7 +143,7 @@ public class Story : Cycle
           transitionStartTime = Time.time;
           oldTransitionPage = pages[currentPage+1];
 
-          pages[currentPage+1].OnEnd.Invoke();
+          pages[currentPage+1].OnStartExit.Invoke();
           currentPage = 0;
           Release();
         }else{
@@ -160,7 +176,14 @@ public class Story : Cycle
 
 
   public void OnLockPage(){
-     data.textParticles.Set( pages[currentPage].text );
+    
+    data.textParticles.Set( pages[currentPage].text );
+
+    if( forward ){
+      pages[currentPage].OnStartEnter.Invoke();
+    }else{
+      pages[currentPage].OnEndEnter.Invoke();
+    }
 
     if( spawnFromCamera ){
       data.textParticles.SpawnFromCamera();
@@ -201,7 +224,8 @@ public class Story : Cycle
 
     started = true;
 
-    transitioning = true;
+    oldTransitionPage = null;
+    //transitioning = true;
     transitionSpeed = pages[currentPage].lerpSpeed;
     if( fast ){ transitionSpeed = 1; }
     transitionStartTime = Time.time;
@@ -222,30 +246,35 @@ public class Story : Cycle
 
 
   public void DoFade(float v ){
-    pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-2*v);
+  
+    pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-v);
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
   
-    pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-2*v);
-    pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
-  
-//    print("fadio");
-//    print( 1-2*v);
+    print("fadio");
+    print( 1-2*v);
   }
 
   public void DoBetweenFade(){
 
     float v = (Time.time - transitionStartTime) / transitionSpeed;
+
+
     if( v > 1 && started ){ 
       transitioning = false;
       OnLockPage();
     }
 
-  if( oldTransitionPage ){
-    oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
-    oldTransitionPage.frame.borderLine.SetPropertyBlock(oldTransitionPage.frameMPB);
-  }
-    pages[currentPage].frameMPB.SetFloat("_Cutoff" ,1-v);
+    if( oldTransitionPage ){
+      oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
+      oldTransitionPage.frame.borderLine.SetPropertyBlock(oldTransitionPage.frameMPB);
+      oldTransitionPage.FadeOut.Invoke(v);
+    }
+
+    // doing this to make sure the frame doesn't "flash" in 
+    pages[currentPage].frameMPB.SetFloat("_Cutoff" ,Mathf.Min((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff")));
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
+    pages[currentPage].FadeIn.Invoke(v);
+
 
 //    print("fad btwx");
 

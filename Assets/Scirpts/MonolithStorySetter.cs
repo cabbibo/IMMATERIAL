@@ -26,7 +26,18 @@ public class MonolithStorySetter : StorySetter
     perimeter.OnExitOuter.AddListener(ExitOuter);
     perimeter.OnExitInner.AddListener(ExitInner);
 
+    perimeter.OnExitOuter.AddListener(TurnOffMonolith);
+    perimeter.OnEnterOuter.AddListener(TurnOnMonolith);
+
   
+  }
+
+  public void TurnOffMonolith(){
+    monolith.gameObject.SetActive(false);
+  }
+
+  public void TurnOnMonolith(){
+    monolith.gameObject.SetActive(true);
   }
 
     

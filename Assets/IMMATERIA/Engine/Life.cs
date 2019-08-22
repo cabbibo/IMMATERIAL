@@ -9,6 +9,9 @@ using UnityEditor;//.EditorGUI;
 
 public class Life : Cycle {
 
+  // automatically turns itself off
+  public bool selfStop;
+
   [HideInInspector] public string primaryName;
   [HideInInspector] public Form primaryForm;
   
@@ -109,6 +112,7 @@ public class Life : Cycle {
 
   public override void _WhileLiving( float v ){
     if( active ){ Live(); }
+    if( selfStop ){ active = false; }
   }
 
   public void Live(){

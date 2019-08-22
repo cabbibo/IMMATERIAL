@@ -80,7 +80,7 @@ public class StorySetter : Cycle
 
   public void ExitOuter(){
 
-    print("StorySetter exiting outer : " + gameObject.name );
+//    print("StorySetter exiting outer : " + gameObject.name );
     stories[currentStory].DoFade(0);
     perimeter.OnDoFade.RemoveListener(stories[currentStory].DoFade);
   }
@@ -90,6 +90,8 @@ public class StorySetter : Cycle
     data.inputEvents.OnTap.RemoveListener(  stories[currentStory].CheckForStart );
     data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
     data.inputEvents.OnSwipeRight.RemoveListener(  stories[currentStory].PreviousPage );
+    stories[currentStory].DoFade(1);
+    print("exitInner");
   }
 
 

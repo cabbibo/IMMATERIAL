@@ -99,6 +99,13 @@ public class Character : Cycle {
     animator.SetBool("GetUp", true);
   }
 
+  public void FallBackAsleep(){
+    animator.SetBool("FallAsleep", true);
+    animator.SetBool("Falling", false);
+    animator.SetBool("GetUp", false);
+  }
+
+
 
 
 
@@ -132,6 +139,10 @@ public class Character : Cycle {
 
     force = Vector3.zero;
 
+    if( movingTowardsTarget && moveTargetTransform ){
+      moveTarget = moveTargetTransform.position;
+    }
+
 
     if( lerping ){
 
@@ -164,6 +175,8 @@ public class Character : Cycle {
       //if( moveTargetTransform ){ moveTargetTransform.position = moveTarget + transform.position; }
 
       if( movingTowardsTarget ){
+
+
         Vector3 dif = moveTarget-transform.position;
         force =  dif * moveForce * (velocity.magnitude + .01f);
         angleOffset *= .5f;
@@ -198,6 +211,8 @@ public class Character : Cycle {
       float turn = Mathf.Atan2(m.x, m.z) * m.magnitude;
       float forward = m.z;
 
+
+     
       //turn += angleOffset;
 
 canMove = true;
@@ -218,6 +233,14 @@ float d = 1;
 }
 
       Rotate(forward , turn );
+
+       if( moveTargetTransform && movingTowardsTarget ){
+         Vector3 dif = moveTarget-transform.position;
+          //print(Vector3.Angle(transform.forward, moveTargetTransform.forward ) );
+         float upOrDown =Mathf.Sign(Vector3.Cross(transform.forward, moveTargetTransform.forward ).y);
+//          print(Mathf.Sign(Vector3.Cross(transform.forward, moveTargetTransform.forward ).y) );
+        turn += upOrDown * Vector3.Angle(transform.forward, moveTargetTransform.forward ) * .05f   * Mathf.Clamp( 1-  3 *dif.magnitude ,0,1);
+      }
       animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
     
 if( canMove ){

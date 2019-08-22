@@ -8,6 +8,12 @@ public class GuideParticles : Simulation
 
   public float _Emit;
   public Vector3 _EmitterPosition;
+  public TransferLifeForm body;
+
+
+  public override void Create(){
+    SafeInsert(body);
+  }
 
   public override void Bind(){
     data.land.BindData(life);

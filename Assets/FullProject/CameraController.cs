@@ -40,6 +40,7 @@ public class CameraController : Cycle
 
     public override void Create(){
       //lerping = false;
+      startFollowTime = Time.time;
     }
 
     public override void WhileLiving( float v ){
@@ -165,6 +166,24 @@ public class CameraController : Cycle
        Vector3 t1 = CameraHolder.position - Vector3.up * CameraHolder.position.y; 
       Vector3 t2 = followTarget.position - Vector3.up * followTarget.position.y; 
       angle = Vector3.Angle(t1,t2);
+    }
+
+
+    public Vector3 GetBezierLocationFromTransform( float t , Transform start , Transform end ){
+      Vector3 p1 = start.position;
+      Vector3 p4 = end.position;
+
+      Vector3 dif = start.position - end.position;
+
+//      Vector3 p2 = start.position + 
+
+      return dif;
+
+    }
+
+    public Vector3 GetBezierLocation( float t, Vector3 p1, Vector3 p2 , Vector3 p3 , Vector3 p4 ){
+      Vector3 final = Mathf.Pow((1-t),3) * p1 + 3*Mathf.Pow((1-t),2) * t*p2 + 3*(1-t)*Mathf.Pow(t,2) * p3 +  Mathf.Pow((1-t),3) * p4;
+      return final;
     }
 
 

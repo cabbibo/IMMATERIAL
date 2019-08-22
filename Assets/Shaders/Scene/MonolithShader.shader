@@ -24,6 +24,7 @@
 
       int _NumStories;
       int _ThisStory;
+      int _ConnectedStory;
       float _HueStory;
       float3 _StoryPositions[30];
       float3 _PlayerPosition;
@@ -114,8 +115,10 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
         }
 
         float3 thisDifVec = (_StoryPositions[_ThisStory] - v.ro);
+        float3 connectedDifVec = (_StoryPositions[_ConnectedStory]- v.ro);
 
-        float thisDif = length(v.thisDif);
+        float thisDif = length(thisDifVec);
+        float connectedDif = length(connectedDifVec);
 
         // Ray direction
         float3 rd           = v.rd;    
@@ -125,7 +128,8 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
         // Our color starts off at zero,   
         float3 col = tex2D(_ColorMap, float2( _HueStart + (((dif * 6 - _Time.y * .3 + length( tCol) *5 ) % 1) * .4) + length( tCol) * .1 ,0 )).xyz / ( .4 + .2*thisDif *thisDif + dif);
 
-        if( thisDif < .135 + .005 * sin(_Time.y*4)  ){ col = 1;}
+        if( thisDif < .18 + .005 * sin(_Time.y*4)  ){ col = 1;}
+        if( connectedDif < .135 + .005 * sin(_Time.y*4)  ){ col = float3(1,0,0);}
         //if( closestID == _ThisStory ){ col *= 4;}
         float4 color = fixed4( col , 1. );
         return color;

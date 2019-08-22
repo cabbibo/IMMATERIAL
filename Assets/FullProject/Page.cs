@@ -13,8 +13,15 @@ public class Page : Cycle
     public Transform lerpTarget;
     public MaterialPropertyBlock frameMPB;
 
-    public EventTypes.BaseEvent  OnStart;
-    public EventTypes.BaseEvent  OnEnd;
+    public EventTypes.BaseEvent  OnStartEnter;
+    public EventTypes.BaseEvent  OnStartExit;
+
+    public EventTypes.BaseEvent  OnEndEnter;
+    public EventTypes.BaseEvent  OnEndExit;
+
+
+    public EventTypes.FloatEvent  FadeIn;
+    public EventTypes.FloatEvent  FadeOut;
 
     public override void Create(){
       frame = GetComponent<Frame>();

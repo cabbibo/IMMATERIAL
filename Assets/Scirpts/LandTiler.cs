@@ -35,7 +35,7 @@ public class LandTiler : Cycle
   public int currentCenterX;
   public int currentCenterY;
 
-
+  public Material terrainMaterial;
 
 
 

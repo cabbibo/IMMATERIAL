@@ -25,14 +25,11 @@ public class StoryMarker : Cycle
     public void CheckHit(){
       
 //      print(data.inputEvents.hitTag);
-      if( data.inputEvents.hitTag == "StartNode" ){
-
-        print("instorio");
-        if( data.inputEvents.hit.collider == this.GetComponent<Collider>()){
+      if( data.inputEvents.hitTag == "StartNode" && data.inputEvents.hit.collider == this.GetComponent<Collider>() ){
           print("IM TOUCHED");
-
+          print(id);
           data.journey.ConnectMonolith( id );
-        }
+        
       }
     
     }

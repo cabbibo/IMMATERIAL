@@ -205,7 +205,7 @@ public class Book : Cycle
 
       if( !started ){
         RaycastHit hit;
-        if( data.inputEvents.hitTag == "Player" ){
+        if( data.inputEvents.hitTag == "Player" && data.state.inPages == false ){
           print("Ya Boi");
           OpenBook();
         }

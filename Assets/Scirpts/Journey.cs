@@ -15,6 +15,7 @@ public class Journey : Cycle
 
   public int currentStory;
   public int connectedStory;
+  public int activatedMonolith;
   public bool inStory;
 
   public bool startInStory;
@@ -50,6 +51,7 @@ public class Journey : Cycle
 
       for( int i = 0; i < stories.Length; i++ ){
         if( stories[i] is MonolithStorySetter ){
+          stories[i].id = monoIndex;
           monoStories[monoIndex] = (MonolithStorySetter)stories[i];
           monoIndex ++;
         }else{
@@ -62,7 +64,7 @@ public class Journey : Cycle
     }else{
 
       Cycles.Clear();
-       SafeInsert( stories[0] );
+       SafeInsert( stories[currentStory] );
     }
 
 
@@ -70,12 +72,17 @@ public class Journey : Cycle
 
 
    public override void OnLive(){
+    
+    DisconnectMonolith(0);
+
     if( startInStory ){
 
       data.player.position = stories[currentStory].transform.position;
 
       stories[currentStory].perimeter.EnterOuter();
       stories[currentStory].perimeter.EnterInner();
+
+      stories[currentStory].stories[currentStory].SetAllEvents();
 
       stories[currentStory].StartStory();
 
@@ -86,13 +93,15 @@ public class Journey : Cycle
       }
     }
 
+
    }
 
   public void ConnectMonolith(int id){
     connectedStory = id;
+    activatedMonolith = id;
     Shader.SetGlobalInt("_ConnectedStory" , connectedStory );
     data.monolithParticles._Emit = 1;
-    //data.monolithParticles._EmitterPosition = stories[id].monolith.transform.position;
+    data.monolithParticles._EmitterPosition = monoStories[id].monolith.transform.position;
   }
 
   public void DisconnectMonolith(int id){

@@ -11,12 +11,37 @@ public class State : Cycle
   public bool[] storiesVisited;
 
   public int currentStory;
+  private int oCurrentStory;
 
   public float lastTimeStoryVisited;
   
   public bool inStory;
   public bool inBook;
-  public bool inPages;
+  public bool inPages; 
+
+
+  public bool isMonolithOn;
+  private bool oIsMonolithOn;
+
+  public Transform monolithTarget;
+  private Transform oMonolithTarget;
+
+  public string animationState;
+  private string oAnimationState;
+
+
+  //public string 
+
+
+
+
+  public override void WhileLiving(float v){
+    
+      // TODO
+      if( isMonolithOn != oIsMonolithOn ){}
+      if( monolithTarget != oMonolithTarget ){}
+      
+  }
 
 
 

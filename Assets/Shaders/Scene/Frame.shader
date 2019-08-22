@@ -193,9 +193,11 @@ Shader "Scene/Frame" {
         col *= ( 1 +_Hovered*2);
 
        if( length(col ) < .2 ){
-        discard;
+        //discard;
        }
 col /= _NumberSteps;
+
+col = 1-_Cutoff;
 //col = 1;
 
 //if( _Restricted > .5 ){ col = float3(1,0,0);}
@@ -243,7 +245,7 @@ half4 MyShadowFragmentProgram () : SV_TARGET {
         //col *= col
 
        if(fadeVal < .2 ){
-        discard;
+       // discard;
        }
   return 1;
 }

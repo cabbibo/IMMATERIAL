@@ -30,9 +30,11 @@ public class PerimeterChecker : Cycle
 
   public override void OnGestated(){
 
-    print("this happened + " + gameObject.name );
+//    print("this happened + " + gameObject.name );
     ExitInner();
     ExitOuter();
+
+      oDif = 100000;
   }
 
 
@@ -42,7 +44,8 @@ public class PerimeterChecker : Cycle
    
     if( !hardCoded ){ 
 
-      oDif = dif;
+      
+
       dif = (transform.position - data.player.position).magnitude;
 
       if( dif < outerRadius && oDif >= outerRadius ){
@@ -65,6 +68,7 @@ public class PerimeterChecker : Cycle
         DoFade( 1-((dif - innerRadius) / (outerRadius-innerRadius)));
       }
 
+      oDif = dif;
 
     }
 
