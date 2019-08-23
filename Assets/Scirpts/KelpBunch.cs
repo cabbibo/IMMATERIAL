@@ -35,7 +35,7 @@ public class KelpBunch : Cycle
   }
 
   public override void Deactivate(){
-    print("what");
+//    print("what");
     body.showBody = false;
   //  circle.body.active = false;
   }

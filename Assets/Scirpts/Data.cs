@@ -24,6 +24,7 @@ public class Data : Cycle
 
   public Journey journey;
   public State state;
+  public Tween tween;
 
   public CameraController cameraControls;
   public Character playerControls;
@@ -60,6 +61,7 @@ public class Data : Cycle
 
   public override void Create(){
     if( journey != null ){ SafePrepend(journey); }
+    if( tween != null ){ SafePrepend(tween); }
     if( textParticles != null ){ SafePrepend(textParticles); }
     if( cameraControls != null ){ SafePrepend(cameraControls); }
     if( playerControls != null ){ SafePrepend(playerControls); }

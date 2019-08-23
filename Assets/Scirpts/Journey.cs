@@ -19,6 +19,9 @@ public class Journey : Cycle
   public bool inStory;
 
   public bool startInStory;
+  public bool startInPages;
+
+  public Tutorial tutorial;
 
 
 
@@ -29,6 +32,8 @@ public class Journey : Cycle
 
    public override void Create(){
 
+    SafeInsert(tutorial);
+    
     if( !NOSTORIES ){
 
 
@@ -44,7 +49,7 @@ public class Journey : Cycle
       int monoIndex = 0;
       int nonMonoIndex = 0;
 
-      print( numMonoStories );
+//      print( numMonoStories );
 
       monoStories = new MonolithStorySetter[ numMonoStories ];
       nonMonoStories = new StorySetter[ stories.Length - numMonoStories ];
@@ -75,14 +80,18 @@ public class Journey : Cycle
     
     DisconnectMonolith(0);
 
-    if( startInStory ){
+    if( startInStory  || startInPages){
 
       data.player.position = stories[currentStory].transform.position;
 
       stories[currentStory].perimeter.EnterOuter();
       stories[currentStory].perimeter.EnterInner();
 
-      stories[currentStory].stories[currentStory].SetAllEvents();
+    }
+
+    if( startInPages ){
+
+      stories[currentStory].stories[stories[currentStory].currentStory].SetAllEvents();
 
       stories[currentStory].StartStory();
 

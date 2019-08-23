@@ -12,6 +12,7 @@ public class Page : Cycle
     public Transform moveTarget;
     public Transform lerpTarget;
     public MaterialPropertyBlock frameMPB;
+    public bool locked;
 
     public EventTypes.BaseEvent  OnStartEnter;
     public EventTypes.BaseEvent  OnStartExit;

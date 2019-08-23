@@ -48,7 +48,7 @@ MaterialPropertyBlock mpb;
       monolith.localScale = new Vector3( size, size * ratio , size / 7 );
       monolith.localPosition = Vector3.up * size * ratio * .4f;
 
-      print( monolith.rotation );
+//      print( monolith.rotation );
 
 
       storyMarkers = new GameObject[data.journey.monoStories.Length];

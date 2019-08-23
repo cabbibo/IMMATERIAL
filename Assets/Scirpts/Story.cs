@@ -28,14 +28,18 @@ public class Story : Cycle
 
   public bool forward;
 
+
+  // The words should be coming from the camera
   public void SpawnFromCamera(){
     spawnFromCamera = true;
   }
   
-
+  // the words should be coming from the player
   public void SpawnFromPlayer(){
     spawnFromCamera = false;
   }
+
+
 
   public override void Create(){
 
@@ -50,6 +54,7 @@ public class Story : Cycle
       pages[i].frameMPB.SetFloat("_Cutoff" , 1);
       pages[i].frame.borderLine.SetPropertyBlock( pages[currentPage].frameMPB );
     }
+    transitioning = false;
   }
 
    public void CheckForStart(){
@@ -72,12 +77,11 @@ public class Story : Cycle
       pages[i].OnStartEnter.Invoke();
       pages[i].OnEndExit.Invoke();
     }
-
   }
 
   public void NextPage(){
 
-    if( started && transitioning == false ){
+    if( started && transitioning == false && !pages[currentPage].locked ){
 
       forward = true;
       currentPage ++;
@@ -139,7 +143,7 @@ public class Story : Cycle
           transitioning = true;
           transitionSpeed = pages[0].lerpSpeed;
           
-        if( fast ){ transitionSpeed = 1; }
+          if( fast ){ transitionSpeed = 1; }
           transitionStartTime = Time.time;
           oldTransitionPage = pages[currentPage+1];
 
@@ -163,8 +167,8 @@ public class Story : Cycle
    
     if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget ); }
     if( pages[currentPage].lerpTarget ){ 
-      print("setting Lerp target");
-      print(transitionSpeed);
+//      print("setting Lerp target");
+ //     print(transitionSpeed);
 
       data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , transitionSpeed ); }
 
@@ -227,6 +231,7 @@ public class Story : Cycle
     oldTransitionPage = null;
     //transitioning = true;
     transitionSpeed = pages[currentPage].lerpSpeed;
+    pages[currentPage].OnStartEnter.Invoke();
     if( fast ){ transitionSpeed = 1; }
     transitionStartTime = Time.time;
     SetActivePage(); 
@@ -250,8 +255,8 @@ public class Story : Cycle
     pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-v);
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
   
-    print("fadio");
-    print( 1-2*v);
+ //   print("fadio");
+//    print( 1-2*v);
   }
 
   public void DoBetweenFade(){
@@ -259,9 +264,13 @@ public class Story : Cycle
     float v = (Time.time - transitionStartTime) / transitionSpeed;
 
 
-    if( v > 1 && started ){ 
+    if( v > 1){ 
       transitioning = false;
-      OnLockPage();
+
+      if( started ){ 
+        OnLockPage();
+      }
+    
     }
 
     if( oldTransitionPage ){
@@ -271,7 +280,8 @@ public class Story : Cycle
     }
 
     // doing this to make sure the frame doesn't "flash" in 
-    pages[currentPage].frameMPB.SetFloat("_Cutoff" ,Mathf.Min((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff")));
+    pages[currentPage].frameMPB.SetFloat("_Cutoff" ,Mathf.Min
+      ((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff")));
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
     pages[currentPage].FadeIn.Invoke(v);
 

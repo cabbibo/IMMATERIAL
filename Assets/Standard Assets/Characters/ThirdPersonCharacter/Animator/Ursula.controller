@@ -937,6 +937,12 @@ AnimatorStateTransition:
   - m_ConditionMode: 2
     m_ConditionEvent: GetUp
     m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: FallAsleep
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: Falling
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -199025637501672807}
   m_Solo: 0

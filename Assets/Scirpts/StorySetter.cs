@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -91,7 +91,7 @@ public class StorySetter : Cycle
     data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
     data.inputEvents.OnSwipeRight.RemoveListener(  stories[currentStory].PreviousPage );
     stories[currentStory].DoFade(1);
-    print("exitInner");
+//    print("exitInner");
   }
 
 
