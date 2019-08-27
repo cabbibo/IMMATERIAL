@@ -14,6 +14,7 @@ public class CircleOnTerrain : Cycle
   public Vector3 set;
 
   public float radius;
+  public float height = 1;
 
 
   private SceneCircleVerts verts;
@@ -35,6 +36,7 @@ public class CircleOnTerrain : Cycle
     life.BindPrimaryForm( "_VertBuffer" , verts);
     life.BindAttribute("_SetLocation", "set", this);
     life.BindAttribute("_Radius", "radius", this);
+    life.BindAttribute("_Height", "height", this);
 
     data.land.BindData(life);
   }

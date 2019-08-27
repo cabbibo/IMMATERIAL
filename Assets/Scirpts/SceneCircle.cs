@@ -17,7 +17,7 @@ public class SceneCircle : Cycle
   public float outer;
 
   private SceneCircleVerts verts;
-  private SceneCircleVerts tris;
+  private SceneCircleTris tris;
 
   public float fadeTime;
   private float setTime;
@@ -67,7 +67,7 @@ public class SceneCircle : Cycle
 
   public void Unset(PerimeterChecker story ){
 
-     setTime = Time.time;
+    setTime = Time.time;
     setting = 0;
     body.mpb.SetFloat("_SetTime", setTime);
     body.mpb.SetFloat("_Setting", setting);

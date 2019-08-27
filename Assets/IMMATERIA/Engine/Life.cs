@@ -61,7 +61,9 @@ public class Life : Cycle {
         catch (Exception e)
         {
             DebugThis("Your Kernel name couldn't be found");
-            EditorGUIUtility.PingObject(this.gameObject);
+               #if UNITY_EDITOR
+                EditorGUIUtility.PingObject(this.gameObject);
+                #endif
         }
   }
 

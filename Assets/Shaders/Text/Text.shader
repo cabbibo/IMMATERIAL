@@ -2,6 +2,7 @@
   Properties {
 
     _Color ("Color", Color) = (1,1,1,1)
+    _BaseHue ("Base Hue", float ) = 1
     
        _TextMap ("Textmap", 2D) = "white" {}
        _ColorMap ("ColorMap", 2D) = "white" {}
@@ -52,7 +53,7 @@
       uniform sampler2D _BackgroundTexture;
 
       float3 _Color;
-
+      float _BaseHue;
 
 			struct varyings {
 				float4 pos 		: SV_POSITION;
@@ -104,7 +105,7 @@
 
         if( d < .2 ){discard;}
         float3 bg = tex2Dproj(_BackgroundTexture, v.screenPos );
-        float3 c = tex2D(_ColorMap,float2(v.debug.z * 10.1 + .7 ,0) ).xyz;
+        float3 c = tex2D(_ColorMap,float2(v.debug.z * 10.1 + .7  + _BaseHue,0) ).xyz;
         
 
          //if( length(bg)/3 < .4 ){ c = 1; }else{

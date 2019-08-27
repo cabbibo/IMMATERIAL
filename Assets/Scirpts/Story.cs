@@ -9,24 +9,43 @@ using UnityEngine;
 public class Story : Cycle
 {
 
+
+  // which id in the set of stories 
   public int id;
    
   public Page[] pages;
   public int currentPage;
 
+
+  // means we are entering and exiting via code, not by walking closer
+  // ( most likely just first page )
   public bool hardcoded;
+
+  // Can't go back past the first page ( most likely just page one)
   public bool cantUnstart;
+
+  // are we spawning particles from camera or from ursula
   public bool spawnFromCamera;
+
+  // Story has started!
   public bool started;
 
 
+
+  // Info for page turning
   public bool transitioning;
   public float transitionSpeed;
   public float transitionStartTime;
   public Page oldTransitionPage;
+ 
+
+  // Makes it so that we can move faster
   public bool fast;
 
   public bool forward;
+
+  public EventTypes.BaseEvent OnEnterOuter;
+  public EventTypes.BaseEvent OnExitOuter;
 
 
   // The words should be coming from the camera
@@ -42,11 +61,10 @@ public class Story : Cycle
 
 
   public override void Create(){
-
     for( int i = 0; i < pages.Length; i ++ ){
       SafeInsert(pages[i]);
     }
-
+    started = false;
   }
 
   public override void OnBirthed(){
@@ -54,32 +72,40 @@ public class Story : Cycle
       pages[i].frameMPB.SetFloat("_Cutoff" , 1);
       pages[i].frame.borderLine.SetPropertyBlock( pages[currentPage].frameMPB );
     }
+
     transitioning = false;
+
   }
 
    public void CheckForStart(){
 
     if( !started ){
+     
       RaycastHit hit;
 
       if (pages[currentPage].frame.collider.Raycast(data.inputEvents.ray, out hit, 100.0f)){
-        
         StartStory();
       }else{
         
       }
+
     }
+
   }
 
+  // populate all the events from this page forward
   public void SetAllEvents(){
     for( int i = 0; i < currentPage-1; i++ ){
-      print("WHATsss");
       pages[i].OnStartEnter.Invoke();
       pages[i].OnEndExit.Invoke();
     }
   }
 
+
+
   public void NextPage(){
+
+
 
     if( started && transitioning == false && !pages[currentPage].locked ){
 
@@ -95,7 +121,6 @@ public class Story : Cycle
 
         SetActivePage();
         oldTransitionPage = pages[currentPage-1];
-        //pages[currentPage].OnStartEnter.Invoke();
         pages[currentPage-1].OnEndExit.Invoke();
 
       }else{
@@ -167,8 +192,6 @@ public class Story : Cycle
    
     if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget ); }
     if( pages[currentPage].lerpTarget ){ 
-//      print("setting Lerp target");
- //     print(transitionSpeed);
 
       data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , transitionSpeed ); }
 
@@ -180,6 +203,8 @@ public class Story : Cycle
 
 
   public void OnLockPage(){
+
+    print("ON LOCK PAGE");
     
     data.textParticles.Set( pages[currentPage].text );
 
@@ -229,14 +254,17 @@ public class Story : Cycle
     started = true;
 
     oldTransitionPage = null;
-    //transitioning = true;
+    transitioning = true;
     transitionSpeed = pages[currentPage].lerpSpeed;
     pages[currentPage].OnStartEnter.Invoke();
+
     if( fast ){ transitionSpeed = 1; }
     transitionStartTime = Time.time;
     SetActivePage(); 
     SetColliders( false );
 
+
+    print("STORY STARTED");
 
   }
 
@@ -265,6 +293,7 @@ public class Story : Cycle
 
 
     if( v > 1){ 
+
       transitioning = false;
 
       if( started ){ 
@@ -273,17 +302,29 @@ public class Story : Cycle
     
     }
 
+    float hue = pages[currentPage].baseHue;
+
     if( oldTransitionPage ){
       oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
       oldTransitionPage.frame.borderLine.SetPropertyBlock(oldTransitionPage.frameMPB);
       oldTransitionPage.FadeOut.Invoke(v);
+      hue = Mathf.Lerp( oldTransitionPage.baseHue , pages[currentPage].baseHue , v);
+
+    }else{
+
     }
+
+
+      data.textParticles.body.mpb.SetFloat("_BaseHue" , hue);
 
     // doing this to make sure the frame doesn't "flash" in 
     pages[currentPage].frameMPB.SetFloat("_Cutoff" ,Mathf.Min
       ((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff")));
     pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
     pages[currentPage].FadeIn.Invoke(v);
+
+
+
 
 
 //    print("fad btwx");

@@ -76,11 +76,11 @@ public class Character : Cycle {
   }
 
   public void OnPickUp(){
-    print("WHAHJAa");
     OnGroundBook.SetActive(false);
     InHandBook.SetActive(true);
     animator.SetBool("PickUp", false);
   }
+  
   public void PickUp(){
     animator.SetBool("PickUp", true);
   }
@@ -114,7 +114,7 @@ public class Character : Cycle {
   public void SwipeTurn( Vector2 delta ){
 
 
-    if( data.book.started == false ){
+    if( data.book.started == false  && data.state.inPages == false ){
       if( delta.magnitude > 10 ){
         movingTowardsTarget = false;
       }

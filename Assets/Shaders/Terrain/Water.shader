@@ -236,15 +236,15 @@ float smin( float a, float b, float k )
                 float2 difP = _PlayerPosition.xz - v.world.xz;
 
                 difP = .1*normalize(difP) * saturate(1/ (10*length(difP)));
-                float n = .2*tex2D(_NoiseTex, v.world.xz * .3 +  difP * - (_Time.y* .03)).x;//-_Time,1));
-                n += .4*tex2D(_NoiseTex, v.world.xz * .1  +  difP - (_Time.y* .03)).x;//-_Time,1));
-                n += tex2D(_NoiseTex, v.world.xz * .05  +  difP - (_Time.y* .03)).x;//-_Time,1));
+                float n = .2*tex2D(_NoiseTex, v.world.xz * .3 +  difP * - (_Time.y* .01)).x;//-_Time,1));
+                n += .4*tex2D(_NoiseTex, v.world.xz * .1  +  difP - (_Time.y* .019)).x;//-_Time,1));
+                n += tex2D(_NoiseTex, v.world.xz * .05  +  difP - (_Time.y* .014)).x;//-_Time,1));
 
                 
                 pDif -=  n*n*3;
 
 
-                float4 c = tex2Dlod(_HeightMap , float4(v.world.xz * _MapSize,0,0) );
+                float4 c = tex2Dlod(_HeightMap , float4(v.world.xz * _MapSize - .5*_MapSize,0,0) );
                 
                 float dif = v.world.y - c.r * _MapHeight;
                
@@ -261,8 +261,8 @@ float smin( float a, float b, float k )
                 
 
 
-                float l1 = (2*tex2D(_NoiseTex, v.world.xz * .2 - 0 - (_Time.y* .03)).x)-1;
-                float l2 = (2*tex2D(_NoiseTex, v.world.xz * .2 + 5 - (_Time.y* .03)).x)-1;
+                float l1 = (2*tex2D(_NoiseTex, v.world.xz * .2 - 0 - (_Time.y* .01)).x)-1;
+                float l2 = (2*tex2D(_NoiseTex, v.world.xz * .2 + 5 - (_Time.y* .01)).x)-1;
 
                 float3 fNor = v.nor + 3*l1 * float3(1,0,0) + 3*l2 * float3(0,0,1);
                 fNor = normalize(fNor);
@@ -275,11 +275,15 @@ float smin( float a, float b, float k )
 
                 float3 tCol = texCUBE(_CubeMap,refr);
 
-                float shoreLine = saturate(1-floor( (dif - n * .2) * 5));
+                float shoreLine = saturate(1-floor( (abs(dif) - abs(n) * .4) *6));
+                
+                if( dif < abs(n) * .2 ){
+                    discard;
+                }
                 col += saturate(1-floor( (dif - n * .2) * 5));//tex2D(_DepthRampTex,float2(bg.b * .2 + .7,0)  ) + aroundPerson ;//tCol;//refl * .5 + .5;
                 
 
-                col = length(bg) * float3(0,0.4,1) + shoreLine * saturate( length( bg) *4);//tCol;//refl * .5 + .5;
+                col = length(bg) * float3(0,0.4,1) + shoreLine * saturate( length(bg) *4);//tCol;//refl * .5 + .5;
                
 
                // col = tex2Dproj(_BackgroundTexture,ComputeGrabScreenPos( mul(UNITY_MATRIX_VP, float4(v.world + v.eye*.9,1)))).rgb;;// + saturate(aroundPerson * (lookup));

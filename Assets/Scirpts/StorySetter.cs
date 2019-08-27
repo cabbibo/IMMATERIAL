@@ -18,10 +18,6 @@ public class StorySetter : Cycle
   public Story[] stories;
   public int currentStory;
 
-
-
-
-
   public override void Create(){
 
 
@@ -33,7 +29,6 @@ public class StorySetter : Cycle
     }
 
 
-    perimeter.OnEnterOuter.AddListener(CheckWhichStory);
     perimeter.OnEnterOuter.AddListener(EnterOuter);
     perimeter.OnEnterInner.AddListener(EnterInner);
     perimeter.OnExitOuter.AddListener(ExitOuter);
@@ -65,6 +60,7 @@ public class StorySetter : Cycle
     CheckWhichStory();
 
     stories[currentStory].DoFade(0);
+    stories[currentStory].OnEnterOuter.Invoke();
     perimeter.OnDoFade.AddListener(stories[currentStory].DoFade);
   }
 
@@ -82,6 +78,8 @@ public class StorySetter : Cycle
 
 //    print("StorySetter exiting outer : " + gameObject.name );
     stories[currentStory].DoFade(0);
+
+    stories[currentStory].OnExitOuter.Invoke();
     perimeter.OnDoFade.RemoveListener(stories[currentStory].DoFade);
   }
 

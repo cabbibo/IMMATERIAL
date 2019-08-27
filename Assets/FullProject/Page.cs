@@ -14,6 +14,8 @@ public class Page : Cycle
     public MaterialPropertyBlock frameMPB;
     public bool locked;
 
+    public float baseHue;
+
     public EventTypes.BaseEvent  OnStartEnter;
     public EventTypes.BaseEvent  OnStartExit;
 

@@ -143,14 +143,12 @@ public class Land : Cycle {
 
   public void LoadFromFile(){
 
-    string name = "Resources/Terrain/safe";
+    string name = "Terrain/safe";
 
     BinaryFormatter bf = new BinaryFormatter();
-    FileStream stream = new FileStream(Application.dataPath + "/"+name+".dna",FileMode.Open);
+    FileStream stream = File.OpenRead(Application.streamingAssetsPath+ "/"+name+".dna");
     float[] data = bf.Deserialize(stream) as float[];
     stream.Close();
-
-    print(data.Length);
 
     Color[] colors =  new Color[data.Length/4];
     for( int i = 0; i < data.Length / 4; i ++ ){

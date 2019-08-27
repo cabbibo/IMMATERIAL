@@ -89,9 +89,17 @@ public class Tutorial : Cycle
       swipeForwardMoveText.enabled = true;
       tapMoveText.enabled = true;
 
+
       inOrOut = true;
+
+      currentRenderer = swipeLeftTurnText; tweenMaterial(0);
+      currentRenderer = swipeRightTurnText; tweenMaterial(0);
+      currentRenderer = swipeForwardMoveText; tweenMaterial(0);
+      currentRenderer = tapMoveText; tweenMaterial(0);
+
+
       currentRenderer = swipeLeftTurnText;
-      data.tween.AddTween( 1 , tweenMaterial  );
+      data.tween.AddTween( .5f , tweenMaterial  );
       data.inputEvents.OnSwipeLeft.AddListener(  switchToRightTurn );
     }
 
@@ -100,13 +108,13 @@ public class Tutorial : Cycle
       data.inputEvents.OnSwipeLeft.RemoveListener(  switchToRightTurn );
       inOrOut = false;
       currentRenderer = swipeLeftTurnText;
-      data.tween.AddTween(1,tweenMaterial,rightTurnAdd);
+      data.tween.AddTween(.5f,tweenMaterial,rightTurnAdd);
     }
 
     public void rightTurnAdd(){
       inOrOut = true;
       currentRenderer = swipeRightTurnText;
-      data.tween.AddTween( 1 , tweenMaterial  );
+      data.tween.AddTween( .5f , tweenMaterial  );
       data.inputEvents.OnSwipeRight.AddListener(  switchToForwardTurn );
     }
 
@@ -115,28 +123,28 @@ public class Tutorial : Cycle
       data.inputEvents.OnSwipeRight.RemoveListener(  switchToForwardTurn );
       inOrOut = false;
       currentRenderer = swipeRightTurnText;
-      data.tween.AddTween(1,tweenMaterial,forwardTurnAdd);
+      data.tween.AddTween(.5f,tweenMaterial,forwardTurnAdd);
     }
 
     public void forwardTurnAdd(){
       inOrOut = true;
       currentRenderer = swipeForwardMoveText;
-      data.tween.AddTween( 1 , tweenMaterial  );
-      data.inputEvents.OnSwipeDown.AddListener(  switchToTap );
+      data.tween.AddTween( .5f , tweenMaterial  );
+      data.inputEvents.OnSwipeUp.AddListener(  switchToTap );
     }
 
     public void switchToTap(){
 
-      data.inputEvents.OnSwipeDown.RemoveListener(  switchToTap );
+      data.inputEvents.OnSwipeUp.RemoveListener(  switchToTap );
       inOrOut = false;
       currentRenderer = swipeForwardMoveText;
-      data.tween.AddTween(1,tweenMaterial,tapAdd);
+      data.tween.AddTween(.5f,tweenMaterial,tapAdd);
     }
 
     public void tapAdd(){
       inOrOut = true;
       currentRenderer = tapMoveText;
-      data.tween.AddTween( 1 , tweenMaterial  );
+      data.tween.AddTween( .5f , tweenMaterial  );
       data.inputEvents.OnTap.AddListener(  endTutorial );
     }
 
@@ -145,7 +153,7 @@ public class Tutorial : Cycle
       data.inputEvents.OnTap.RemoveListener(  endTutorial );
       inOrOut = false;
       currentRenderer = swipeForwardMoveText;
-      data.tween.AddTween(1,tweenMaterial,onTweenOutEnd);
+      data.tween.AddTween(.5f,tweenMaterial,onTweenOutEnd);
     }
 
 
@@ -165,7 +173,7 @@ public class Tutorial : Cycle
     public void ShowClickTut(){
       clickBackground.enabled = true;
       clickText.enabled = true;
-      data.tween.AddTween( 3 , tweenInClick  , onClickTweenIn );
+      data.tween.AddTween( 1 , tweenInClick  , onClickTweenIn );
     } 
 
 

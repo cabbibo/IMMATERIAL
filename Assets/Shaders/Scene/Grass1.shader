@@ -112,7 +112,7 @@ float dif = saturate((_FalloffRadius -  length( v.worldPos - _PlayerPosition ))/
         color *= (tcol+1);
                 if( tcol.a < .8 ){ discard; }
 color *= dif;
-       // if( v.debug.y < .3 ){ discard; }
+        if( v.debug.y < .3 ){ discard; }
         return float4( color.xyz * shadow, 1.);
             }
 
@@ -159,6 +159,7 @@ sampler2D _MainTex;
   struct v2f {
         V2F_SHADOW_CASTER;
         float2 uv : TEXCOORD1;
+        float2 debug : TEXCOORD2;
       };
 
 
@@ -176,12 +177,15 @@ sampler2D _MainTex;
        
         o.uv = fUV.yx *float2(1./6.,1);;
         o.pos = mul(UNITY_MATRIX_VP, float4(fPos, 1));
+        o.debug = debug;
         return o;
       }
 
       float4 frag(v2f i) : COLOR
       {
         float4 col = tex2D(_MainTex,i.uv);
+
+        if( i.debug.y < .3 ){ discard; }
         if( col.a < .8){discard;}
         SHADOW_CASTER_FRAGMENT(i)
       }

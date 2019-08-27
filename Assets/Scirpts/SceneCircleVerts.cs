@@ -23,7 +23,7 @@ public class SceneCircleVerts : Particles
       float colNor = (float)i / ((float)cols-1);
 
       for( int j = 0; j < rows; j++){
-        float rowNor = (float)j / (float)rows;
+        float rowNor = .0001f + (float)j / (float)rows;
 
         float angle = colNor * 2 * Mathf.PI;//6.28f;
         float x = Mathf.Cos( angle ) * 1 * rowNor;
