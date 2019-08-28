@@ -31,6 +31,9 @@ public class Story : Cycle
   public bool started;
 
 
+  public StorySetter setter;
+
+
 
   // Info for page turning
   public bool transitioning;
@@ -46,6 +49,10 @@ public class Story : Cycle
 
   public EventTypes.BaseEvent OnEnterOuter;
   public EventTypes.BaseEvent OnExitOuter;
+
+
+  public EventTypes.BaseEvent OnEnterInner;
+  public EventTypes.BaseEvent OnExitInner;
 
 
   // The words should be coming from the camera
@@ -191,13 +198,8 @@ public class Story : Cycle
     data.cameraControls.SetLerpTarget( pages[currentPage].transform , transitionSpeed );
    
     if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget ); }
-    if( pages[currentPage].lerpTarget ){ 
-
-      data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , transitionSpeed ); }
-
-    if( pages[currentPage].moveTarget &&  pages[currentPage].lerpTarget ){
-      Debug.LogError("this page has multiple targets");
-    }
+    if( pages[currentPage].lerpTarget ){ data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , transitionSpeed ); }
+    if( pages[currentPage].moveTarget &&  pages[currentPage].lerpTarget ){ Debug.LogError("this page has multiple targets"); }
 
   }   
 

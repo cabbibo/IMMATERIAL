@@ -152,7 +152,7 @@ public class Tutorial : Cycle
 
       data.inputEvents.OnTap.RemoveListener(  endTutorial );
       inOrOut = false;
-      currentRenderer = swipeForwardMoveText;
+      currentRenderer = tapMoveText;
       data.tween.AddTween(.5f,tweenMaterial,onTweenOutEnd);
     }
 
@@ -196,16 +196,13 @@ public class Tutorial : Cycle
 
     public void checkForHit(){
       if( data.inputEvents.hitTag == "Frame" ){
-        data.tween.AddTween(1 , tweenOutClick , onTweenOutEnd );
-        clickBackground.GetComponent<Collider>().enabled = false;
+        HideClickTut();
       }
     }
 
 
     public void onTweenOutEnd(){
 
-      clickBackground.enabled = false;
-      clickText.enabled = false;
 
       swipeLeftPageText.enabled = false;
       swipeRightPageText.enabled = false;
@@ -216,8 +213,15 @@ public class Tutorial : Cycle
 
     }
 
-    public void HideClickTut(){
+    public void onClickOutEnd(){
 
+      clickBackground.enabled = false;
+      clickText.enabled = false;
+    }
+
+    public void HideClickTut(){
+        data.tween.AddTween(1 , tweenOutClick , onClickOutEnd );
+        clickBackground.GetComponent<Collider>().enabled = false;
     } 
 
 

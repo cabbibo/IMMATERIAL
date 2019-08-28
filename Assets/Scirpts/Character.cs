@@ -49,6 +49,7 @@ public class Character : Cycle {
 
   public GameObject OnGroundBook;
   public GameObject InHandBook;
+  public EpiphanyRing epiphanyRing;
 
   public bool canMove;
 
@@ -78,6 +79,8 @@ public class Character : Cycle {
   public void OnPickUp(){
     OnGroundBook.SetActive(false);
     InHandBook.SetActive(true);
+    epiphanyRing.Set();
+    data.state.hasPickedUpBook = true;
     animator.SetBool("PickUp", false);
   }
   

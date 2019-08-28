@@ -25,6 +25,7 @@ public class StorySetter : Cycle
     uv =new Vector2( transform.position.x * data.land.size , transform.position.z * data.land.size);
 
     for( int i = 0; i < stories.Length; i ++ ){
+      stories[i].setter = this;
       SafeInsert(stories[i]);
     }
 
@@ -70,6 +71,7 @@ public class StorySetter : Cycle
     data.inputEvents.OnSwipeLeft.AddListener(  stories[currentStory].NextPage );
     data.inputEvents.OnSwipeRight.AddListener(  stories[currentStory].PreviousPage );
 
+    stories[currentStory].OnEnterInner.Invoke();
     stories[currentStory].DoFade(1);
 
   }
@@ -88,6 +90,8 @@ public class StorySetter : Cycle
     data.inputEvents.OnTap.RemoveListener(  stories[currentStory].CheckForStart );
     data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
     data.inputEvents.OnSwipeRight.RemoveListener(  stories[currentStory].PreviousPage );
+
+    stories[currentStory].OnExitInner.Invoke();
     stories[currentStory].DoFade(1);
 //    print("exitInner");
   }

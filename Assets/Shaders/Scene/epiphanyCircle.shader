@@ -61,7 +61,7 @@
 
                 float angle = atan2( v.pos.z , v.pos.x );
 
-                float distance = (_ID + 4 ) * .04 *  pow( ( _Time.y  - _StartTime) , 3);
+                float distance = (_ID + 4 ) * .2 *  pow( ( _Time.y  - _StartTime) , 2);
                 float r =  (length( v.pos )* ( distance/3)) + distance;
 
 
@@ -94,8 +94,11 @@
 
                 col = tex2D(_RibbonMap , (v.uv * 2 + 1 + _ID + float2(_Time.y  * .05 * (_ID+4),0) ) * float2( 10,1) );
 
-                if( col.x > abs(v.uv.y) ){ discard; }else{
-                    col = tex2D(_RibbonMap2, float2(sin(col.x * 2 + _ID * .1) * .3 + .4,0));
+                float cutoff = saturate(((_Time.y - _StartTime)) / 10);
+                if( col.x > abs(v.uv.y) - cutoff * .6 ){ 
+                    discard; 
+                }else{
+                    col = tex2D(_RibbonMap2, float2(sin(col.x * 2 + _ID * .1) * .3 + .7,0));
                 }
 
                 col /= (1 + .01 * v.dist);// (.5+ .1*dif);

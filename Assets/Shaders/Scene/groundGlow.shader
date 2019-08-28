@@ -36,6 +36,9 @@ Tags { "RenderType"="Opaque" }
             sampler2D _MainTex;
             sampler2D _ColorMap;
 
+            float _StartTime;
+            float _Setting;
+
             struct v2f { 
               float4 pos : SV_POSITION; 
               float3 nor : NORMAL;
@@ -82,7 +85,9 @@ fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
                
 
                 float4 tCol = tex2D(_MainTex, v.uv *   float2( 10, 1 ) + .1 - float2(0 , .05)*_Time.y);
-                if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .8 ){ discard;}
+
+                float cutoff = saturate(((_Time.y - _StartTime - 8 ) / 2) * _Setting);
+                if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .8 + cutoff * .3  ){ discard;}
                 fixed4 col =   tex2D(_ColorMap , float2( length(tCol) * 1 + (1-shadow  * .05)+ .0 + lookupVal* lookupVal * .1  + v.uv.y * 3 - _Time.y * .2, 0) );//* 20-10;//*tCol* lookupVal*4;//* 10 - 1;
                     col *= .7;
                 return col;
@@ -115,14 +120,17 @@ fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
 
       #include "UnityCG.cginc"
       sampler2D _MainTex;
-
+    float _StartTime;
+            float _Setting;
       float DoShadowDiscard( float3 pos , float2 uv ){
         
                 float lookupVal =  max(min( uv.y * 2,( 1- uv.y ) ) * 1.5,0);//2 * tex2D(_MainTex,v.uv * float2(4 * saturate(min( v.uv.y * 4,( 1- v.uv.y ) )) ,.8) + float2(0,.2));
                
 
                 float4 tCol = tex2D(_MainTex, uv *   float2( 10, 1 ) + .1- float2(0 , .05)*_Time.y);
-                if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .8 ){ return 0;}else{ return 1;}//     if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .5 ){ return 0;}else{return 1;}
+
+                 float cutoff = saturate(((_Time.y - _StartTime - 8 ) / 2) * _Setting);
+                if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .8  + cutoff * .3){ return 0;}else{ return 1;}//     if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .5 ){ return 0;}else{return 1;}
       }
 
       #include "../Chunks/ShadowDiscardFunction.cginc"

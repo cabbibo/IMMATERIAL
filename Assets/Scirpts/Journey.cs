@@ -69,7 +69,7 @@ public class Journey : Cycle
     }else{
 
       Cycles.Clear();
-       SafeInsert( stories[currentStory] );
+      SafeInsert( stories[currentStory] );
     }
 
 
@@ -80,7 +80,7 @@ public class Journey : Cycle
     
     DisconnectMonolith(0);
 
-    if( startInStory  || startInPages){
+    if( startInStory  || startInPages ){
 
       data.player.position = stories[currentStory].transform.position;
 

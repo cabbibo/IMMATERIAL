@@ -14,6 +14,8 @@ public class EpiphanyRing : Cycle
 
     public ReRender[] rerenderers;
 
+    public CircleOnTerrain circle;
+
 
 
     public float startTime;
@@ -34,6 +36,9 @@ public class EpiphanyRing : Cycle
       body.active = true;
       
       body.mpb.SetFloat("_StartTime", Time.time );
+      circle.body.mpb.SetFloat("_StartTime" , Time.time );
+      circle.body.mpb.SetFloat("_Setting" , 1 );
+
       for( int i = 0; i < rerenderers.Length; i++ ){
         rerenderers[i].active = true;
 
@@ -58,4 +63,11 @@ public class EpiphanyRing : Cycle
         rerenderers[i].mpb.SetVector("_SetPosition", transform.position );
       }
     } 
+
+    public override void WhileLiving( float v ){
+      if( Time.time -startTime > 10 ){
+        circle._Deactivate();
+        _Deactivate();
+      }
+    }
 }
