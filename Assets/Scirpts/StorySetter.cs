@@ -67,6 +67,7 @@ public class StorySetter : Cycle
 
   public void EnterInner(){
     
+    print("DOBLSLSW");
     data.inputEvents.OnTap.AddListener( stories[currentStory].CheckForStart );
     data.inputEvents.OnSwipeLeft.AddListener(  stories[currentStory].NextPage );
     data.inputEvents.OnSwipeRight.AddListener(  stories[currentStory].PreviousPage );
@@ -88,6 +89,12 @@ public class StorySetter : Cycle
 
   public void ExitInner(){
     data.inputEvents.OnTap.RemoveListener(  stories[currentStory].CheckForStart );
+    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
+    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
+    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
+    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
+    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
+    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
     data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
     data.inputEvents.OnSwipeRight.RemoveListener(  stories[currentStory].PreviousPage );
 

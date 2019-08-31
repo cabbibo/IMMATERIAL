@@ -414,6 +414,7 @@ void SetStates(){
 
     foreach( Cycle c in Cycles ){
       CheckSelfCycle(c);
+     // print(c);
       c._WhileDebug();
       
     }

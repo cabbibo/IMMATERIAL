@@ -8,6 +8,7 @@ public class StoryMarker : Cycle
 
     public TextMesh text;
     public int id;
+    public string storyName;
 
     public override void Destroy(){
       data.inputEvents.OnTap.RemoveListener( CheckHit );
@@ -26,10 +27,8 @@ public class StoryMarker : Cycle
       
 //      print(data.inputEvents.hitTag);
       if( data.inputEvents.hitTag == "StartNode" && data.inputEvents.hit.collider == this.GetComponent<Collider>() ){
-          print("IM TOUCHED");
-          print(id);
-          data.journey.ConnectMonolith( id );
-        
+        data.journey.ConnectMonolith( id );
+        print( storyName );
       }
     
     }

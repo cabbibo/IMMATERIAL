@@ -40,6 +40,7 @@ public class Data : Cycle
   public TerrainTap  terrainTap;
 
   public Painter painter;
+  public Helper helper;
 
   //public Terrain terrain;
 
@@ -75,6 +76,7 @@ public class Data : Cycle
     if( terrainTap != null ){ SafePrepend(terrainTap); }
     if( state != null ){ SafePrepend(state); }
     if( painter != null ){ SafePrepend(painter); }
+    if( helper != null ){ SafePrepend(helper); }
   }
 
 

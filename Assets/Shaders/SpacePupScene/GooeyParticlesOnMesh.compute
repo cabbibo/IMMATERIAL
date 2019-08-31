@@ -1,0 +1,62 @@
+﻿#pragma kernel Transfer
+
+
+struct Vert{
+  float3 pos;
+  float3 nor;
+  float3 tang;
+  float2 uv;
+  float  debug;
+};
+
+
+
+
+struct Particle{
+  float3 pos;
+  float3 vel;
+  float3 nor;
+  float3 og;
+  float2 uv;
+  float2 debug;
+};
+
+
+
+RWStructuredBuffer<Vert> _VertBuffer;
+RWStructuredBuffer<Particle> _ParticleBuffer;
+
+int _VertBuffer_COUNT;
+int _ParticleBuffer_COUNT;
+
+
+float _Scale;
+int _VertsPerMesh;
+float _Time;
+
+float4x4 _Transform;
+
+#include "../Chunks/safeID.cginc"
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = threadID + u3GroupID.x * NR_THREADS;
+
+  if( pID < _ParticleBuffer_COUNT ){
+    
+    int sID = safeID( pID, _ParticleBuffer_COUNT );
+    int vID = safeID( pID, _VertBuffer_COUNT );
+    Particle p = _ParticleBuffer[sID];
+    Vert v = _VertBuffer[vID];
+
+    p.pos = mul(_Transform , float4( v.pos ,1 ) ).xyz;
+    p.nor = normalize( mul(_Transform , float4( v.nor ,0 ) ).xyz);
+
+    _ParticleBuffer[sID] = p;
+
+
+  }
+
+}

@@ -57,6 +57,7 @@ MaterialPropertyBlock mpb;
           
           SafeInsert(storyMarkers[i].GetComponent<StoryMarker>());
           storyMarkers[i].GetComponent<StoryMarker>().text.text = data.journey.monoStories[i].gameObject.name;
+          storyMarkers[i].GetComponent<StoryMarker>().storyName = data.journey.monoStories[i].gameObject.name;
           storyMarkers[i].GetComponent<StoryMarker>().id = i;
           storyMarkers[i].transform.parent = transform;
           storyMarkers[i].transform.localPosition = Vector3.zero;

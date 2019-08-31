@@ -48,19 +48,19 @@ public class PerimeterChecker : Cycle
 
       dif = (transform.position - data.player.position).magnitude;
 
-      if( dif < outerRadius && oDif >= outerRadius ){
+      if( dif < outerRadius && oDif >= outerRadius &&  !insideOuter ){
         EnterOuter();
       }
 
-      if( dif < innerRadius && oDif >= innerRadius ){
+      if( dif < innerRadius && oDif >= innerRadius && !insideInner ){
         EnterInner();
       }
 
-      if( dif >= outerRadius && oDif < outerRadius ){
+      if( dif >= outerRadius && oDif < outerRadius && insideOuter ){
         ExitOuter();
       }
 
-      if( dif >= innerRadius && oDif < innerRadius ){
+      if( dif >= innerRadius && oDif < innerRadius && insideInner){
         ExitInner();
       }
       

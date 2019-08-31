@@ -113,7 +113,7 @@ public class Story : Cycle
   public void NextPage(){
 
 
-
+//    print("NEXXX");
     if( started && transitioning == false && !pages[currentPage].locked ){
 
       forward = true;
@@ -143,19 +143,23 @@ public class Story : Cycle
         Release();
       
       }
+    }else{
+
+      if( started && transitioning == false && pages[currentPage].locked ){
+        data.helper.OnPageLocked();
+      }
     }
 
   }
 
   public void PreviousPage(){
     
-    if( started && transitioning == false ){
+    if( started && transitioning == false && !pages[currentPage].mustContinue ){
 
       forward = false;
       currentPage --;
       
       if( currentPage >= 0 ){
-
 
         transitioning = true;
         transitionSpeed = pages[currentPage].lerpSpeed;
@@ -186,6 +190,11 @@ public class Story : Cycle
           currentPage ++;
         }
       }
+    }else{
+      if( started && transitioning == false && pages[currentPage].mustContinue ){
+        data.helper.OnPageCantGoBack();
+      }
+
     }
 
   }

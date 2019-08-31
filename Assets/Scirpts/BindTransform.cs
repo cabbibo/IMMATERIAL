@@ -5,13 +5,14 @@ using UnityEngine;
 public class BindTransform : Binder
 {
 
-  public Matrix4x4 transformMatrix;
-  public override void Bind(){
-    toBind.BindAttribute("_Transform", "transformMatrix" , this );
+    public Matrix4x4 transformMatrix;
+    public override void Bind(){
+      toBind.BindAttribute("_Transform", "transformMatrix" , this );
+    }
+
+
+    public override void WhileLiving( float v){
+//      print(transform.localToWorldMatrix[0]);
+      transformMatrix = transform.localToWorldMatrix;
+    }
   }
-
-
-public override void WhileLiving( float v){
- transformMatrix = transform.localToWorldMatrix;
-}
-}

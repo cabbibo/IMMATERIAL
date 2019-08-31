@@ -434,8 +434,8 @@ void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
 
     }else{
      
-      force += curlNoise( v.pos * .1 ) * .001;
-      v.debug.y -= .001;
+      force += curlNoise( v.pos * .3 ) * .002;
+      v.debug.y -= .005;
 
     }
 

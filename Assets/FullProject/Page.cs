@@ -13,6 +13,7 @@ public class Page : Cycle
     public Transform lerpTarget;
     public MaterialPropertyBlock frameMPB;
     public bool locked;
+    public bool mustContinue;
 
     public float baseHue;
 
@@ -36,6 +37,10 @@ public class Page : Cycle
       
       SafeInsert(frame);
       SafeInsert(text);
+    }
+
+    public void Lock(){
+
     }
 
 

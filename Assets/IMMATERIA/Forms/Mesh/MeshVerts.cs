@@ -16,14 +16,20 @@ public class MeshVerts : Form {
     public float debug;
   };*/
 
-  public override void SetStructSize(){ 
+  public override void Create(){
+
     if( meshFilter == null ){ meshFilter = GetComponent<MeshFilter>(); } 
+    mesh = meshFilter.sharedMesh;
+
+  }
+
+  public override void SetStructSize(){ 
+
     structSize = 12; 
   }
 
   public override void SetCount(){ 
 
-    mesh = meshFilter.sharedMesh;
     count = mesh.vertices.Length;
   }
 
@@ -44,17 +50,18 @@ public class MeshVerts : Form {
     int index = 0;
 
 
+    print("Creatings");
 
     float[] values = new float[count*structSize];
     for( int i = 0; i < count; i ++ ){
 
 
-      if( transformVerts ){ verts[i] = meshFilter.transform.TransformPoint( verts[i] ); }
+      if( transformVerts ){ verts[i] = transform.TransformPoint( verts[i] ); }
       values[ index ++ ] = verts[i].x;
       values[ index ++ ] = verts[i].y;
       values[ index ++ ] = verts[i].z;
 
-      if( transformVerts ){ nors[i] = meshFilter.transform.TransformDirection( nors[i] ); }
+      if( transformVerts ){ nors[i] = transform.TransformDirection( nors[i] ); }
       values[ index ++ ] = nors[i].x;
       values[ index ++ ] = nors[i].y;
       values[ index ++ ] = nors[i].z;
