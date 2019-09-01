@@ -74,28 +74,37 @@ void Flow(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
   if( vert.life < 0 ){
     vert.pos = mul( _Transform,float4(0,0,0,1)).xyz;
+    float3 up = mul( _Transform,float4(0,1,0,0));
+    float3 right = mul( _Transform,float4(1,0,0,0));
+    float3 back = mul( _Transform,float4(0,0,1,0));
+    vert.pos += up   * .16;//  * ( hash(float(pID * 31)) - .5) * .2;
+    vert.pos += right * ( hash(float(pID * 41)) - .5) * .16;
+    vert.pos += back  * ( hash(float(pID * 21)) - .5) * .16;
+
     float3 v = float3( hash(float(pID * 20)),hash(float(pID * 42)),hash(float(pID * 32)));
     v -= .5;
+
     vert.axis = normalize( v);
-    float3 dir = mul( _Transform , float4(0,1,0,0)).xyz * 4.1;
-    vert.vel = (v * 1 + dir) * .01;
-    vert.life = 1 + hash(float(pID));
+    float3 dir = normalize(mul( _Transform , float4(0,1,0,0)).xyz) * .1;
+    vert.vel = 0;// (v * 1 + dir) * .001;
+    vert.life = 1;// + hash(float(pID));
   }else{
     float3 force = 0;
 
-    force += mul( _Transform , float4(0,1,0,0)).xyz * .001;
-    force += curlNoise( vert.pos * 3.1 ) * .0006;
+    force += normalize(mul( _Transform , float4(0,1,0,0)).xyz) * .0003;
+    force += curlNoise( vert.pos * 3.1 ) * .001;
     float dist = map( vert.pos );
     float3 nor = getNor( vert.pos ); 
     if( dist < 0 ){ force += nor  * .001; }
     if( dist < .4 ){ force -= cross( nor ,float3(0,1,0)) * .001 / (1 + 1 * dist); }
+    force -=  dist * cross( nor ,float3(0,1,0)) * .001 + dist * nor * .001;
     
     vert.vel += force;
     vert.pos += vert.vel;
 
 
     vert.vel *= .9;//* minDist;
-    vert.life -= .003;
+    vert.life -= .0003;
   }
   
  // vert.nor = mul(rotation(vert.axis,vert.life*20*(hash(float(pID*123)))+hash(float(pID * 23))),float4(0,0,1,0)).xyz;

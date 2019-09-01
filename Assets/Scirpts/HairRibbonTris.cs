@@ -7,6 +7,7 @@ public class HairRibbonTris: IndexForm {
 
   [ HideInInspector ] public int length;
   [ HideInInspector ] public int numHairs;
+  
   public HairRibbonVerts verts;
 
   public override void SetCount(){
