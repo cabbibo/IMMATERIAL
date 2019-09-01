@@ -8,5 +8,6 @@ public class BindData : Binder
   public override void Bind() {
     data.BindCameraData(toBind);
     data.BindPlayerData(toBind);
+    data.BindRayData(toBind);
   }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ public class Helper : Cycle
   }
 
   public void OnSuccessUnlock(){
-    print("GOOD JOB U ONLOCKTIOD!");
+    print("GOOD JOB U ONLOCKTIOD!");  
   }
 
 }

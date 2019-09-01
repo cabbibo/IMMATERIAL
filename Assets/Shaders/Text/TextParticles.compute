@@ -5,7 +5,6 @@
 #pragma kernel SetPageAtEmitPos
 #pragma kernel SetPageAtCamera
 #pragma kernel SetPageAtPlayer
-#pragma kernel Simulation 
 #pragma kernel SimulationTest 
 #pragma kernel SimulationBasic 
 #pragma kernel Transfer 
@@ -66,6 +65,13 @@ float _Time;
 
 float3 _RayOrigin;
 float3 _RayDirection;
+
+float3 _RO;
+float3 _RD;
+float3 _DOWN;
+
+
+#include "../Chunks/GetRayForce.cginc"
 
 float3 _PlayerPosition;
 float3 _PlayerSoul;
@@ -352,61 +358,6 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
 
 
 
-#define NR_THREADS 128
-[numthreads(NR_THREADS,1,1)]
-void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
-
-    int pID = threadID + u3GroupID.x * NR_THREADS;
-    int sID =safeID(pID,_VertBuffer_COUNT);
-    Vert v = _VertBuffer[sID];
-
-    float3 force = 0;
-    float m = (2 + hash(float(pID))) /2;//sin(float(sID));
-    
-      float3 activeForce = 0;
-      float3 passiveForce = 0;
-
-      activeForce += ((v.pos - v.lockPosition)/max(.01,_Scale))*.5;
-
-      float3 d = getProj( v.pos , _RayOrigin + _RayDirection * 100 , _RayOrigin - _RayDirection * 100 );
-      float l = length(d);
-      activeForce += .1*normalize(d)* -saturate(( (_Scale*_Scale*1) - l ) /(_Scale*_Scale*1) );
-
-      d = v.pos - _UrsulaPos;
-      l = length(d);
-      activeForce += .01*normalize(d);//* - saturate(( (_Scale*_Scale*3) - l*l ) /(_Scale*_Scale*3) );
-
-      activeForce += curlNoise(v.pos * 1 /(max(.01,_Scale)) + _Time * (_Scale) ) * .0001;
-   
-
-
-       d = v.pos - _UrsulaPos;
-      l = length(d);
-      //passiveForce +=.01*normalize(d) * (l-1);
-
-      d = getProj( v.pos , _UrsulaPos - _Up , _UrsulaPos + _Up );
-      l = length(d);
-     //passiveForce +=.01*normalize(d) * (l-1);// * -saturate(( (3 - l*l ) /3 ));
-     //passiveForce += .01 * CurlForce( v.pos , _UrsulaPos - _Up , _Up );
-     
-     passiveForce += curlNoise( v.pos * .1 ) * .01;
-     passiveForce += randDir( float(sID)) * .001;
-
-    
-    force = lerp( passiveForce , activeForce , _PageAlive )*m;
-   // force += (v.pos - _UrsulaPos) *.1 *m;
-
-    if( length(force) > 3 ){ force = normalize(force) * 3;}
-    if( length(v.vel) > 3 ){ v.vel = normalize(v.vel) * 3;}
-  
-    v.vel -= force * .1;
-    v.pos += v.vel;
-    v.vel *= .8;
-    _VertBuffer[sID] = v;
-
-}
-
-
 
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
@@ -415,6 +366,7 @@ void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
     int pID = threadID + u3GroupID.x * NR_THREADS;
     int sID =safeID(pID,_VertBuffer_COUNT);
     Vert v = _VertBuffer[sID];
+    TransferVert tv = _TransferBuffer[safeID(pID*4,_TransferBuffer_COUNT)];
 
     float3 force = 0;
 
@@ -431,6 +383,7 @@ void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
       force += -min((v.pos - v.lockPosition),1000) * .01;
 
       force += curlNoise( v.pos * .4 ) * .002 * min( pow((v.pos - v.lockPosition),4),3)/(t*t*.4+1);
+      force += GetRayForce( v.pos , .01 , 10 * length( tv.offset));
 
     }else{
      

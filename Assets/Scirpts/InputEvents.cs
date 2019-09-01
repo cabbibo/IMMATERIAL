@@ -44,6 +44,9 @@ public class InputEvents: Cycle {
 
   public Ray ray;
 
+  public Vector3 RO;
+  public Vector3 RD;
+
   public float startTime;
   public float endTime;
 
@@ -108,6 +111,10 @@ public class InputEvents: Cycle {
 
     ray.origin = RayOrigin;
     ray.direction = -RayDirection;//.normalized;
+
+
+    RO = ray.origin;
+    RD = ray.direction;
 
 
     // Does the ray intersect any objects excluding the player layer

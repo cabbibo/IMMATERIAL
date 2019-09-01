@@ -99,6 +99,15 @@ public class Data : Cycle
 
   }
 
+
+  public void BindRayData(Life toBind){
+
+    toBind.BindAttribute("_RO", "RO" , inputEvents );
+    toBind.BindAttribute("_RD", "RD" , inputEvents );
+    toBind.BindAttribute("_DOWN", "Down" , inputEvents );
+
+  }
+
   public void BindLandData(Life toBind){
 
     land.BindData(toBind);

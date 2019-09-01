@@ -34,9 +34,18 @@ float _Scale;
 int _VertsPerMesh;
 float _Time;
 
+float3 _RO;
+float3 _RD;
+float  _DOWN;
+
+float3 _Velocity;
+
 float4x4 _Transform;
 
 #include "../Chunks/safeID.cginc"
+#include "../Chunks/snoise.cginc"
+#include "../Chunks/curlNoise.cginc"
+#include "../Chunks/GetRayForce.cginc"
 
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
@@ -51,8 +60,37 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     Particle p = _ParticleBuffer[sID];
     Vert v = _VertBuffer[vID];
 
-    p.pos = mul(_Transform , float4( v.pos ,1 ) ).xyz;
-    p.nor = normalize( mul(_Transform , float4( v.nor ,0 ) ).xyz);
+    p.nor = normalize( mul(_Transform , float4( -v.nor ,0 ) ).xyz);
+
+    float3 targetPos = mul(_Transform , float4( v.pos , 1 ) ).xyz;
+
+    if( length(p.pos - targetPos) > 40 ){
+      p.pos = targetPos;
+    }
+
+    float3 force = 0;
+
+    float velMatch = (1-dot( p.nor , normalize(_Velocity) ));
+    targetPos = mul(_Transform , float4( v.pos   , 1 ) ).xyz;
+    targetPos -= 10*p.nor * -dot( p.nor , normalize(_Velocity) ) * length( _Velocity);
+
+    force -= (p.pos - targetPos) * .02 * velMatch;
+    force += curlNoise( p.pos * .01 + _Time * .03 ) * .001;
+
+
+
+
+    force += GetRayForce( p.pos , .2 , 5 );//_DOWN * normalize(inLine) * .3 / (.5  +  length( inLine));
+    p.vel += force * .1;
+    p.pos += p.vel;
+    p.vel *= .9;
+    p.debug = length( force);
+
+    p.uv = v.uv;
+
+    //p.pos = mul(_Transform , float4( v.pos ,1 ) ).xyz;
+
+    //p.debug = length(inLine);
 
     _ParticleBuffer[sID] = p;
 

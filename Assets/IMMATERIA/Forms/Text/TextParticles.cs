@@ -67,6 +67,7 @@ public int currentMin;
     setPage.BindAttribute("_EmitPos" , "emitterPosition" , this );
 
     simulate.BindPrimaryForm("_VertBuffer",particles);
+    simulate.BindForm("_TransferBuffer",body.verts);
 
     transfer.BindPrimaryForm("_TransferBuffer",body.verts);
     transfer.BindForm("_VertBuffer",particles);

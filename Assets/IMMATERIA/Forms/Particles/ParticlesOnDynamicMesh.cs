@@ -58,7 +58,11 @@ public class ParticlesOnDynamicMesh: Particles {
         area = HELP.AreaOfTriangle (verts[tri0], verts[tri1], verts[tri2]);
       }else if( noiseType =="fractal" ){
         area = HELP.NoiseTriangleArea(noiseSize, verts[tri0],  verts[tri1], verts[tri2]);
-        area = Mathf.Pow( area, 10);
+        area = Mathf.Pow( area, 3);
+      }else if( noiseType == "band"){
+
+        float avePos = verts[tri0].y + verts[tri1].y + verts[tri2].y;
+        area = HELP.AreaOfTriangle (verts[tri0], verts[tri1], verts[tri2])/(.01f + Mathf.Abs(100 * avePos));
       }
 
       triangleAreas[i] = area;

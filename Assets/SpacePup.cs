@@ -12,7 +12,12 @@ public class SpacePup : Cycle
   public MeshTris tris;
 
   public Body body;
-  public Grass anchors;
+  public Simulation anchors;
+
+  public Transform target;
+
+  public Vector3 velocity;
+  public Vector3 force;
 
   public override void Create(){
 
@@ -29,6 +34,25 @@ public class SpacePup : Cycle
 
     life.BindPrimaryForm( "_ParticleBuffer" , particles );
     life.BindForm("_VertBuffer" , verts );
+    life.BindAttribute("_Velocity" , "velocity" , this );
+
+    data.BindRayData( life );
+  }
+
+  public override void WhileLiving( float v ){
+
+    force = Vector3.zero;
+
+    force += (target.position - transform.position);
+
+    velocity += force;
+
+    velocity  *= .9f;
+
+    transform.position += velocity;
+
+
+
   }
 
 

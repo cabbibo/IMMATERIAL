@@ -60,16 +60,16 @@ public class HairBasic : LifeForm {
     HairCollision.BindAttribute( "_HairLength"  , "length", Hair );
     HairCollision.BindAttribute( "_HairVariance"  , "variance", Hair );
     HairCollision.BindAttribute( "_NumVertsPerHair" , "numVertsPerHair", Hair );
-    HairCollision.BindAttribute( "transform" , "transformArray" , this );
+    HairCollision.BindAttribute( "_Transform" , "transformArray" , this );
+
+    data.BindCameraData(HairCollision);
 
   }
 
 
   public override void OnBirth(){
-
     SetHairPosition.Live();
     SetHairPosition.active = false;
-
   }
 
   public override void Activate(){

@@ -39,6 +39,7 @@ public class CaptureTest : MonoBehaviour {
     void Update () {
 
         if( oldFolderName != folderName ){
+            
             oldFolderName = folderName;
 
             final = folder+ "/" + folderName;
