@@ -15,16 +15,25 @@ public class glyph{
   public int id;
   public char character;
 
-  public glyph( int c, int r , int i , char ch ){
+  public float textureVal;
+  public float scaleOffset;
+  public float hueOffset;
+  public float special;
+
+  public glyph( int c, int r , int i , char ch , float tv , float so , float ho , float s ){
     column = c;
     row = r;
     id = i;
     character = ch;
+    textureVal = tv;
+    scaleOffset = so;
+    hueOffset = ho;
+    special = s;
   }
 }
 
 
-[TextArea]
+ [TextArea(15,20)]
 public string text;
   
   public Frame frame;
@@ -40,16 +49,34 @@ public string text;
   public float scaledCharacterSize;
   public float scaledLineHeight;
 
+
+  public float currentTextureVal;
+  public float currentScaleOffset;
+  public float currentHueOffset;
+  public float currentSpecial;
+
+  public int row;
+  public int column;
+  public float location;
+
   public override void Create(){
     if( frame == null ){ frame = GetComponent<Frame>(); }
   }
 
-  public override void SetStructSize(){ structSize = 16; }
+  public override void SetStructSize(){ structSize = 20; }
   
   public override void SetCount(){
 
     //print( "setting count");
    // scale = frame.distance / 3;
+    row = 0;
+    column = 0;
+    location = 0;
+
+    currentSpecial       = 0;
+    currentHueOffset     = 0;
+    currentScaleOffset   = 1;
+    currentTextureVal    = 0;
 
     scaledPadding = scale * padding;
     scaledCharacterSize = scale  * characterSize;
@@ -60,51 +87,95 @@ public string text;
     glyphs = new List<glyph>();
 
     count = 0;
-    
-    string[] words = text.Split(' ');
-    
 
-    int column = 0;
-    int row = 0;
-    float value = scaledPadding * 3;
+    string[] test1 = text.Split('<');
 
-    foreach( string word in words ){
+    if( test1.Length > 1 ){
       
+      int totalCount = test1.Length;
+      print( totalCount );
+
+      string[] sections = new string[totalCount];
+      
+      for( int i = 0; i < totalCount-1; i++ ){
+        string[] test2 = test1[i+1].Split('>');
+
+        sections[i] = test2[1];
+         
+        string[] val = test2[0].Split('=');
+
+        if(val[0] == "t" ){ currentTextureVal   = float.Parse(val[1]); }
+        if(val[0] == "h" ){ currentHueOffset    = float.Parse(val[1]); }
+        if(val[0] == "so" ){ currentScaleOffset = float.Parse(val[1]); }
+        if(val[0] == "s"  ){ currentSpecial     = float.Parse(val[1]); }
+        
+
+        print( gameObject );
+        print( val[0]);
+        print( val[1] );
+
+        print("setting : " + test2[0] );
+        print("on val1 : " + sections[i] );
+        
+        MakeGlyphs(sections[i]);
+
+
+      }
+
+
+
+    }else{
+      MakeGlyphs(text);
+    }
+  
+    //print(words[0]);
+
+  }
+
+  public void MakeGlyphs( string parsedText ){
+
+    string[] words = parsedText.Split(' ');
+    
+
+    int first = 0;
+    foreach( string word in words ){
+ 
+      if( first != 0 ){
+        column ++;
+        location += scaledCharacterSize;
+      }else{
+        first=1;
+      }
       char[] letters = word.ToCharArray();
-      if( value + letters.Length * scaledCharacterSize >= frame.width - scaledPadding){
+
+      if( location + letters.Length * scaledCharacterSize >= frame.width - scaledPadding){
           row ++;
-          value = scaledPadding;
+          location = scaledPadding;
           column = 0;
       }
 
       foreach( char c in letters ){ 
 
-
         if( c == '\n'){
           
           row ++;
-          value = scaledPadding;
+          location = scaledPadding;
           column = 0;
 
         }else{
          // print( c );
-          glyph g = new glyph(column,row,count,c);
+          glyph g = new glyph(column,row,count,c,currentTextureVal,currentScaleOffset,currentHueOffset,currentSpecial);
           glyphs.Add(g);
-          value += scaledCharacterSize;
+
+          location += scaledCharacterSize;
           column ++;
           count ++;
         }
         //print((int)c);
         //print(column);
       }
-
-      column ++;
-      value += scaledCharacterSize;
-
     }
     
-    //print(words[0]);
-
   }
   
 
@@ -156,6 +227,12 @@ public string text;
       values[ index ++ ] = scaledPadding + glyphs[i].row * scaledLineHeight;
       values[ index ++ ] = (scaledPadding + glyphs[i].column * scaledCharacterSize) / frame.width;
       values[ index ++ ] = (scaledPadding + glyphs[i].row * scaledLineHeight)/frame.height;
+
+
+      values[index++] = glyphs[i].textureVal;// Mathf.Floor(Random.Range(0,1.999f));
+      values[index++] = glyphs[i].scaleOffset; //Random.Range(.8f,1.2f );
+      values[index++] = glyphs[i].hueOffset;
+      values[index++] = glyphs[i].special;
 
     }
 

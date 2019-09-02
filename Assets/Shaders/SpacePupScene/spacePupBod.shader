@@ -153,11 +153,11 @@
 
 
                 float4 s = texCUBE( _CubeMap , refl );
-                float4 s2 = tex2D( _TextureMap , float2(s.x  * .1   + .9, 0) );
+                float4 s2 = tex2D( _TextureMap , float2(s.x  * .2   + .9, 0) );
 
                 float fVal = (fLCol * .7 + .3) * s2;
 
-                float4 fCol = tex2D(_ColorMap , float2(fVal * .2 + .4,0)) * (1-fVal);
+                float4 fCol = tex2D(_ColorMap , float2(saturate(fVal * .2 + .4 - .1*v.debug),0)) * (1-fVal) * s;//(v.debug * .4+.3);
                 // sample the texture
                 fixed4 col = fCol;//(fLCol * .7 + .3) * s2;//(fLCol.x  * .8 + .2) * s2 * s;//float4( fNor * .5 + .5 , 1);//tex2D(_MainTex, i.uv);
                 return col;

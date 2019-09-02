@@ -162,7 +162,7 @@ public class Story : Cycle
       if( currentPage >= 0 ){
 
         transitioning = true;
-        transitionSpeed = pages[currentPage].lerpSpeed;
+        //transitionSpeed = pages[currentPage].lerpSpeed;
 
         if( fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
@@ -215,8 +215,8 @@ public class Story : Cycle
 
   public void OnLockPage(){
 
-    print("ON LOCK PAGE");
-    
+//    print("ON LOCK PAGE");
+    transitionSpeed = pages[currentPage].lerpSpeed;
     data.textParticles.Set( pages[currentPage].text );
 
     if( forward ){
@@ -275,7 +275,7 @@ public class Story : Cycle
     SetColliders( false );
 
 
-    print("STORY STARTED");
+//    print("STORY STARTED");
 
   }
 

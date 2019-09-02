@@ -67,7 +67,7 @@ public class StorySetter : Cycle
 
   public void EnterInner(){
     
-    print("DOBLSLSW");
+//    print("DOBLSLSW");
     data.inputEvents.OnTap.AddListener( stories[currentStory].CheckForStart );
     data.inputEvents.OnSwipeLeft.AddListener(  stories[currentStory].NextPage );
     data.inputEvents.OnSwipeRight.AddListener(  stories[currentStory].PreviousPage );

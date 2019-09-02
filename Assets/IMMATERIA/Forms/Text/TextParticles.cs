@@ -23,8 +23,8 @@ public class TextParticles : LifeForm{
 
   public float scale;
 
-public int currentMax;
-public int currentMin;
+  public int currentMax;
+  public int currentMin;
 
   public void HideShowParticles(bool val){
     body.active = val;
