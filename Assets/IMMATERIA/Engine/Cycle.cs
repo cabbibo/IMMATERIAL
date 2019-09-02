@@ -324,7 +324,7 @@ for (int i = Cycles.Count - 1; i >= 0; i--){
   public virtual void Destroy(){}
 
   protected void DoDestroy(){
-   
+//   print( Cycles );
 for (int i = Cycles.Count - 1; i >= 0; i--){
     if (Cycles[i] == null ){
         Cycles.RemoveAt(i);

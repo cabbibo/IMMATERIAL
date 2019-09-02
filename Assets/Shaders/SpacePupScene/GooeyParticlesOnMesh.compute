@@ -1,4 +1,6 @@
 ﻿#pragma kernel Transfer
+#pragma kernel TriLocation
+#pragma kernel Resolve
 
 
 struct Vert{
@@ -9,9 +11,6 @@ struct Vert{
   float  debug;
 };
 
-
-
-
 struct Particle{
   float3 pos;
   float3 vel;
@@ -19,15 +18,19 @@ struct Particle{
   float3 og;
   float2 uv;
   float2 debug;
+  float4 resolver;
+  float3 connections[16];
 };
 
 
 
 RWStructuredBuffer<Vert> _VertBuffer;
 RWStructuredBuffer<Particle> _ParticleBuffer;
+RWStructuredBuffer<int> _TriBuffer;
 
 int _VertBuffer_COUNT;
 int _ParticleBuffer_COUNT;
+int _TriBuffer_COUNT;
 
 
 float _Scale;
@@ -71,11 +74,14 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     float3 force = 0;
 
     float velMatch = (1-dot( p.nor , normalize(_Velocity) ));
+
+    p.og = v.pos;
+
     targetPos = mul(_Transform , float4( v.pos   , 1 ) ).xyz;
     targetPos -= 10*p.nor * -dot( p.nor , normalize(_Velocity) ) * length( _Velocity);
 
     force -= (p.pos - targetPos) * .02 * velMatch;
-    force += curlNoise( p.pos * .01 + _Time * .03 ) * .001;
+    force += curlNoise( p.pos * .1 + _Time * .2 ) * .004;
 
 
 
@@ -91,9 +97,129 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     //p.pos = mul(_Transform , float4( v.pos ,1 ) ).xyz;
 
     //p.debug = length(inLine);
+    //p.pos = targetPos;
 
     _ParticleBuffer[sID] = p;
 
+
+  }
+
+}
+
+float3 getOffset( Particle p1 , Particle p2 , Vert v1 , Vert v2 ){
+
+    float ogL = length(v1.pos - v2.pos);
+   
+    float3 dif =  p1.pos - p2.pos;
+    float l = length(dif);
+
+
+     float difference = 0;
+
+      // We want to make sure that l isn't zero, 
+      // or we will get some NaNs
+      if( l > 0.001 ){
+        difference = (ogL-l);//((s*v1.debug.x/float(_NumVertsPerHair)) - l ) / l;
+        dif = normalize(dif);
+      }
+
+    // Here is where the actual verlet goes down!
+    float3 translate = dif * .6 * difference;
+
+    return translate;
+
+
+}
+
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void TriLocation (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = threadID + u3GroupID.x * NR_THREADS;
+
+
+  if( pID < _ParticleBuffer_COUNT ){
+    int sID = safeID( pID, _ParticleBuffer_COUNT );
+    Particle p  = _ParticleBuffer[sID];
+    Vert v      = _VertBuffer[sID];
+
+    p.resolver += float4( p.pos , 1 );
+
+    for(int i = 0; i < 16; i++ ){
+
+      float3 connection = p.connections[i];
+
+      if( connection.z > .1 ){
+
+        int id2 = (int)connection.x;
+
+        Particle p2 = _ParticleBuffer[safeID(id2,_ParticleBuffer_COUNT)];
+        Vert v2 = _VertBuffer[safeID(id2,_ParticleBuffer_COUNT)];
+
+        float3 translate = getOffset( p,p2,v,v2);
+
+        p.resolver += float4( p.pos + translate , 1);
+
+      }
+
+    }
+
+    _ParticleBuffer[sID] = p;
+  
+  }
+
+}
+
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Resolve (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = threadID + u3GroupID.x * NR_THREADS;
+
+  if( pID < _ParticleBuffer_COUNT ){
+    
+    int sID = safeID( pID, _ParticleBuffer_COUNT );
+    Particle p = _ParticleBuffer[sID];
+
+    p.resolver.xyz /= p.resolver.w;
+
+    p.vel -= pow( length(p.pos - p.resolver.xyz) , 2 ) * normalize(p.pos-p.resolver.xyz) * 10;//
+    //p.pos = lerp( p.pos , p.resolver.xyz ,1.4);
+
+
+    float3 nor = 0;
+    for( int i = 0; i < 16; i++ ){
+
+
+      float3 connection = p.connections[i];
+
+      if( connection.z > .1 ){
+        int id1 = (int)connection.x;
+        int id2 = (int)connection.y;
+        Particle p1 = _ParticleBuffer[safeID(id1,_ParticleBuffer_COUNT)];
+        Particle p2 = _ParticleBuffer[safeID(id2,_ParticleBuffer_COUNT)];
+
+
+        nor += cross( p.pos - p1.pos , p.pos - p2.pos );
+
+      }
+    }
+
+    nor /= p.resolver.w;
+    nor = normalize( nor );
+
+
+    p.nor = nor;
+
+
+
+    p.resolver = 0;
+
+    _ParticleBuffer[sID] = p;
 
   }
 

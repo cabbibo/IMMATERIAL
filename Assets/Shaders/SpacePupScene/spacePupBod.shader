@@ -33,7 +33,16 @@
             #include "UnityCG.cginc"
 
 
-            #include "../Chunks/Struct16.cginc"
+            struct Vert{
+      float3 pos;
+      float3 vel;
+      float3 nor;
+      float3 tan;
+      float2 uv;
+      float2 offset;
+      float4 debug;
+      float3 connections[16];
+    };
 
 
             struct v2f { 
@@ -72,23 +81,27 @@
                 Vert v2 = _VertBuffer[_TriBuffer[b + 2]];
 
                 float3 fPos; float fDebug; float2 fUV;
+                float3 fNor;
                 if( rot == 0 ){
                   fPos = v0.pos;
                   fDebug = v0.debug;
                   fUV = v0.uv;
+                  fNor = v0.nor;
                 }else if( rot == 1 ){
                   fPos = v1.pos;
                   fDebug = v1.debug;
                   fUV = v1.uv;
+                  fNor = v1.nor;
                 }else{
                   fPos = v2.pos;
                   fDebug = v2.debug;
                   fUV = v2.uv;
+                  fNor = v2.nor;
                 }
                 o.world = fPos;
                 o.uv = fUV;
                 o.pos = mul (UNITY_MATRIX_VP, float4(fPos,1.0f));
-                o.nor = normalize(cross(v0.pos - v1.pos , v0.pos - v2.pos ));
+                o.nor = fNor;//normalize(cross(v0.pos - v1.pos , v0.pos - v2.pos ));
                 o.debug = fDebug;
                 o.eye = fPos - _WorldSpaceCameraPos;
                 o.screenPos = ComputeScreenPos(o.pos);

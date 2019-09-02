@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -93,7 +93,7 @@ public string text;
     if( test1.Length > 1 ){
       
       int totalCount = test1.Length;
-      print( totalCount );
+//      print( totalCount );
 
       string[] sections = new string[totalCount];
       
@@ -110,13 +110,13 @@ public string text;
         if(val[0] == "s"  ){ currentSpecial     = float.Parse(val[1]); }
         
 
-        print( gameObject );
-        print( val[0]);
-        print( val[1] );
-
-        print("setting : " + test2[0] );
-        print("on val1 : " + sections[i] );
-        
+        //print( gameObject );
+        //print( val[0]);
+        //print( val[1] );
+//
+        //print("setting : " + test2[0] );
+        //print("on val1 : " + sections[i] );
+        //
         MakeGlyphs(sections[i]);
 
 
@@ -140,12 +140,16 @@ public string text;
     int first = 0;
     foreach( string word in words ){
  
+      
+      // makes sure we skip the first space of the section
       if( first != 0 ){
         column ++;
         location += scaledCharacterSize;
       }else{
         first=1;
       }
+
+
       char[] letters = word.ToCharArray();
 
       if( location + letters.Length * scaledCharacterSize >= frame.width - scaledPadding){
