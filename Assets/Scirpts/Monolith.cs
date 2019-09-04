@@ -37,9 +37,9 @@ MaterialPropertyBlock mpb;
 
       ratio = (float)Screen.width / (float) Screen.height;
 
-      ratio = 1 / ratio;
+      ratio =  ratio;
 
-      ratio = 1/.5f;
+     // ratio = 1/.5f;
 
       //transform.position = story.transform.position;
       //transform.rotation = story.transform.rotation;

@@ -6,6 +6,7 @@
     
        _TextMap ("Textmap", 2D) = "white" {}
        _TextMap2 ("Textmap2", 2D) = "white" {}
+       _TextMap3 ("Textmap3", 2D) = "white" {}
        _ColorMap ("ColorMap", 2D) = "white" {}
     
   }
@@ -44,6 +45,7 @@
 
       uniform sampler2D _TextMap;
       uniform sampler2D _TextMap2;
+      uniform sampler2D _TextMap3;
       uniform sampler2D _ColorMap;
       uniform sampler2D _BackgroundTexture;
 
@@ -104,18 +106,23 @@
     
         fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos -v.nor ) * .9 + .1 ;
 
-        float d = tex2D(_TextMap,v.uv).a;
-        if( v.textureVal > .5 ){
-         d = tex2D(_TextMap2,v.uv).a;
-        } 
+        float d;
+        if( v.textureVal < .5 ){
+          d = tex2D(_TextMap,v.uv).a;
+        }else if(v.textureVal > .5 && v.textureVal < 1.5 ){
+          d = tex2D(_TextMap2,v.uv).a;
+        }else{
+          d = tex2D(_TextMap3,v.uv).a;
+        }
+
         float smoothing = .1;
-        float lum = smoothstep( 0.3 - smoothing , 0.3 + smoothing , d.x );
+        float lum = smoothstep( 0.9 - smoothing , 0.9 + smoothing , d.x );
 
 
 
-        if( d < .001 ){discard;}
+        if( d < .5 ){discard;}
         float3 bg = tex2Dproj(_BackgroundTexture, v.screenPos );
-        float3 c = tex2D(_ColorMap,float2(v.debug.z * 10.1 + .7  + _BaseHue + v.hueExtra,0) ).xyz;
+        float3 c = tex2D(_ColorMap,float2(v.debug.z * 10.1 + .7  + _BaseHue + v.hueExtra + d * .1,0) ).xyz;
         
 
         if( v.special > .5 ){
@@ -128,7 +135,7 @@
          //c = float3(1,0,0);
        //c *= lum;
 
-        return float4(  c * 1.4 , saturate(3*d));
+        return float4(  c * 1.4 , saturate(2*d));
         //return 1;
 
       }

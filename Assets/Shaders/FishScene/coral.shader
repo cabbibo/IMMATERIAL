@@ -16,6 +16,7 @@ Shader "Scenes/FishScene/Coral1"
 
             Tags { "LightMode" = "ForwardBase" }
          
+            Cull Off
             CGPROGRAM
 
 
