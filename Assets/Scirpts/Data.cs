@@ -100,6 +100,8 @@ public class Data : Cycle
   }
 
 
+
+
   public void BindRayData(Life toBind){
 
     toBind.BindAttribute("_RO", "RO" , inputEvents );
@@ -112,6 +114,13 @@ public class Data : Cycle
 
     land.BindData(toBind);
 
+  }
+
+  public void BindAllData(Life life){
+    BindPlayerData( life );
+    BindLandData(life);
+    BindPlayerData(life);
+    BindRayData(life);
   }
 
   public override void WhileLiving( float v ){

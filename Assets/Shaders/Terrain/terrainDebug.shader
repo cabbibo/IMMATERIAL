@@ -31,7 +31,7 @@ Shader "Debug/Terrain" {
             float2 uv_MainTex;// : TEXCOORD;
             float3 worldPosition;
             float4 color : TEXCOORD3;
-            float3 nor : TEXCOORD4;
+            float3 nor : NORMAL;
         };
 
         half _Glossiness;
@@ -83,12 +83,13 @@ float4 terrainSampleColor( float4 pos ){
         #include "../Chunks/hsv.cginc"
 
 
-        void vert (inout appdata_full v,out Input o) {
+        void vert (inout appdata_full v, out Input o) {
                 UNITY_INITIALIZE_OUTPUT(Input,o);
                 o.nor = terrainGetNormal( v.vertex );
                 //o.uv = v.texcoord.xy;
 
                 o.worldPosition = terrainWorldPos( v.vertex ) - float4(0,0,_Vertical,0);
+                o.nor = terrainGetNormal( v.vertex );
                 v.vertex = terrainNewPos( v.vertex )- float4(0,0,_Vertical,0);//mul( unity_WorldToObject, worldPos);
                 o.color = terrainSampleColor( v.vertex );
       }

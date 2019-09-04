@@ -11,6 +11,8 @@ public class ParticlesOnCircle: Particles {
   public Form verts;
   public Life life;
 
+  public bool specialInCenter;
+
   public IndexForm tris;
 
   public enum NoiseType {MiddleBand, CenterOut, Even,OuterRing };
@@ -126,6 +128,8 @@ public class ParticlesOnCircle: Particles {
 
       baseTri = 3 * HELP.getTri (Random.value, triangleAreas);
 
+      if( specialInCenter && i == 0 ){ baseTri = 0; }
+
       tri0 = baseTri + 0;
       tri1 = baseTri + 1;
       tri2 = baseTri + 2;
@@ -182,7 +186,14 @@ public class ParticlesOnCircle: Particles {
       values[ index ++ ] = p2;
 
       values[ index ++ ] = 1;
-      values[ index ++ ] = triangleAreas[baseTri/3] * 1000;
+
+      if(specialInCenter){
+
+        values[ index ++ ] = 1;
+      }else{
+
+        values[ index ++ ] = triangleAreas[baseTri/3] * 1000;
+      }
       values[ index ++ ] = 0;
 
     }

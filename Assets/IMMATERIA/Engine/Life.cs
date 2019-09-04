@@ -79,6 +79,9 @@ public class Life : Cycle {
   }
  
   public void BindForm( string name , Form form ){
+   //print(name);
+   //print(form);
+   //print(boundForms);
     boundForms.Add( name ,form );
   }
 

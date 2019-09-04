@@ -15,27 +15,24 @@ public class TransferLifeForm : LifeForm {
 
     public float[] transformArray;
 
-  [HideInInspector]public Transform cam;
-  [HideInInspector]public Vector3 right;
-  [HideInInspector]public Vector3 up;
-  [HideInInspector]public Vector3 forward;
-
 
   public override void Destroy(){
     Cycles.Remove( body );
     Cycles.Remove( transfer );
   }
   // Use this for initialization
-  public override void Create(){
+  public override void _Create(){
 
-    Destroy();
+    _Destroy();
+
 
     transformArray = new float[16];
-    cam = Camera.main.transform;
 
     SafeInsert(body);
     SafeInsert(transfer);
 
+
+    DoCreate();
 
   }
 
@@ -43,9 +40,7 @@ public class TransferLifeForm : LifeForm {
     transfer.BindPrimaryForm("_VertBuffer", verts);
     transfer.BindForm("_SkeletonBuffer", skeleton); 
 
-    transfer.BindAttribute("_CameraRight" , "right" , this); 
-    transfer.BindAttribute("_CameraUp" , "up" , this); 
-    transfer.BindAttribute("_CameraForward" , "forward" , this); 
+    data.BindCameraData( transfer );
     transfer.BindAttribute("_Radius" , "radius" , this); 
 
     transfer.BindAttribute("_TransformBase","transformArray", this);
@@ -62,11 +57,7 @@ public class TransferLifeForm : LifeForm {
 
 
       transformArray = HELP.GetMatrixFloats( transform.localToWorldMatrix );
-    
-
-      right = cam.right;
-      up = cam.up;
-      forward = cam.forward;
+  
 
       if( showBody == true ){
         body.active = true;

@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: cubeShads
-  m_Shader: {fileID: 4800000, guid: 617a1f569c3bbcd45898e4e7458e3bf7, type: 3}
+  m_Shader: {fileID: 4800000, guid: 108637acd738c6c4eb4898350e6bb873, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -20,11 +20,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 790e0d41d6ff66b46b549a227315c4c4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMap:
-        m_Texture: {fileID: 2800000, guid: dbd643198f410764fba0fd3b95d73a63, type: 3}
+        m_Texture: {fileID: 2800000, guid: cd9e5b499c8ff5d47b8d7bbae003b803, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 0ec73b08d43826f479e4eb931db07e91, type: 3}
+        m_Texture: {fileID: 2800000, guid: bbe2bb75b803ec54ba6fd7af52b9c838, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -57,6 +57,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecMap:
+        m_Texture: {fileID: 2800000, guid: bbe2bb75b803ec54ba6fd7af52b9c838, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpeciMap:
+        m_Texture: {fileID: 2800000, guid: c17b52f3830fb5a4dbd9617283f4c95f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:

@@ -33,6 +33,7 @@ public class DandelionBunch : Cycle
     stalkBody.showBody = true;
   }
 
+
   public override void Deactivate(){
     stalkBody.showBody = false;
   }
@@ -40,5 +41,11 @@ public class DandelionBunch : Cycle
   public override void WhileLiving(float v){
     if( constant ){ Set(); }
   }
+
+
+  public override void Bind(){
+    data.BindAllData( stalk.HairCollision ); 
+  }
+
 
 }

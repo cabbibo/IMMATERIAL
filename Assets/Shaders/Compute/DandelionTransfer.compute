@@ -40,7 +40,8 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     int hairID = (transferID / _VertsPerVert);
 
-    int sID = ((transferID / _VertsPerVert) + 1) * _NumVertsPerHair -1;
+    if( hairID <3 ){ hairID = 0; }
+    int sID = (hairID + 1) * _NumVertsPerHair -1;
     
     Vert p1 = _DandelionBuffer[safeID( transferID , _DandelionBuffer_COUNT )];
     Vert s1 = _SkeletonBuffer[safeID(sID,_SkeletonBuffer_COUNT)];

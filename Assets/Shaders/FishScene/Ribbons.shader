@@ -5,6 +5,7 @@
     _FalloffRadius ("Falloff", float) = 20
 
     _MainTex ("Texture", 2D) = "white" {}
+    _BumpMap ("Bumpy", 2D) = "white" {}
 
        _ColorMap ("ColorMap", 2D) = "white" {}
   }
@@ -47,6 +48,7 @@
       float _FalloffRadius;
       sampler2D _MainTex;
       sampler2D _ColorMap;
+      sampler2D _BumpMap;
 
 
             struct varyings {
@@ -58,6 +60,10 @@
         float3 debug    : TEXCOORD7;
                 float3 vel    : TEXCOORD9;
                 float3 closest    : TEXCOORD8;
+                   half3 tspace0 : TEXCOORD11; // tangent.x, bitangent.x, normal.x
+                half3 tspace1 : TEXCOORD12; // tangent.y, bitangent.y, normal.y
+                half3 tspace2 : TEXCOORD13; // tangent.z, bitangent.z, normal.z
+                half3 tang : TEXCOORD14; // tangent.z, bitangent.z, normal.z
                 UNITY_SHADOW_COORDS(2)
             };
 
@@ -82,8 +88,20 @@
                 o.vel = fVel;
 
         float offset = floor(hash(debug.x) * 6) /6;
-                o.uv =  fUV.xy  -float2(0.1,0);//fUV.yx * float2(1./6.,.999) + float2(offset,0);
+                o.uv =  fUV * float2(1,1./6.) + float2(-.1,offset);
                 o.debug = float3(debug.x,debug.y,0);
+
+                o.tang = v.tan;
+
+                half3 wNormal = v.nor;
+                half3 wTangent = v.tan;
+                // compute bitangent from cross product of normal and tangent
+                //half tangentSign = tangent.w * unity_WorldTransformParams.w;
+                half3 wBitangent = cross(wNormal, wTangent);// * tangentSign;
+                // output the tangent space matrix
+                o.tspace0 = half3(wTangent.x, wBitangent.x, wNormal.x);
+                o.tspace1 = half3(wTangent.y, wBitangent.y, wNormal.y);
+                o.tspace2 = half3(wTangent.z, wBitangent.z, wNormal.z);
 
                 UNITY_TRANSFER_SHADOW(o,o.worldPos);
 
@@ -92,31 +110,35 @@
 
             float4 frag(varyings v) : COLOR {
 
-        float4 color = float4(0,0,0,0);// = tex2D(_MainTex,v.uv );
-                float4 tcol = tex2D(_MainTex,v.uv );
+
+
+              float4 color = float4(0,0,0,0);// = tex2D(_MainTex,v.uv );
+              float4 tCol = tex2D(_MainTex,v.uv );
+
+
+ // sample the normal map, and decode from the Unity encoding
+                half3 tnormal =UnpackNormal(tex2D(_BumpMap, v.uv));// lerp( i.norm ,  , specMap.x);
+                // transform normal from tangent to world space
+                half3 worldNormal;
+                worldNormal.x = dot(v.tspace0, tnormal);
+                worldNormal.y = dot(v.tspace1, tnormal);
+                worldNormal.z = dot(v.tspace2, tnormal);
+
+               worldNormal = lerp( v.nor , worldNormal , tCol.x);
+          half3 worldViewDir = normalize(UnityWorldSpaceViewDir(v.worldPos));
+                //half3 worldRefl = reflect(-worldViewDir, worldNormal);
+                half3 worldRefl = refract(worldViewDir, worldNormal,.8);
+                half4 skyData = UNITY_SAMPLE_TEXCUBE(unity_SpecCube0, worldRefl);
+                half3 skyColor = DecodeHDR (skyData, unity_SpecCube0_HDR);
+
+              float4 cCol = tex2D(_ColorMap,float2(tCol.x * .3 - tCol.a*.3,0) );
         
-                fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos  ) * .7 + .3 ;
-float dif = saturate((_FalloffRadius -  length( v.worldPos - _PlayerPosition ))/_FalloffRadius);
-                
-        float col =.2*pow(length(tcol.xyz) , 10);
-        //color.xyz *= 1* hsv(color.a +v.uv.x *.3+.1+saturate(100*length(v.vel)) * .2 - .4,.3,dif);//col*hsv( v.uv.x * .4 + sin( v.debug.x) * .1 + sin(dif) * 1+ sin(_Time.y) * .1 , .7,dif);
-       // color.xyz *= col;
-
-       float vSat =  saturate(4*length(v.vel) + .3);
-       float hue = -saturate(length( v.worldPos - _PlayerPosition ) * .3) * .2 + .3 + tcol.r   * .1  +saturate(length(v.vel) * 20) * .1 ;
-       color.xyz = tex2D(_ColorMap , float2( hue + .2 + v.debug.y * .4 + v.uv.y * .1,0 ));;
-        color.xyz *=  vSat;
-        color.xyz *=  v.uv.y * 1.1;
-
-                
-        color *= (tcol+1);
-                if( tcol.a < .8 ){ discard; }
-color *= dif;
-color *= 4;
-color = tcol;
-//color = 1;
-        //if( v.debug.y < .3 ){ discard; }
-        return float4( color.xyz * shadow, 1.);
+              fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos  ) * .7 + .3 ;
+              
+              color.xyz = skyColor  * cCol ;// * tCol;;//worldNormal * .5 + .5;//tCol;
+             // color =  float4(v.nor * .5 + .5,1);//v.uv.x;
+              if( tCol.a < .3 ){ discard; }    
+              return float4( color.xyz * shadow, 1.);
             }
 
             ENDCG
@@ -145,6 +167,7 @@ color = tcol;
 
   #include "UnityCG.cginc"
 
+            #include "../Chunks/hash.cginc"
 
   struct Vert{
       float3 pos;
@@ -179,7 +202,9 @@ sampler2D _MainTex;
 
         v2f o;
        
-        o.uv = fUV.xy  -float2(0.1,0);// *float2(1./6.,1);;
+        float offset = floor(hash(debug.x) * 6) /6;
+               o.uv =  fUV * float2(1,1./6.) + float2(-.1,offset);
+        //o.uv = fUV.xy  -float2(0.1,0);// *float2(1./6.,1);;
         float4 position = ShadowCasterPos(v.pos, -v.nor);
         o.pos = UnityApplyLinearShadowBias(position);
         o.debug = debug;
@@ -191,7 +216,7 @@ sampler2D _MainTex;
         float4 col = tex2D(_MainTex,i.uv);
 
         //if( i.debug.y < .3 ){ discard; }
-        if( col.a < .8){discard;}
+        if( col.a < .3){discard;}
         SHADOW_CASTER_FRAGMENT(i)
       }
       ENDCG

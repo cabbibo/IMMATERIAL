@@ -169,6 +169,7 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
 
 
         float3 tCol = texCUBE(_CubeMap,refl) * color;
+        color *= ( grassHeight + .5);
 
 
         //tCol *=color;// pow(eyeM,100)  * 20;

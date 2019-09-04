@@ -106,7 +106,7 @@ void Flow(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     
     float3 force = 0;
 
-    force += -(vert.pos - targetVert.pos) * .1;
+    force += -(vert.pos - targetVert.pos) * .04;
 
 
     float dist = map( vert.pos );

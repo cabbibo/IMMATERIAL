@@ -1,5 +1,6 @@
 ﻿#pragma kernel Transfer
 #pragma kernel TrailTransfer
+#pragma kernel LineTransfer
 
 struct Vert{
     float3 pos;
@@ -29,7 +30,17 @@ float3 _CameraUp;
 #include "../Chunks/safeID.cginc"
 
 #include "../Chunks/terrainCompute.cginc"
-float3 cubicFromValue( in float val , in int particleID, out float3 upPos , out float3 doPos ){
+
+
+
+float3 cubicDerivative (float t, float3 a, float3 b, float3 c, float3 d) {
+  a = 3*(b-a);
+  b = 3*(c-b);
+  c = 3*(d-c);
+  return a * pow((1-t),2) + 2 * b * (1-t) * t + c * pow(t,2);
+}
+
+float3 cubicFromValue( in float val , in int particleID, out float3 upPos , out float3 doPos , out float3 tang  , out float3 tangUp , out float3 tangDown){
 
   float3 p0 = float3( 0. , 0. , 0. );
   float3 v0 = float3( 0. , 0. , 0. );
@@ -91,6 +102,10 @@ float3 cubicFromValue( in float val , in int particleID, out float3 upPos , out 
   upPos = cubicCurve( amount  + .01 , c0 , c1 , c2 , c3 );
   doPos = cubicCurve( amount  - .01 , c0 , c1 , c2 , c3 );
 
+  tang = cubicDerivative( amount , c0 , c1 , c2 , c3  );
+  tangUp = cubicDerivative( amount + .01 , c0 , c1 , c2 , c3  );
+  tangDown = cubicDerivative( amount - .01 , c0 , c1 , c2 , c3  );
+
   return pos;
 
 }
@@ -113,8 +128,10 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     float colVal =  (float(col)/float(2)) ;
 
     float3 upPos; float3 doPos;
+    float3 upTang; float3 doTang;
+    float3 tang;
 
-    float3 pos = cubicFromValue( rowVal , particleID , upPos , doPos );
+    float3 pos = cubicFromValue( rowVal , particleID , upPos , doPos , tang , upTang , doTang );
 
     float3 d = normalize(upPos - pos);
     float3 x = normalize(cross( d , _CameraRight) );
@@ -153,8 +170,6 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 
 
-
-
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
 void TrailTransfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
@@ -172,11 +187,15 @@ void TrailTransfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
     float colVal =  (float(col)/float(2)) ;
 
     float3 upPos; float3 doPos;
+    float3 upTang; float3 doTang;
+    float3 tang;
 
-    float3 pos = cubicFromValue( rowVal , particleID , upPos , doPos );
 
-    float3 d = normalize(baseParticle.pos - tipParticle.pos);
-    float3 x = normalize(cross( d , _CameraUp) );
+   
+    float3 pos = cubicFromValue( rowVal , particleID , upPos , doPos , tang , upTang , doTang );
+
+    float3 d = normalize(upPos - doPos );
+    float3 x = normalize(cross( d , cross(upTang,doTang)) );
     float3 y = normalize(cross( x , d));
 
     float angle = colVal * 2*3.14159;
@@ -208,6 +227,59 @@ void TrailTransfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
     v.tangent = fTan;
     v.debug = float2(float(particleID),baseParticle.debug.y);
     v.pos = fPos;
+    _VertBuffer[sID] = v;
+
+}
+
+
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void LineTransfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+
+    int particleID = pID / ( _RibbonLength * 2);
+
+    int idInTube = pID % ( _RibbonLength * 2);
+    int row = idInTube / 2;
+    int col = pID % 2;
+    Vert baseParticle  = _SkeletonBuffer[ safeID(particleID * _NumVertsPerHair, _SkeletonBuffer_COUNT) ];
+    Vert tipParticle  = _SkeletonBuffer[ safeID(particleID * _NumVertsPerHair + _NumVertsPerHair-1, _SkeletonBuffer_COUNT) ];
+    float rowVal = float(row) / float(_RibbonLength);
+    float colVal =  (float(col)/float(2)) ;
+
+    float3 upPos; float3 doPos;
+    float3 upTang; float3 doTang;
+    float3 tang;
+
+
+   
+    float3 pos = cubicFromValue( rowVal , particleID , upPos , doPos , tang , upTang , doTang );
+
+   
+   
+//float4 vals = _HeightMap.SampleLevel(sampler_HeightMap, (baseParticle.pos.xz-.5) * _MapSize  , 0);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+    /*float l = 1 - saturate( baseParticle.debug.y ) ;
+    //float r =   _Radius  *  saturate(min( rowVal * 4,1-rowVal ))*saturate( min( l * 10 , 1-l)) ;
+    float r =   _Radius  * saturate( min( l * 10 , 1-l)) ;*/
+
+    float3 fPos = pos;
+
+    float2 fUV = float2( float(row+1)/_RibbonLength , colVal*2 );
+
+        //if( baseParticle.debug.x < 1 ){ fPos  = 0;}
+    
+
+    int sID = safeID( pID , _VertBuffer_COUNT );
+    Vert v = _VertBuffer[sID];
+
+   
+    v.uv = fUV;
+    v.vel = fPos - v.pos;
+    v.debug = float2(float(particleID),baseParticle.debug.y);
+    v.pos = pos;
     _VertBuffer[sID] = v;
 
 }

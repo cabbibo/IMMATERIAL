@@ -192,7 +192,7 @@ float sdBox( float3 p, float3 b )
         // The ray origin will be right where the position is of the surface
         o.ro = mPos;
 
-        o.normal = mul( unity_ObjectToWorld , float4(v.normal,0)).xyz;
+        o.normal =UnityObjectToWorldNormal(v.normal);// mul( float4( v.normal, 0.0 ),unity_ObjectToWorld ).xyz;//mul( unity_ObjectToWorld , float4(v.normal,0)).xyz;
 
 
        // float3 camPos = mul( unity_WorldToObject , float4( _WorldSpaceCameraPos , 1. )).xyz;
@@ -255,12 +255,12 @@ struct fragmentOutput {
           p = v.ro + v.rd * d;
 
           float3 newPos = mul(unity_WorldToObject, float4( p ,1)).xyz;
-          h =map(p);
+          h =noise( p * 10) + noise(p);//map(p);
           
-          d += h * 4;
-          //col += hsv(dist * 1000.1,1,1);
+          d += .1 + h; //h * 4;
+          
 
-          if( h < .05 ){
+          if( h < 1 ){
             hit = true;
             break;
           }
@@ -270,14 +270,29 @@ struct fragmentOutput {
 
         }
 
-        p = v.ro;// + v.rd * d/4;
-
         nor = normalize(float3(
                         map(p+float3(.001,0,0))-map(p-float3(.001,0,0)),
                         map(p+float3(0,0.001,0))-map(p-float3(0,.001,0)),
                         map(p+float3(0,0,0.001))-map(p-float3(0,0,.001))));
 
-        nor = v.normal + cross( v.normal , float3(0,1,0)) *10000 ;
+        nor = v.normal;// + cross( v.normal , float3(0,1,0)) *10000 ;
+
+
+
+
+        float3 normi = UnpackNormal (tex2D (_MainTex, v.uv));
+        nor = -normi;
+
+
+        float3 refl = reflect( v.rd , nor  );
+        float rm =  dot( normalize(refl) , _WorldSpaceLightPos0.xyz );
+
+        float4 tCol = tex2D(_MainTex , v.uv);//
+        float m = dot( normalize(nor) , _WorldSpaceLightPos0.xyz );
+        col = tex2D(_ColorMap, float2( rm *1 ,0)).xyz * (rm) +  tex2D(_ColorMap, float2( m *1 ,0)).xyz * (m)  ;// hsv(d * 10.1,1,1);
+        p = v.ro;// + v.rd * d/4;
+
+        
 fragmentOutput o;
 //convert position to clip space, read depth
 float4 clip_pos = mul(UNITY_MATRIX_VP, float4(p, 1.0));
@@ -287,7 +302,7 @@ o.zvalue = clip_pos.z / clip_pos.w;
 
   
         //col /=  float( _NumberSteps);
-        col = dot( normalize(nor) , _WorldSpaceLightPos0.xyz );//normalize(nor) * .5 + .5;//hsv(d,1,1);
+       // col = dot( normalize(nor) , _WorldSpaceLightPos0.xyz );//normalize(nor) * .5 + .5;//hsv(d,1,1);
         if( hit == false ){
         //  discard;
         }

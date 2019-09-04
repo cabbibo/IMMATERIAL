@@ -135,14 +135,23 @@ void Force (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 i
 
   uint pID = threadID + u3GroupID.x * NR_THREADS;
   uint bID = pID / _VertsPerVert;
+  uint bID2 = pID / _VertsPerVert;
+
+  if( bID < 3){ bID == 0;}
+  if( bID2 < 3){ bID2 == 0;}
   bID = (bID+1) * _NumVertsPerHair - 1;
+  bID2 *=  _NumVertsPerHair;
 
   if( pID < _VertBuffer_COUNT && bID < _SkeletonBuffer_COUNT ){
 
     pID = safeID( pID , _VertBuffer_COUNT );
     bID = safeID( bID , _SkeletonBuffer_COUNT );
+    bID2 = safeID( bID2 , _SkeletonBuffer_COUNT );
+    
+
     Vert vert = _VertBuffer[pID];
     Vert base = _SkeletonBuffer[bID];
+    Vert base2 = _SkeletonBuffer[bID2];
 
 
 
@@ -156,7 +165,10 @@ void Force (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 i
 
     float3 force = 1.01 * normalize(dir);//( x *  sin( v  ) + y * -cos(v)); //-(vert.pos - targetPos) * 30;
 
-
+    if( base2.debug.x < 1 ){
+      //force *= 200;
+    }
+ //force *= 20000;
 
     // Inertia: objects in motion stay in motion.
     float3 vel = getVel( vert.pos , vert.oPos);
@@ -200,7 +212,12 @@ void Constraint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
 
     pID = uint(safeID(pID,_VertBuffer_COUNT));
     int bID = pID/_VertsPerVert;
+
+
+      if( bID == 2){ bID = 0; }
+      if( bID == 1){ bID = 0; }
       bID = (bID+1) * _NumVertsPerHair - 1;
+
     int pUp = uint(safeID(bID,_SkeletonBuffer_COUNT));
     Vert v1 = _VertBuffer[pID];
     Vert v2 = _SkeletonBuffer[pUp];
