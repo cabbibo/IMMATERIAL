@@ -22,6 +22,13 @@
       Tags{ "LightMode" = "ForwardBase" }
       Cull Off
 
+
+      Stencil {
+            Ref 1
+            Comp Always 
+            Pass Replace
+        }
+
       CGPROGRAM
       #pragma target 4.5
       #pragma vertex vert
@@ -45,6 +52,8 @@
 
       float3 _Color;
       float3 _PlayerPosition;
+      float3 _TerrainHole;
+
       bool _Debug;
       float _HueStart;
       float _PlayerFalloff;
@@ -157,7 +166,8 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
         float reflM = dot( refl , _WorldSpaceLightPos0 );
 
 
-        float grassHeight = (hCol.w * 5 + noise( v.worldPos + float3(0,_Time.y * .2,0) + fNor * _Time.y * .01 ) * .4) / 5;
+
+        float grassHeight = (hCol.w * 5 + noise( v.worldPos * .2+ float3(0,_Time.y * .2,0) + fNor * _Time.y * .01 ) * .4) / 5;
         color.xyz = tex2D(_ColorMap, float2( reflM * reflM  * .2 + .6 + dif * .03, 0)) * l ;
 
 
@@ -171,6 +181,12 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
         float3 tCol = texCUBE(_CubeMap,refl) * color;
         color *= ( grassHeight + .5);
 
+
+        float holeVal = length( v.worldPos - _TerrainHole)  + noise( v.worldPos * 4.2 + float3(0,_Time.y * .2,0) )  * .2;
+        if( holeVal < 2 ){
+          discard;
+        }
+        if( holeVal < 2.3){ color = saturate((holeVal - 2) * 4) * color;}
 
         //tCol *=color;// pow(eyeM,100)  * 20;
         //tCol = 1;
@@ -209,7 +225,45 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
       #pragma fragmentoption ARB_precision_hint_fastest
       #include "UnityCG.cginc"
 
-      #include "../Chunks/Shadow16.cginc"
+      
+
+      #include "../Chunks/Struct16.cginc"
+      #include "../Chunks/ShadowCasterPos.cginc"
+      #include "../Chunks/noise.cginc"
+   
+
+      StructuredBuffer<Vert> _VertBuffer;
+      StructuredBuffer<int> _TriBuffer;
+
+      float3 _TerrainHole;
+
+      struct v2f {
+        V2F_SHADOW_CASTER;
+        float3 nor : NORMAL;
+        float3 worldPos : TEXCOORD0;
+      };
+
+
+      v2f vert(appdata_base input, uint id : SV_VertexID)
+      {
+        v2f o;
+        Vert v = _VertBuffer[_TriBuffer[id]];
+
+        float4 position = ShadowCasterPos(v.pos, -v.nor);
+        o.pos = UnityApplyLinearShadowBias(position);
+        o.worldPos = v.pos;
+        return o;
+      }
+
+      float4 frag(v2f i) : COLOR
+      {
+
+        float holeVal = length( i.worldPos - _TerrainHole)  + noise( i.worldPos * 4.2 + float3(0,_Time.y * .2,0) )  * .2;
+        if( holeVal < 2 ){
+          discard;
+        }
+        SHADOW_CASTER_FRAGMENT(i)
+      }
 
       ENDCG
     }

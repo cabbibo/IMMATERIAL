@@ -19,6 +19,7 @@ public class Land : Cycle {
   public int traceSteps;
   public float traceDist;
 
+  public Transform terrainHole;
   public Transform camRay;
   
 
@@ -36,6 +37,7 @@ public class Land : Cycle {
     Shader.SetGlobalFloat("_TerrainHeight", height);
     Shader.SetGlobalFloat("_MapSize", size);
     Shader.SetGlobalFloat("_MapHeight", height);
+    Shader.SetGlobalVector("_TerrainHole", terrainHole.position );
 
     if( data.painter == null ){ LoadFromFile(); };
 
@@ -53,6 +55,8 @@ public class Land : Cycle {
     Shader.SetGlobalFloat("_TerrainHeight", height);
     Shader.SetGlobalFloat("_MapSize", size);
     Shader.SetGlobalFloat("_MapHeight", height);
+    
+    Shader.SetGlobalVector("_TerrainHole", terrainHole.position );
 
     camRay.position = Trace( data.cameraPosition , data.cameraForward );
 

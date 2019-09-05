@@ -33,8 +33,8 @@ public class Painter : Simulation
 
   public string safeName;
 
-  public Texture2D startTexture;
-  public Texture2D undoTexture;
+  public Texture startTexture;
+  public Texture undoTexture;
 
 
   public Vector3 paintPosition;

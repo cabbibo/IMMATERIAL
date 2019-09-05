@@ -49,6 +49,7 @@ public class CircleOnTerrain : Cycle
 
     body.active = true;
     body.mpb.SetFloat("_Radius", radius);
+    Set();
   }
 
   public override void Deactivate(){
