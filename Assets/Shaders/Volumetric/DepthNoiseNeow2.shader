@@ -145,7 +145,7 @@ Shader "Custom/DepthNoiseNeow2" {
         // Getting the position for actual position
         o.pos = UnityObjectToClipPos(  v.position );
      
-        float3 mPos = mul( unity_ObjectToWorld , v.position );
+        float3 mPos = mul( unity_ObjectToWorld , v.position - 1 * _MapSize );
         o.world = mPos;
         o.dif = terrainWorldPos( mPos ).y - mPos.y;
 
@@ -175,7 +175,7 @@ Shader "Custom/DepthNoiseNeow2" {
         // Our color starts off at zero,   
         float3 col = float3( 0.0 , 0.0 , 0.0 );
 
-        if( v.dif < .05 ){ discard;}
+        if( v.dif < .2 ){ discard;}
 
 
         float3 p;

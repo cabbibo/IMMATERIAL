@@ -3,6 +3,7 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _ColorMap ("Color Map", 2D) = "white" {}
     }
     SubShader
     {
@@ -43,6 +44,7 @@
             };
 
             sampler2D _MainTex;
+            sampler2D _ColorMap;
             float4 _MainTex_ST;
 
 
@@ -133,7 +135,7 @@ float calcAO2( float3 pos, float3 nor )
         Transform t =  _TransformBuffer[i];
 
         float3 spherePos = mul(_TransformBuffer[i].localToWorld , float4(0,0,0,1));
-        float sphereRad =.49*length(mul(_TransformBuffer[i].localToWorld , float4(1,0,0,0)));
+        float sphereRad =.5*length(mul(_TransformBuffer[i].localToWorld , float4(1,0,0,0)));
 
         float ao = sphOcclusion( pos , nor , float4( spherePos , sphereRad ));
 
@@ -175,7 +177,9 @@ float calcAO2( float3 pos, float3 nor )
                 //in frag shader;
                 half atten = LIGHT_ATTENUATION(i);
                 // sample the texture
-                fixed4 col = i.ao;//a;//1-(i.ao*4);//((atten  * .5+.5)  * (1-i.ao)); //atten;// * atten;//tex2D(_MainTex, i.uv);
+
+                float4 c = clamp( pow((1-a),2) * 50 ,0,2) *tex2D(_ColorMap , float2( a * 1  , 0 ));
+                fixed4 col = c;// * atten;//i.ao * ( atten * .5 + .5);//a;//1-(i.ao*4);//((atten  * .5+.5)  * (1-i.ao)); //atten;// * atten;//tex2D(_MainTex, i.uv);
           
                 return col;
             }

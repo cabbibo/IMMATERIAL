@@ -10,6 +10,8 @@ public class AddTransformBufferToMaterial : Cycle {
 
   public Material material;
 
+  public Renderer self;
+
   public Renderer[] renderers;
   public MaterialPropertyBlock mpb;
 
@@ -21,6 +23,10 @@ public class AddTransformBufferToMaterial : Cycle {
     mpb.SetInt("_TransformBuffer_COUNT", transforms.count);
     mpb.SetBuffer("_TransformBuffer", transforms._buffer );
 
+    self = GetComponent<Renderer>();
+
+    self.SetPropertyBlock( mpb );
+
     for( int i = 0; i < renderers.Length; i++ ){
       renderers[i].material = material;
       renderers[i].SetPropertyBlock(mpb);
@@ -31,7 +37,9 @@ public class AddTransformBufferToMaterial : Cycle {
   public override void WhileLiving(float v){
      mpb.SetInt("_TransformBuffer_COUNT", transforms.count);
     mpb.SetBuffer("_TransformBuffer", transforms._buffer );
+    
 
+    self.SetPropertyBlock( mpb );
     for( int i = 0; i < renderers.Length; i++ ){
       renderers[i].SetPropertyBlock(mpb);
     }
