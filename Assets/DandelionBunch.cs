@@ -44,7 +44,7 @@ public class DandelionBunch : Cycle
 
 
   public override void Bind(){
-    data.BindAllData( stalk.HairCollision ); 
+    data.BindAllData( stalk.collision ); 
   }
 
 

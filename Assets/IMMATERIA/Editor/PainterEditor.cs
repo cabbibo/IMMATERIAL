@@ -42,7 +42,7 @@
 
 EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();
         GUILayout.Label("PaintSize : " + test.paintSize);
-        test.paintSize = GUILayout.HorizontalSlider(test.paintSize, 0.0F, 1000.0F);
+        test.paintSize = GUILayout.HorizontalSlider(test.paintSize, 0.0F, 100.0F);
        
      
         GUILayout.Label("Paint Opacity: " + test.paintOpacity);

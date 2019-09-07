@@ -115,7 +115,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     float3 pos = cubicFromValue( rowVal , particleID , upPos , doPos );
 
     float3 d = normalize(upPos - pos);
-    float3 x = normalize(cross( d , float3(0,0,1)) );
+    float3 x = normalize(cross( d , float3(0,1,0)) );
     float3 y = normalize(cross( x , d));
 
     float angle = colVal * 2*3.14159;

@@ -93,6 +93,14 @@ SamplerState sampler_TextureReset;
 
 #include "../Chunks/noise.cginc"
 
+
+
+
+
+
+
+
+
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
 void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
@@ -124,11 +132,12 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     // Flatten
     }else if( _Brush == 2 ){
 
-      float3 delta = float3(1,0,0);
-      float3 l1 = worldPos( v.pos + delta.xyy* _PaintSize * .1 );
-      float3 l2 = worldPos( v.pos - delta.xyy* _PaintSize * .1 );
-      float3 l3 = worldPos( v.pos + delta.yyx* _PaintSize * .1 );
-      float3 l4 = worldPos( v.pos - delta.yyx* _PaintSize * .1 );
+      float3 delta = float3(.1,0,0);
+
+      float3 l1 = worldPos( v.pos + delta.xyy * _PaintSize * .1 );
+      float3 l2 = worldPos( v.pos - delta.xyy * _PaintSize * .1 );
+      float3 l3 = worldPos( v.pos + delta.yyx * _PaintSize * .1 );
+      float3 l4 = worldPos( v.pos - delta.yyx * _PaintSize * .1 );
 
 
 
@@ -138,7 +147,7 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
       //v.pos.y = lerp(  ave.y,v.pos.y  , l * _PaintOpacity);// lerp( _PaintOpacity , 0 , l );
 
       if( length( v.pos - _PaintPosition) < _PaintSize ){
-        v.pos.y = lerp( v.pos.y ,ave.y , _PaintOpacity  * length(v.pos - _PaintPosition ) / _PaintSize );
+        v.pos.y = lerp( v.pos.y ,ave.y , _PaintOpacity  *(1-(length(v.pos - _PaintPosition ) / _PaintSize)) );
       }
       if( v.pos.y < 0 ){ v.pos.y = 0; }
       if( v.pos.y > _MapHeight ){ v.pos.y = _MapHeight; }

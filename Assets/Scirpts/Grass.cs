@@ -17,7 +17,7 @@ public class Grass : Simulation
 
       life.BindAttribute("_Size", "size", tile );
       life.BindAttribute("_Offset", "position", tile );
-      hair.SetHairPosition.BindAttribute("_Offset" , "position" , tile);
+      hair.set.BindAttribute("_Offset" , "position" , tile);
       data.land.BindData(life);
 
     }

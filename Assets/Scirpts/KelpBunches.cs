@@ -23,7 +23,7 @@ public class KelpBunches : Cycle
   public override void Bind(){
 
     for( int i = 0; i < Kelps.Length; i++){
-      Kelps[i].kelp.HairCollision.BindForm("_Pullers",pullers);
+      Kelps[i].kelp.collision.BindForm("_Pullers",pullers);
     }
   }
 
