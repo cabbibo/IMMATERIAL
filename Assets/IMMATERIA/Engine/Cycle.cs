@@ -42,7 +42,7 @@ public class Cycle : MonoBehaviour{
 
   protected void DoCreate(){
 
-   
+   float t = Time.time;
 
     //_Destroy();
    // SetStates();
@@ -91,6 +91,10 @@ for (int i = Cycles.Count - 1; i >= 0; i--){
     
 
     }
+
+    float dT = Time.time - t;
+
+//    print( "" + this.gameObject + " HOW LONG :" + dT );
 
 
   }

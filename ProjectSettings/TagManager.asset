@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Frame
   - StartNode
+  - Pond
   layers:
   - Default
   - TransparentFX

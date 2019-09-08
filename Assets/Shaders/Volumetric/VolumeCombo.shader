@@ -173,14 +173,14 @@ Shader "Custom/VolumeCombo" {
 					float val = getFogVal( p );	
 
 
-          col += hsv( float(i)/_NumberSteps * _HueSize, 1 , 1) * val * ( 1 - float(i)/_NumberSteps) * 30;
+          col += hsv( float(i)/_NumberSteps * _HueSize , 1 , 1) * val * ( 1 - float(i)/_NumberSteps) * 30;
 
 
         }
 
         col /=  _NumberSteps;
 
-        col = normalize( col)  * col ;
+        col =  col ;
 
 
 
