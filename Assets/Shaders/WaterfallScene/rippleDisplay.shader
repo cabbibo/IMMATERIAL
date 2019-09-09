@@ -58,7 +58,7 @@
                 o.dist = abs(dif.y) * 4;
                 o.worldPos = worldPos;
 
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv = v.uv;//TRANSFORM_TEX(v.uv, _MainTex);
                 return o;
             }
 

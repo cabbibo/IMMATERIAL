@@ -8,6 +8,8 @@ public class RippleRenderer : Cycle {
   public  Material reactionDiffusionMaterial;
   public Renderer render;
 
+  public Body body;
+
   public Vector2 resolution;
   public int flip;
 
@@ -21,8 +23,9 @@ public class RippleRenderer : Cycle {
   private RenderTexture t1;
   private RenderTexture t2;
 
-public override void Create() {
-    
+  public override void Create() {
+
+    SafeInsert(body);
     InitRenderTextures();
   }
 
@@ -40,17 +43,15 @@ public override void Create() {
     reactionDiffusionMaterial.SetMatrix("_Transform", transform.localToWorldMatrix);
 
     if( data.inputEvents.hitTag == "Pond" && data.inputEvents.Down ==1 ){
-      
-
       reactionDiffusionMaterial.SetVector("_HitUV",data.inputEvents.hit.textureCoord );
       reactionDiffusionMaterial.SetInt("_Down", 1 );
     }else{
-reactionDiffusionMaterial.SetInt("_Down", 0 );
+      reactionDiffusionMaterial.SetInt("_Down", 0 );
     }
 
-  for( int i = 0; i < passesPerFrame; i++ ){
-    Flip();
-  }
+    for( int i = 0; i < passesPerFrame; i++ ){
+      Flip();
+    }
 
 
   }
@@ -63,11 +64,13 @@ reactionDiffusionMaterial.SetInt("_Down", 0 );
     if( flip == 0){
       reactionDiffusionMaterial.SetTexture("_LastTex", t1);
       Graphics.Blit(t1, t2, reactionDiffusionMaterial);
-      render.material.SetTexture("_MainTex", t2);
+      body.mpb.SetTexture("_MainTex", t2);
+      render.sharedMaterial.SetTexture("_MainTex", t2);
     }else{
       reactionDiffusionMaterial.SetTexture("_LastTex", t2);
       Graphics.Blit(t2, t1, reactionDiffusionMaterial);
-      render.material.SetTexture("_MainTex", t1);
+      body.mpb.SetTexture("_MainTex", t1);
+      render.sharedMaterial.SetTexture("_MainTex", t1);
     }
 
   }

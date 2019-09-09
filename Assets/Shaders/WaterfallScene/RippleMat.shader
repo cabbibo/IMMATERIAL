@@ -66,6 +66,7 @@
 
             float2 newHeight(float2 uv , float3 worldPos ,float texel ) {
 
+              float dif = terrainWorldPos( worldPos ).y - worldPos.y;
 
                 float2 c   = tex2D(_LastTex, uv  ).xy;
 
@@ -74,16 +75,18 @@
                 float h_s = tex2D(_LastTex, uv + float2(0., -1.) * _TexelSize.xy ).x;
                 float h_w = tex2D(_LastTex, uv + float2(-1., 0.) * _TexelSize.xy ).x;
 
-                float m_n = terrainWorldPos( worldPos  + float3( 0., 0,  1.) * texel ).y - worldPos.y;
-                float m_e = terrainWorldPos( worldPos  + float3( 1., 0,  0.) * texel ).y - worldPos.y;
-                float m_s = terrainWorldPos( worldPos  + float3( 0., 0, -1.) * texel ).y - worldPos.y;
-                float m_w = terrainWorldPos( worldPos  + float3(-1., 0,  0.) * texel ).y - worldPos.y;
+                float m_n = terrainWorldPos( worldPos  + float3( 0., 0,  1.) * texel* .1).y - worldPos.y;
+                float m_e = terrainWorldPos( worldPos  + float3( 1., 0,  0.) * texel* .1).y - worldPos.y;
+                float m_s = terrainWorldPos( worldPos  + float3( 0., 0, -1.) * texel* .1).y - worldPos.y;
+                float m_w = terrainWorldPos( worldPos  + float3(-1., 0,  0.) * texel* .1).y - worldPos.y;
 
+               // if( )
 
-                if(m_n > -.5 ){  h_n = h_s; }
-                if(m_e > -.5 ){  h_e = h_w; }
-                if(m_s > -.5 ){  h_s = h_n; }
-                if(m_w > -.5 ){  h_w = h_e; }
+               float edge = 0;
+                if(m_n > 0 ){  h_n = 0;edge = 1;}
+                if(m_e > 0 ){  h_e = 0;edge = 1;}
+                if(m_s > 0 ){  h_s = 0;edge = 1;}
+                if(m_w > 0 ){  h_w = 0;edge = 1;}
 
 
 
@@ -93,28 +96,29 @@
                 float newVel = c.y + f ;
                 ;// * .3;// * .9f;
                        
-                newVel *= .99999;
+                newVel *= .996;
                 
-                float newPos = c.x + newVel - .000001;
+                float newPos = c.x/(edge+1) + newVel / (edge+1) ;
 
+                //newPos *= dif;
 
-
-
-                return float2( saturate(newPos) , newVel );
+                return float2( clamp( newPos , -2 ,2) , newVel );
 
             }
 
             fixed4 frag (v2f v) : SV_Target
             {
         
-                    float2 result = newHeight(v.uv , v.worldPos , v.texel);
+                    float2 result = newHeight(v.uv , v.worldPos - float3(.5,0,.5) , v.texel);
 
 
                     if( length(v.uv-_HitUV) < .01 && _Down == 1 ){
                         result.x += 1;
                     }
+
                     float tPos = terrainWorldPos( v.worldPos ).y- v.worldPos.y;
-                    return fixed4(result.x , result.y ,sin( tPos * 40) * .4, 1.0);
+
+                    return fixed4(result.x , result.y ,sin( tPos * 20 + _Time.y * .1) * 1.4, 1.0);
                 
             }
             ENDCG
