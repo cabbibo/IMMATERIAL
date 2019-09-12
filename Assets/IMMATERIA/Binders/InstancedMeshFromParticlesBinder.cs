@@ -11,11 +11,13 @@ public class InstancedMeshFromParticlesBinder : Binder
 
   // Use this for initialization
   public override void Bind() {
-    toBind.BindForm( "_SkeletonBuffer" , particles );
-    toBind.BindForm( "_BaseBuffer" , GetComponent<InstancedMeshVerts>().verts );
 
-    toBind.BindAttribute("_Scale", "scale",this);
-    toBind.BindAttribute("_VertsPerMesh", "vertsPerMesh",GetComponent<InstancedMeshVerts>() );
+    InstancedMeshVerts v = GetComponent<InstancedMeshVerts>();
+    toBind.BindForm( "_SkeletonBuffer" , particles );
+    toBind.BindForm( "_BaseBuffer" , v.verts );
+
+    toBind.BindFloat("_Scale", () => this.scale );
+    toBind.BindInt("_VertsPerMesh", () => v.vertsPerMesh );
   }
   
 }

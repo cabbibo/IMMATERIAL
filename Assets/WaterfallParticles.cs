@@ -17,8 +17,8 @@ public class WaterfallParticles : Simulation
 
   public override void Bind(){
     data.land.BindData(life);
-    life.BindAttribute("_EmitterPosition","position",this);
-    life.BindAttribute("_EmitterDirection","direction",this);
+    life.BindVector3( "_EmitterPosition"   , () => this.position   );
+    life.BindVector3( "_EmitterDirection"  , () => this.direction  );
   }
 
   public override void WhileLiving(float v){

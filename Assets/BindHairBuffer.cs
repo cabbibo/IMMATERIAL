@@ -8,6 +8,6 @@ public class BindHairBuffer : Binder
   public override void Bind(){
 
     toBind.BindForm( "_HairBuffer" , hair );
-    toBind.BindAttribute( "_NumVertsPerHair" , "numVertsPerHair" , hair );
+    toBind.BindInt( "_NumVertsPerHair" , () => hair.numVertsPerHair );
   }
 }

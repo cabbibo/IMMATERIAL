@@ -37,20 +37,25 @@ public class TrailRibbonTransfer : Cycle {
   public override void Bind(){
 
     print("hmmmss");
-      transfer.BindPrimaryForm("_VertBuffer", verts);
+    transfer.BindPrimaryForm("_VertBuffer", verts);
     transfer.BindForm("_SkeletonBuffer", skeleton); 
 
-    transfer.BindAttribute( "_RibbonLength" , "length" , verts );
-    transfer.BindAttribute( "_NumVertsPerHair" , "particlesPerTrail" , skeleton );
+
+    TrailRibbonVerts v = (TrailRibbonVerts)verts;
+    transfer.BindInt( "_RibbonLength" , () => v.length );
+
+    TrailParticles s = (TrailParticles)skeleton;
+    transfer.BindInt( "_NumVertsPerHair" , () => s.particlesPerTrail);
 
     parallel.BindPrimaryForm("_ParticleBuffer" , particles);
     parallel.BindForm("_VertBuffer" , verts );
 
-    parallel.BindAttribute( "_RibbonLength" , "length" , verts );
-    parallel.BindAttribute( "_NumVertsPerHair" ,  "length" , verts  );
+    parallel.BindInt( "_RibbonLength"     ,   () => v.length  );
+    parallel.BindInt( "_NumVertsPerHair"  ,   () => v.length  );
 
     data.BindCameraData( parallel );
-    parallel.BindAttribute( "_Radius" ,  "radius" , this );
+
+    parallel.BindFloat( "_Radius" ,  () => this.radius );
 
   }
 

@@ -6,9 +6,13 @@ public class TubeTransfer : TransferLifeForm {
   
   
   public override void Bind(){
-    transfer.BindAttribute( "_TubeLength" , "length" , verts );
-    transfer.BindAttribute( "_TubeWidth" , "width" , verts );
-    transfer.BindAttribute( "_NumVertsPerHair" , "numVertsPerHair" , skeleton );
+
+    TubeVerts v = (TubeVerts)verts;
+    Hair s = (Hair)skeleton;
+
+    transfer.BindInt( "_TubeLength" , () => v.length );
+    transfer.BindInt( "_TubeWidth" , () => v.width );
+    transfer.BindInt( "_NumVertsPerHair" , () => s.numVertsPerHair  );
   }
 
 }

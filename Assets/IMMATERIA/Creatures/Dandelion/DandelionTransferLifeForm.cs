@@ -9,8 +9,11 @@ public class DandelionTransferLifeForm :TransferLifeForm{
   public override void Bind(){
 
     transfer.BindForm("_DandelionBuffer" , dandelion);
-    transfer.BindAttribute("_VertsPerVert" , "vertsPerVert" , dandelion);
-    transfer.BindAttribute("_NumVertsPerHair" , "numVertsPerHair" , skeleton);
+    transfer.BindInt("_VertsPerVert" , () => dandelion.vertsPerVert );
+
+    Hair s = (Hair)skeleton;
+    
+    transfer.BindInt("_NumVertsPerHair" , () => s.numVertsPerHair );
     
   }
 

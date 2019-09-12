@@ -122,8 +122,9 @@ public class LandTiler : Cycle
 
   public override void Bind(){
     data.BindLandData( setTile );
-    setTile.BindAttribute("_Offset", "_Offset" , this );
-    setTile.BindAttribute("_ID", "_ID" , this );
+    
+    setTile.BindVector3("_Offset", () => this._Offset );
+    setTile.BindInt("_ID", () => this._ID );
 
  
   }

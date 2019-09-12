@@ -41,9 +41,9 @@ public class TransferLifeForm : LifeForm {
     transfer.BindForm("_SkeletonBuffer", skeleton); 
 
     data.BindCameraData( transfer );
-    transfer.BindAttribute("_Radius" , "radius" , this); 
-
-    transfer.BindAttribute("_TransformBase","transformArray", this);
+    
+    transfer.BindFloat("_Radius" , () => this.radius ); 
+    transfer.BindFloats("_TransformBase", () => this.transformArray);
     
     Bind();
   }

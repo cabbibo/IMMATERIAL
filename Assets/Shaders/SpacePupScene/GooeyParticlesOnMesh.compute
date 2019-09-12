@@ -87,10 +87,16 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 
     force += GetRayForce( p.pos , .2 , 3 );//_DOWN * normalize(inLine) * .3 / (.5  +  length( inLine));
+   
+    if( length(force) > 10 ){ force = normalize(force) * 10; }
+
+
     p.vel += force * .1;
     p.pos += p.vel;
     p.vel *= .9;
     p.debug = length( p.pos - targetPos);
+
+
 
     p.uv = v.uv;
 
@@ -124,7 +130,7 @@ float3 getOffset( Particle p1 , Particle p2 , Vert v1 , Vert v2 ){
       }
 
     // Here is where the actual verlet goes down!
-    float3 translate = dif * .6 * difference;
+    float3 translate = dif * .5 * difference;
 
     return translate;
 

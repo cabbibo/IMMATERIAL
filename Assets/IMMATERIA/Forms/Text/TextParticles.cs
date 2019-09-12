@@ -64,28 +64,36 @@ public class TextParticles : LifeForm{
 
     setPage.BindForm("_AnchorBuffer",anchor);
     setPage.BindForm("_VertBuffer",particles);
-    setPage.BindAttribute("_EmitPos" , "emitterPosition" , this );
 
     simulate.BindPrimaryForm("_VertBuffer",particles);
     simulate.BindForm("_TransferBuffer",body.verts);
 
     transfer.BindPrimaryForm("_TransferBuffer",body.verts);
     transfer.BindForm("_VertBuffer",particles);
-    setGlyph.BindAttribute("_Radius","radius",this);//.BindForm("_VertBuffer",particles);
-    setGlyph.BindAttribute("_Scale","scale",this);//.BindForm("_VertBuffer",particles);
-
-    setGlyph.BindAttribute("_BaseID" , "currentMin" , this );
-    setAnchor.BindAttribute("_BaseID" , "currentMin" , this );
-    setPage.BindAttribute("_BaseID" , "currentMin" , this );
-    simulate.BindAttribute("_BaseID" , "currentMin" , this );
-    transfer.BindAttribute("_BaseID" , "currentMin" , this );
+    
 
 
-    setGlyph.BindAttribute(  "_TipID" , "currentMax" , this );
-    setAnchor.BindAttribute( "_TipID" , "currentMax" , this );
-    setPage.BindAttribute(   "_TipID" , "currentMax" , this );
-    simulate.BindAttribute(  "_TipID" , "currentMax" , this );
-    transfer.BindAttribute(  "_TipID" , "currentMax" , this );
+
+    setPage.BindVector3("_EmitPos" , () => this.emitterPosition );
+
+    setGlyph.BindFloat("_Radius" , () => this.radius );//"radius",this);//.BindForm("_VertBuffer",particles);
+    setGlyph.BindFloat("_Scale"  , () => this.scale  );//.BindForm("_VertBuffer",particles);
+
+
+  /*  var scaleGetter = () -> { return this.scale; };
+    setGlyph.BindAttribute("_Scale", () -> { return this.scale; }, float); */
+
+    setGlyph.BindInt(  "_BaseID"  , () => this.currentMin );
+    setAnchor.BindInt( "_BaseID"  , () => this.currentMin );
+    setPage.BindInt(   "_BaseID"  , () => this.currentMin );
+    simulate.BindInt(  "_BaseID"  , () => this.currentMin );
+    transfer.BindInt(  "_BaseID"  , () => this.currentMin );
+
+    setGlyph.BindInt(  "_TipID" , () => this.currentMax );
+    setAnchor.BindInt( "_TipID" , () => this.currentMax );
+    setPage.BindInt(   "_TipID" , () => this.currentMax );
+    simulate.BindInt(  "_TipID" , () => this.currentMax );
+    transfer.BindInt(  "_TipID" , () => this.currentMax );
 
 
    /* simulate.BindAttribute("_Active","pageActive",story);

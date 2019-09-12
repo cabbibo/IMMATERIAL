@@ -17,7 +17,7 @@ public class PitParticles : Simulation
 
   public override void Bind(){
     data.land.BindData(life);
-    life.BindAttribute("_EmitterPosition","position",this);
+    life.BindVector3( "_EmitterPosition", () => this.position );
     life.BindForm("_TransformBuffer",transforms);
 
   }

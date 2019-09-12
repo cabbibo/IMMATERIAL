@@ -34,9 +34,9 @@ public class CircleOnTerrain : Cycle
 
   public override void Bind(){
     life.BindPrimaryForm( "_VertBuffer" , verts);
-    life.BindAttribute("_SetLocation", "set", this);
-    life.BindAttribute("_Radius", "radius", this);
-    life.BindAttribute("_Height", "height", this);
+    life.BindVector3("_SetLocation", () => this.transform.position );
+    life.BindFloat("_Radius", () => this.radius );
+    life.BindFloat("_Height", () => this.height );
 
     data.land.BindData(life);
   }

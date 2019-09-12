@@ -16,7 +16,7 @@ public class BindKelpTip :Binder
     data.BindCameraData( toBind );
 
 
-    toBind.BindAttribute( "_VertsPerHair" , "numVertsPerHair" , hair );
+    toBind.BindInt( "_VertsPerHair" , () => hair.numVertsPerHair );
     toBind.BindForm( "_HairBuffer" ,hair );
     toBind.BindForm( "_PullBuffer" ,pullers );
 

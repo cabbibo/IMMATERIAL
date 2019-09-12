@@ -36,9 +36,10 @@ public class SceneCircle : Cycle
 
   public override void Bind(){
     life.BindPrimaryForm( "_VertBuffer" , verts);
-    life.BindAttribute("_SetLocation", "set", this);
-    life.BindAttribute("_InnerRadius", "inner", this);
-    life.BindAttribute("_OuterRadius", "outer", this);
+    
+    life.BindVector3("_SetLocation"   , () => this.set    );
+    life.BindFloat("_InnerRadius"     , () => this.inner  );
+    life.BindFloat("_OuterRadius"     , () => this.outer  );
 
     data.land.BindData(life);
   }

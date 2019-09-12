@@ -11,7 +11,7 @@ public class God : Cycle {
 public bool AllInEditMode;
 private static God _instance;
   
-
+public bool started;
 
 public override void Create(){
 
@@ -32,7 +32,11 @@ public void OnRenderObject(){
 
 public void LateUpdate(){
 
-
+    if( started == false ){ 
+        _OnLive(); 
+        started = true;
+    }
+    
     if( birthing ){ _WhileBirthing(1);}
     if( living ){ _WhileLiving(1); }
     if( dying ){ _WhileDying(1); }
@@ -42,18 +46,25 @@ public void LateUpdate(){
 
 public void OnEnable(){
 
+    started = false;
+
     #if UNITY_EDITOR 
         EditorApplication.update += Always;
     #endif
+
     if( _instance == null ){ _instance = this; }
+
+    print("god enambles");
+    
     Reset();
     _Create(); 
     _OnGestate();
     _OnGestated();
     _OnBirth(); 
     _OnBirthed();
-    _OnLive(); 
 }
+
+
 
 public void OnDisable(){
 

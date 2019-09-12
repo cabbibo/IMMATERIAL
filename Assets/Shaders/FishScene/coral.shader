@@ -1,4 +1,7 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "Scenes/FishScene/Coral1"
 {
@@ -20,18 +23,16 @@ Shader "Scenes/FishScene/Coral1"
             CGPROGRAM
 
 
-            #pragma vertex vert
-            #pragma fragment frag
-            #include "UnityCG.cginc"
+        #pragma vertex vert
+ #pragma fragment frag
+ #pragma multi_compile_fwdbase
+ #include "AutoLight.cginc"
+ #include "UnityCG.cginc"
 
 
-            // 2.) This matches the "forward base" of the LightMode tag to ensure the shader compiles
-            // properly for the forward bass pass. As with the LightMode tag, for any additional lights
-            // this would be changed from _fwdbase to _fwdadd.
-            #pragma multi_compile_fwdbase
+
  
-            // 3.) Reference the Unity library that includes all the lighting shadow macros
-            #include "AutoLight.cginc"
+   
 
             struct v2f {
                 float3 worldPos : TEXCOORD0;
@@ -44,8 +45,9 @@ Shader "Scenes/FishScene/Coral1"
                 // texture coordinate for the normal map
                 float2 uv : TEXCOORD5;
                 float4 pos : SV_POSITION;
+                float4 _ShadowCoord : TEXCOORD6;
                 // in v2f struct;
-LIGHTING_COORDS(7,8) // replace 0 and 1 with the next available TEXCOORDs in your shader, don't put a semicolon at the end of this line.
+//LIGHTING_COORDS(7,8) // replace 0 and 1 with the next available TEXCOORDs in your shader, don't put a semicolon at the end of this line.
  
             };
 
@@ -72,7 +74,9 @@ LIGHTING_COORDS(7,8) // replace 0 and 1 with the next available TEXCOORDs in you
                 o.norm = wNormal;
                 o.uv = uv;
 
-                TRANSFER_VERTEX_TO_FRAGMENT(o); 
+
+                o._ShadowCoord = mul( unity_WorldToShadow[0], mul( unity_ObjectToWorld, vertex ) );
+               //TRANSFER_VERTEX_TO_FRAGMENT(o); 
                 return o;
             }
 
@@ -88,7 +92,7 @@ LIGHTING_COORDS(7,8) // replace 0 and 1 with the next available TEXCOORDs in you
                 float4 specMap = tex2D(_SpecMap, i.uv);
 
                 // sample the normal map, and decode from the Unity encoding
-                half3 tnormal =UnpackNormal(tex2D(_BumpMap, i.uv));// lerp( i.norm ,  , specMap.x);
+                half3 tnormal = UnpackNormal(tex2D(_BumpMap, i.uv));// lerp( i.norm ,  , specMap.x);
                 // transform normal from tangent to world space
                 half3 worldNormal;
                 worldNormal.x = dot(i.tspace0, tnormal);
@@ -125,5 +129,5 @@ LIGHTING_COORDS(7,8) // replace 0 and 1 with the next available TEXCOORDs in you
 
     }
 
-    Fallback "VertexLit"
+    FallBack "Diffuse"
 }

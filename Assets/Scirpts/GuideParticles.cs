@@ -17,8 +17,8 @@ public class GuideParticles : Simulation
 
   public override void Bind(){
     data.land.BindData(life);
-    life.BindAttribute("_Emit","_Emit",this);
-    life.BindAttribute("_EmitterPosition","_EmitterPosition",this);
+    life.BindFloat("_Emit",() => this._Emit);
+    life.BindVector3("_EmitterPosition",() => this._EmitterPosition);
   }
 
   public void SetEmitterPosition( Vector3 position ){

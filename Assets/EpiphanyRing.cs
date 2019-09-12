@@ -49,7 +49,7 @@ public class EpiphanyRing : Cycle
     }
 
     public override void Bind(){
-      life.BindAttribute("_StartTime", "startTime",this);
+      life.BindFloat("_StartTime", () => this.startTime );
 
       body.mpb.SetVector("_SetPosition", transform.position );
       body.mpb.SetFloat("_StartTime", Time.time );

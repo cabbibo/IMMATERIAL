@@ -82,20 +82,20 @@ public class Data : Cycle
 
   public void BindPlayerData(Life toBind){
 
-    toBind.BindAttribute("_PlayerForward", "playerForward" , this );
-    toBind.BindAttribute("_PlayerUp", "playerUp" , this );
-    toBind.BindAttribute("_PlayerRight", "playerRight" , this );
-    toBind.BindAttribute("_PlayerPosition", "playerPosition" , this );
-    toBind.BindAttribute("_PlayerSoul", "playerSoul" , this );
+    toBind.BindVector3("_PlayerForward",  () => this.playerForward    );
+    toBind.BindVector3("_PlayerUp",       () => this.playerUp         );
+    toBind.BindVector3("_PlayerRight",    () => this.playerRight      );
+    toBind.BindVector3("_PlayerPosition", () => this.playerPosition   );
+    toBind.BindVector3("_PlayerSoul",     () => this.playerSoul       );
 
   }
 
   public void BindCameraData(Life toBind){
 
-    toBind.BindAttribute("_CameraForward", "cameraForward" , this );
-    toBind.BindAttribute("_CameraUp", "cameraUp" , this );
-    toBind.BindAttribute("_CameraRight", "cameraRight" , this );
-    toBind.BindAttribute("_CameraPosition", "cameraPosition" , this );
+    toBind.BindVector3("_CameraForward",  () => this.cameraForward  );
+    toBind.BindVector3("_CameraUp",       () => this.cameraUp       );
+    toBind.BindVector3("_CameraRight",    () => this.cameraRight    );
+    toBind.BindVector3("_CameraPosition", () => this.cameraPosition );
 
   }
 
@@ -104,9 +104,9 @@ public class Data : Cycle
 
   public void BindRayData(Life toBind){
 
-    toBind.BindAttribute("_RO", "RO" , inputEvents );
-    toBind.BindAttribute("_RD", "RD" , inputEvents );
-    toBind.BindAttribute("_DOWN", "Down" , inputEvents );
+    toBind.BindVector3("_RO", () => inputEvents.RO    );
+    toBind.BindVector3("_RD", () => inputEvents.RD    );
+    toBind.BindFloat("_DOWN", () => inputEvents.Down  );
 
   }
 

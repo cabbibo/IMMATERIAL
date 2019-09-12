@@ -138,9 +138,9 @@ public class Land : Cycle {
 
   public void BindData(Life life){
 
-    life.BindAttribute("_HeightMap", "heightMap" , this );
-    life.BindAttribute("_MapSize"  , "size" , this );
-    life.BindAttribute("_MapHeight", "height" , this );
+    life.BindTexture("_HeightMap" , () => this.heightMap  );
+    life.BindFloat("_MapSize"     , () => this.size       );
+    life.BindFloat("_MapHeight"   , () => this.height     );
 
   }
 

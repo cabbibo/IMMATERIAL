@@ -42,7 +42,8 @@ public class Hydra : Cycle
    }
 
    public override void OnLive(){
-      stalkRope.Set();
+
+    stalkRope.Set();
     tipRope.Set();
   
    }
@@ -50,6 +51,7 @@ public class Hydra : Cycle
 
    public override void WhileLiving(float v){
 
+    if( active ){
 
     Vector3 force = new Vector3();
 
@@ -91,6 +93,8 @@ public class Hydra : Cycle
         vels[i] *= .9f;
 
       }
+
+    }
 
 
    }

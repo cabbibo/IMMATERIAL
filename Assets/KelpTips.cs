@@ -20,7 +20,7 @@ public class KelpTips : Simulation
     data.BindPlayerData( life );
     data.BindCameraData( life );
 
-    life.BindAttribute( "_NumVertsPerHair" , "numVertsPerHair" , hair );
+    life.BindInt( "_NumVertsPerHair" , () => hair.numVertsPerHair );
     life.BindForm( "_HairBuffer" ,hair );
     life.BindForm( "_PullBuffer" ,pullers );
 

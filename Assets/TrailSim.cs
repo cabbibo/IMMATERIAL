@@ -10,7 +10,9 @@ public class TrailSim : Simulation
   public override void Bind(){
 
     life.BindForm("_HeadBuffer", head);
-    life.BindAttribute("_ParticlesPerTrail" , "particlesPerTrail" , form );
+
+    TrailParticles tp = (TrailParticles)form;
+    life.BindInt( "_ParticlesPerTrail" , () => tp.particlesPerTrail );
   }
 
 

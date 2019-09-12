@@ -6,8 +6,12 @@ public class RibbonTransfer : TransferLifeForm {
   
   
   public override void Bind(){
-    transfer.BindAttribute( "_RibbonLength" , "length" , verts );
-    transfer.BindAttribute( "_NumVertsPerHair" , "numVertsPerHair" , skeleton );
+
+    HairRibbonVerts v = (HairRibbonVerts)verts;
+    transfer.BindFloat( "_RibbonLength" , () => v.length );
+
+    Hair h = (Hair)skeleton;
+    transfer.BindInt( "_NumVertsPerHair" , () => h.numVertsPerHair );
   }
 
 }

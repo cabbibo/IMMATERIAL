@@ -48,21 +48,21 @@ public class HairBasic : LifeForm {
 
     constraint0.BindInt("_Pass" , 0 );
     constraint0.BindPrimaryForm("_VertBuffer", Hair);
-    constraint0.BindAttribute( "_NumVertsPerHair" , "numVertsPerHair", Hair );
+    constraint0.BindInt( "_NumVertsPerHair" , () => Hair.numVertsPerHair );
 
     constraint1.BindInt("_Pass" , 1 );
     constraint1.BindPrimaryForm("_VertBuffer", Hair);
-    constraint1.BindAttribute( "_NumVertsPerHair" , "numVertsPerHair", Hair );
+    constraint1.BindInt( "_NumVertsPerHair" ,  () => Hair.numVertsPerHair );
 
-    set.BindAttribute( "_HairLength"  , "length", Hair );
-    set.BindAttribute( "_HairVariance"  , "variance", Hair );
-    set.BindAttribute( "_NumVertsPerHair" , "numVertsPerHair", Hair );
+    set.BindFloat( "_HairLength"  , () => Hair.length);
+    set.BindFloat( "_HairVariance"  , () => Hair.variance);
+    set.BindInt( "_NumVertsPerHair" , () => Hair.numVertsPerHair );
 
     // Don't need to bind for all of them ( constraints ) because same shader
-    collision.BindAttribute( "_HairLength"  , "length", Hair );
-    collision.BindAttribute( "_HairVariance"  , "variance", Hair );
-    collision.BindAttribute( "_NumVertsPerHair" , "numVertsPerHair", Hair );
-    collision.BindAttribute( "_Transform" , "transformArray" , this );
+    collision.BindFloat( "_HairLength"  , () => Hair.length );
+    collision.BindFloat( "_HairVariance"  , () => Hair.variance );
+    collision.BindInt( "_NumVertsPerHair" , () => Hair.numVertsPerHair );
+    collision.BindFloats( "_Transform" , () => this.transformArray );
 
     data.BindCameraData(collision);
 

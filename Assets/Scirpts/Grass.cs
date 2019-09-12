@@ -15,9 +15,9 @@ public class Grass : Simulation
     public override void Bind(){
 
 
-      life.BindAttribute("_Size", "size", tile );
-      life.BindAttribute("_Offset", "position", tile );
-      hair.set.BindAttribute("_Offset" , "position" , tile);
+      life.BindFloat("_Size", () => tile.size );
+      life.BindVector3("_Offset", () => tile.position );
+      hair.set.BindVector3("_Offset" , () => tile.position );
       data.land.BindData(life);
 
     }

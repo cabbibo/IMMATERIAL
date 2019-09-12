@@ -7,7 +7,7 @@ public class BindTransform : Binder
 
     public Matrix4x4 transformMatrix;
     public override void Bind(){
-      toBind.BindAttribute("_Transform", "transformMatrix" , this );
+      toBind.BindMatrix("_Transform", () => this.transformMatrix );
     }
 
 

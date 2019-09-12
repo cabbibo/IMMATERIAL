@@ -91,14 +91,18 @@ private float[] values;
   public override void Bind(){
 
     life.BindPrimaryForm("_VectorBuffer", verts);
-    life.BindAttribute("_PaintPosition", "paintPosition" , this);
-    life.BindAttribute("_PaintDirection", "paintDirection" , this);
-    life.BindAttribute("_PaintSize", "paintSize" , this);
-    life.BindAttribute("_PaintOpacity", "paintOpacity" , this);
-    life.BindAttribute("_Brush", "brushType" , this);
-    life.BindAttribute("_Reset", "reset" , this);
-    life.BindAttribute("_TextureReset", "startTexture" , this);
-    life.BindAttribute("_UndoTexture", "undoTexture" , this);
+
+    print(this.paintPosition);
+    
+    
+    life.BindVector3( "_PaintPosition"  , () => this.paintPosition  );
+    life.BindVector3( "_PaintDirection" , () => this.paintDirection );
+    life.BindFloat(   "_PaintSize"      , () => this.paintSize      );
+    life.BindFloat(   "_PaintOpacity"   , () => this.paintOpacity   );
+    life.BindInt(     "_Brush"          , () => this.brushType      );
+    life.BindFloat(   "_Reset"          , () => this.reset          );
+    life.BindTexture( "_TextureReset"   , () => this.startTexture   );
+    life.BindTexture( "_UndoTexture"    , () => this.undoTexture    );
 
     data.BindLandData(life);
 

@@ -22,16 +22,21 @@ public class SpacePup : Cycle
   public Vector3 velocity;
   public Vector3 force;
 
+  public BindTransform transformBinder;
+
   public override void Create(){
 
     particles.count = verts.meshFilter.sharedMesh.vertices.Length;
 
     SafeInsert( verts );
     SafeInsert( life );
+
+    //SafeInsert(triLocation);
+    //SafeInsert( resolve );
+
     SafeInsert( body ); // particles and tris added to body
     SafeInsert( anchors );
-    SafeInsert(triLocation);
-    SafeInsert( resolve );
+    SafeInsert( transformBinder );
 
   }
 
@@ -39,13 +44,14 @@ public class SpacePup : Cycle
 
     life.BindPrimaryForm( "_ParticleBuffer" , particles );
     life.BindForm("_VertBuffer" , verts );
-    life.BindAttribute("_Velocity" , "velocity" , this );
+    
+    life.BindVector3("_Velocity" , () => this.velocity );
 
 
-    triLocation.BindPrimaryForm( "_ParticleBuffer" , particles );
-    triLocation.BindForm("_VertBuffer" , verts );
+    //triLocation.BindPrimaryForm( "_ParticleBuffer" , particles );
+    //triLocation.BindForm("_VertBuffer" , verts );
 
-    resolve.BindPrimaryForm( "_ParticleBuffer" , particles );
+    //resolve.BindPrimaryForm( "_ParticleBuffer" , particles );
 
 
     data.BindRayData( life );
