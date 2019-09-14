@@ -70,13 +70,11 @@ public class HairBasic : LifeForm {
 
 
   public override void OnBirth(){
-    set.Live();
-    set.active = false;
+    set.active = true;
   }
 
   public override void Activate(){
-    set.Live();
-    set.active = false;
+    set.active = true;
   }
 
   public override void WhileLiving(float v){

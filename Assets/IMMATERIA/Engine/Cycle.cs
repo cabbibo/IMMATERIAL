@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[ExecuteInEditMode]
 public class Cycle : MonoBehaviour{
 
 [HideInInspector] public bool created = false;
@@ -32,6 +32,19 @@ public class Cycle : MonoBehaviour{
 
   public List<Cycle> Cycles;
 
+
+
+  /*
+    Tying it up to the unity event system for enable and disable
+  */
+ /* void OnEnable(){
+   // if( living ){ _Activate(); }
+  }
+
+  void OnDisable(){
+    //if( living ){ _Deactivate(); }
+  }*/
+
 /*
 
   Creation
@@ -60,11 +73,11 @@ public class Cycle : MonoBehaviour{
 
 
 
-for (int i = Cycles.Count - 1; i >= 0; i--){
-    if (Cycles[i] == null ){
-        Cycles.RemoveAt(i);
+    for (int i = Cycles.Count - 1; i >= 0; i--){
+        if (Cycles[i] == null ){
+            Cycles.RemoveAt(i);
+        }
     }
-}
 
 
 
@@ -73,7 +86,6 @@ for (int i = Cycles.Count - 1; i >= 0; i--){
       if( c == null ){
         DebugThis( "SOME CYCLE NULL");
        // Cycles.Remove( c );
-
       }else{
 
 
@@ -83,18 +95,11 @@ for (int i = Cycles.Count - 1; i >= 0; i--){
 
         if( c.data == null ){ c.data = data; }
         if( data == null ){ print("fuhhh"); }
-        
-        //   print(this);
         c._Create();
 
       }
-    
-
     }
 
-    float dT = Time.time - t;
-
-//    print( "" + this.gameObject + " HOW LONG :" + dT );
 
 
   }
@@ -328,12 +333,12 @@ for (int i = Cycles.Count - 1; i >= 0; i--){
   public virtual void Destroy(){}
 
   protected void DoDestroy(){
-//   print( Cycles );
-for (int i = Cycles.Count - 1; i >= 0; i--){
-    if (Cycles[i] == null ){
-        Cycles.RemoveAt(i);
+    //   print( Cycles );
+    for (int i = Cycles.Count - 1; i >= 0; i--){
+        if (Cycles[i] == null ){
+            Cycles.RemoveAt(i);
+        }
     }
-}
 
     foreach( Cycle c in Cycles ){
 
@@ -354,6 +359,8 @@ for (int i = Cycles.Count - 1; i >= 0; i--){
     Destroy();
     
     SetStates();
+
+
   }
 
 
@@ -378,7 +385,6 @@ public virtual void Activate(){}
 public virtual void _Deactivate(){
   Deactivate();
   foreach( Cycle c in Cycles ){
-
     CheckSelfCycle(c);
     c._Deactivate();
   }
@@ -477,7 +483,7 @@ void SetStates(){
     Helpers
   */
   public void DebugThis( string s ){
-     print( "Object Name : " + this.gameObject.name +"     || Script Name : "+this.GetType()+ "     || Message: " + s );
+     Debug.Log( "Object Name : " + this.gameObject.name +"     || Script Name : "+this.GetType()+ "     || Message: " + s , this.gameObject );
   }
 
   public void CheckSelfCycle(Cycle c){

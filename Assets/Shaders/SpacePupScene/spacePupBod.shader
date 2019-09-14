@@ -141,7 +141,7 @@
 
                 float fern = dot( normalize( v.eye ), normalize(fNor) );
  
-                m = 1-pow(-fern,.7);//*fern*fern;//pow( fern * fern, 1);
+                m = 1-pow(fern,.7);//*fern*fern;//pow( fern * fern, 1);
                 //m = saturate( 1-m );
                 m = 5 * m;
 
@@ -170,7 +170,9 @@
 
                 float fVal = (fLCol * .7 + .3) * s2;
 
-                float4 fCol = tex2D(_ColorMap , float2(saturate(fVal * .2 + .4 - .1*v.debug),0)) * (1-fVal) * s;//(v.debug * .4+.3);
+                float4 fCol = s;//tex2D(_ColorMap , float2(saturate(fVal * .2 + .4 - .1*v.debug),0)) * (1-fVal) * s;//(v.debug * .4+.3);
+               
+               // fCol.xyz = fNor * .5 + .5;//s*fLCol;//saturate( -fCol );
                 // sample the texture
                 fixed4 col = fCol;//(fLCol * .7 + .3) * s2;//(fLCol.x  * .8 + .2) * s2 * s;//float4( fNor * .5 + .5 , 1);//tex2D(_MainTex, i.uv);
                 return col;

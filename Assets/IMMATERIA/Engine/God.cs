@@ -4,9 +4,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-[ExecuteInEditMode]
 public class God : Cycle {
-
 
 public bool AllInEditMode;
 private static God _instance;
@@ -21,10 +19,11 @@ public override void Create(){
         print("DUDE WHERE'S MY DATA");
     }
 
-    Application.targetFrameRate = 30;
+    Application.targetFrameRate = 60;
 
 
 }
+
 
 public void OnRenderObject(){
     if( created ){ _WhileDebug(); }
@@ -44,35 +43,68 @@ public void LateUpdate(){
 
 
 
+
+public void OnLevelWasLoaded(){
+    print("WASDass");
+}
 public void OnEnable(){
 
     started = false;
 
-    #if UNITY_EDITOR 
-        EditorApplication.update += Always;
-    #endif
 
     if( _instance == null ){ _instance = this; }
 
-    print("god enambles");
+    #if UNITY_EDITOR 
+        EditorApplication.update += Always;
+
+         Reset();
+        _Destroy(); 
+        _Create(); 
+        _OnGestate();
+        _OnGestated();
+        _OnBirth(); 
+        _OnBirthed();
+
+    #else
+
     
-    Reset();
-    _Create(); 
-    _OnGestate();
-    _OnGestated();
-    _OnBirth(); 
-    _OnBirthed();
+
+    print("god enambles");
+
+
+    if( Application.isPlaying ){
+    
+        Reset();
+        _Destroy(); 
+        _Create(); 
+        _OnGestate();
+        _OnGestated();
+        _OnBirth(); 
+        _OnBirthed();
+
+    }
+
+    #endif
+
+
 }
 
 
 
 public void OnDisable(){
 
+
+    print("god disabblee");
     #if UNITY_EDITOR 
         EditorApplication.update -= Always;
+        _Destroy();   
+
+    #else
+     
+    if( Application.isPlaying ){
+        _Destroy();   
+    }
     #endif
-        
-    _Destroy();   
 }
 
 

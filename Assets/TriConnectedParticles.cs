@@ -43,6 +43,7 @@ public class TriConnectedParticles : Particles {
    triVals = tris.GetIntData();
    connections = new int[count][][];
    numConnections = new int[count];
+   int maxConnections = 0;
 
     for( int i = 0; i < connections.Length; i++ ){
       connections[i] = new int[16][];
@@ -83,7 +84,14 @@ public class TriConnectedParticles : Particles {
 
     float[] values = new float[ count * structSize ];
 
+
+
+
     for( int i = 0 ; i < count; i++ ){
+
+      if( numConnections[i] > maxConnections ){
+        maxConnections = numConnections[i];
+      }
 
       for( int j = 0; j < numConnections[i]; j++ ){
         values[i * structSize + 20  + j * 3 + 0 ] = connections[i][j][0];
@@ -92,6 +100,8 @@ public class TriConnectedParticles : Particles {
       }
 
     }
+
+    print( "MAX CONNECTION : " + maxConnections );
 
     SetData(values);
 

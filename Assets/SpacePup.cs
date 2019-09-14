@@ -31,8 +31,8 @@ public class SpacePup : Cycle
     SafeInsert( verts );
     SafeInsert( life );
 
-    //SafeInsert(triLocation);
-    //SafeInsert( resolve );
+    SafeInsert(triLocation);
+    SafeInsert( resolve );
 
     SafeInsert( body ); // particles and tris added to body
     SafeInsert( anchors );
@@ -48,10 +48,10 @@ public class SpacePup : Cycle
     life.BindVector3("_Velocity" , () => this.velocity );
 
 
-    //triLocation.BindPrimaryForm( "_ParticleBuffer" , particles );
-    //triLocation.BindForm("_VertBuffer" , verts );
+    triLocation.BindPrimaryForm( "_ParticleBuffer" , particles );
+    triLocation.BindForm("_VertBuffer" , verts );
 
-    //resolve.BindPrimaryForm( "_ParticleBuffer" , particles );
+    resolve.BindPrimaryForm( "_ParticleBuffer" , particles );
 
 
     data.BindRayData( life );

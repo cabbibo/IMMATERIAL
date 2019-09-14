@@ -89,6 +89,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     force += GetRayForce( p.pos , .2 , 3 );//_DOWN * normalize(inLine) * .3 / (.5  +  length( inLine));
    
     if( length(force) > 10 ){ force = normalize(force) * 10; }
+    if( length(p.vel) > 10 ){ p.vel = normalize(p.vel) * 10; }
 
 
     p.vel += force * .1;
@@ -147,6 +148,7 @@ void TriLocation (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 
   if( pID < _ParticleBuffer_COUNT ){
+
     int sID = safeID( pID, _ParticleBuffer_COUNT );
     Particle p  = _ParticleBuffer[sID];
     Vert v      = _VertBuffer[sID];
@@ -186,47 +188,58 @@ void Resolve (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
   int pID = threadID + u3GroupID.x * NR_THREADS;
 
-  if( pID < _ParticleBuffer_COUNT ){
-    
+
+
     int sID = safeID( pID, _ParticleBuffer_COUNT );
-    Particle p = _ParticleBuffer[sID];
+    if( pID < _ParticleBuffer_COUNT ){
+    
+      Particle p = _ParticleBuffer[sID];
 
-    p.resolver.xyz /= p.resolver.w;
-
-    p.vel -= pow( length(p.pos - p.resolver.xyz) , 2 ) * normalize(p.pos-p.resolver.xyz) * 10;//
-    //p.pos = lerp( p.pos , p.resolver.xyz ,1.4);
-
-
-    float3 nor = 0;
-    for( int i = 0; i < 16; i++ ){
+      
+      if(p.resolver.w != 0 ){ p.resolver.xyz /= p.resolver.w; }
 
 
-      float3 connection = p.connections[i];
+      if( length( p.pos-p.resolver.xyz) != 0 ){
+        p.vel -= clamp( pow( length(p.pos - p.resolver.xyz) , 2 )* 100 , -.4 , .4) * normalize(p.pos-p.resolver.xyz);//
+      }
 
-      if( connection.z > .1 ){
-        int id1 = (int)connection.x;
-        int id2 = (int)connection.y;
-        Particle p1 = _ParticleBuffer[safeID(id1,_ParticleBuffer_COUNT)];
-        Particle p2 = _ParticleBuffer[safeID(id2,_ParticleBuffer_COUNT)];
+      float3 nor = float3(0,1,0);
+      for( int i = 0; i < 16; i++ ){
 
 
-        nor += cross( p.pos - p1.pos , p.pos - p2.pos );
+        float3 connection = p.connections[i];
+
+        if( connection.z > .0000000000 ){
+          int id1 = (int)connection.x;
+          int id2 = (int)connection.y;
+          Particle p1 = _ParticleBuffer[safeID(id1,_ParticleBuffer_COUNT)];
+          Particle p2 = _ParticleBuffer[safeID(id2,_ParticleBuffer_COUNT)];
+
+
+          nor += normalize(cross( p.pos*1000 - p1.pos * 1000 , p.pos*1000 - p2.pos * 1000 ));
+
+        }
+
 
       }
+
+      if( p.resolver.w != 0 ){
+        nor /= p.resolver.w;
+        nor = normalize( nor );
+      }
+
+
+      p.nor = nor;
+
+
+
+      p.resolver = 0;
+
+      _ParticleBuffer[sID] = p;
+
     }
 
-    nor /= p.resolver.w;
-    nor = normalize( nor );
 
-
-    p.nor = nor;
-
-
-
-    p.resolver = 0;
-
-    _ParticleBuffer[sID] = p;
-
-  }
+  
 
 }

@@ -12,6 +12,8 @@ public class RibbonTransfer : TransferLifeForm {
 
     Hair h = (Hair)skeleton;
     transfer.BindInt( "_NumVertsPerHair" , () => h.numVertsPerHair );
+
+    
   }
 
 }
