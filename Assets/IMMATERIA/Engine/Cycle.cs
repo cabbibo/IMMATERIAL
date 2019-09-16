@@ -37,13 +37,17 @@ public class Cycle : MonoBehaviour{
   /*
     Tying it up to the unity event system for enable and disable
   */
- /* void OnEnable(){
-   // if( living ){ _Activate(); }
-  }
-
-  void OnDisable(){
-    //if( living ){ _Deactivate(); }
+   /*void OnEnable(){
+    //_Activate();
+    DebugThis("enablio");
+    if( living ){ _Activate(false); }
   }*/
+
+  /*void OnDisable(){
+    if( living ){ _Deactivate(false); }
+  }*/
+
+
 
 /*
 
@@ -248,12 +252,16 @@ public class Cycle : MonoBehaviour{
   public virtual void WhileLiving(float v){}
 
   protected void DoLiving(float v){
-    WhileLiving(v);
+    
+    if( active ){
+      WhileLiving(v);
 
-    foreach( Cycle c in Cycles ){
-      CheckSelfCycle(c);
-      c._WhileLiving(v);
+      foreach( Cycle c in Cycles ){
+        CheckSelfCycle(c);
+        c._WhileLiving(v);
+      }
     }
+
   }
   
   public virtual void _OnLived(){ DoLived(); }
@@ -380,7 +388,25 @@ public virtual void _Activate(){
   }
   active = true;
 }
+
+
+// Making it so we can activate this object and not every one of the children!
+public virtual void _Activate( bool propogate ){
+  Activate();
+
+  if( propogate ){
+    foreach( Cycle c in Cycles ){
+
+      CheckSelfCycle(c);
+      c._Activate();
+    }
+  }
+  active = true;
+}
+
+
 public virtual void Activate(){}
+
 
 public virtual void _Deactivate(){
   Deactivate();
@@ -390,6 +416,20 @@ public virtual void _Deactivate(){
   }
   active = false;
 }
+
+
+public virtual void _Deactivate(bool propogate){
+  Deactivate();
+  
+  if( propogate ){
+    foreach( Cycle c in Cycles ){
+      CheckSelfCycle(c);
+      c._Deactivate();
+    }
+  }
+  active = false;
+}
+
 public virtual void Deactivate(){}
 
 

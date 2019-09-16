@@ -121,7 +121,7 @@
 
       float4 frag(varyings v) : COLOR {
 
-       /*float4 color = tex2D(_MainTex,v.worldPos.xz * .1 );
+       float4 color = tex2D(_MainTex,v.worldPos.xz * .1 );
         float4 hCol = sampleColor(v.worldPos );
 
         float3 fNor = normalize(float3(
@@ -196,9 +196,9 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
         //tCol = dif;
 
         //tCol = grassHeight;
-        if( _Debug != 0 ){ color.xyz = v.nor * .5 + .5; }*/
-        return float4( 0,0,0,1 );
-        //return float4( color.xyz * (shadow * .5 + .5)  , 1.);
+        if( _Debug != 0 ){ color.xyz = v.nor * .5 + .5; }
+        //return float4( 0,0,0,1 );
+        return float4( color.xyz * (shadow * .5 + .5)  , 1.);
       }
 
       ENDCG
