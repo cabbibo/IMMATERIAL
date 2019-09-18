@@ -42,9 +42,9 @@ public class ReRender : Cycle {
     mpb.SetBuffer("_VertBuffer", verts._buffer );
     mpb.SetBuffer("_TriBuffer", triangles._buffer );
 
-    // Infinit bounds so its always drawn!
-    Graphics.DrawProcedural(material,  new Bounds(transform.position, Vector3.one * 50000), MeshTopology.Triangles, triangles.count , 1, null, mpb, ShadowCastingMode.TwoSided, true, gameObject.layer);
-  }
+      // Infinit bounds so its always drawn!
+      Graphics.DrawProcedural(material,  new Bounds(transform.position, Vector3.one * 50000), MeshTopology.Triangles, triangles.count , 1, null, mpb, ShadowCastingMode.TwoSided, true, gameObject.layer);
+    }
   }
 
  

@@ -13,8 +13,12 @@ public class Book : Cycle
     public float forward;
 
     public bool started;
+    public bool opened;
+    public bool storyOpened;
 
     public BookStory[] bookStories;
+    
+
     public GameObject nodePrefab;
 
     public GameObject[] startNodes; 
@@ -22,8 +26,21 @@ public class Book : Cycle
     public bool inStory = false;
     public int storyID = 0; 
 
+    public int currentStory;
+
+    
+
+    private float transitionToBookTime;
+    public float transitionToBookRate;
+
+    private float transitionOutOfBookTime;
+    public float transitionOutOfBookRate;
+
+
     private float transitionToStoryTime;
     public float transitionToStoryRate;
+
+    
 
     private float transitionOutOfStoryTime;
     public float transitionOutOfStoryRate;
@@ -54,6 +71,13 @@ public class Book : Cycle
 
       }
 
+      started = false;
+      opened = false;
+      storyOpened = false;
+      inStory = false;
+
+        data.journey.active = true;
+
 
     }
 
@@ -64,6 +88,8 @@ public class Book : Cycle
       started = true;
 
       data.playerControls.animator.SetTrigger("LiftPhone");
+
+
 
       transform.position = data.playerPosition + Vector3.up * above +  data.player.forward * forward;
       transform.rotation = data.player.rotation;
@@ -79,19 +105,51 @@ public class Book : Cycle
 
           bookStories[i].pages[j].transform.position = transform.position; 
           bookStories[i].pages[j].transform.rotation = transform.rotation;
-          bookStories[i].pages[j].frame.distance = frame.distance;
+          bookStories[i].pages[j].frame.distance = frame.distance - .1f;
         }
 
       }
 
-      data.cameraControls.SetLerpTarget( transform , 1);
+      data.cameraControls.SetLerpTarget( transform , transitionToBookRate );
+      transitionToBookTime = Time.time;
+     
+
       //started = true;
         //  OpenBook();
     
 
+    }
+
+
+    public void OnBookOpened(){
+
+
       data.inputEvents.OnTap.AddListener( TapInBook );
       data.inputEvents.OnSwipeLeft.AddListener( LeftSwipe);
       data.inputEvents.OnSwipeRight.AddListener( RightSwipe);
+
+      data.journey.active = false;
+
+      if(data.state.startInBookPages){
+
+        OpenStory(currentStory);
+      }
+
+      opened = true;
+
+    }
+
+
+    public void OnPageOpened(){
+
+
+      data.inputEvents.OnTap.AddListener( TapInBook );
+      data.inputEvents.OnSwipeLeft.AddListener( LeftSwipe);
+      data.inputEvents.OnSwipeRight.AddListener( RightSwipe);
+
+      data.journey.active = false;
+
+      opened = true;
 
     }
 
@@ -119,9 +177,12 @@ public class Book : Cycle
         }
     }
 
+
+
     public void CloseBook(){
       
       started = false;
+      opened = false;
 
       data.cameraControls.SetFollowTarget();
 
@@ -131,7 +192,10 @@ public class Book : Cycle
       data.inputEvents.OnSwipeLeft.RemoveListener( LeftSwipe );
       data.inputEvents.OnSwipeRight.RemoveListener( RightSwipe );
 
+      data.journey.active = true;
+
     }
+
 
 
   public void TapInBook(){
@@ -156,6 +220,20 @@ public class Book : Cycle
 
     if( Time.time - transitionToStoryTime < transitionToStoryRate ){
       DoTransitionTo( (Time.time - transitionToStoryTime) / transitionToStoryRate );
+    }else{
+      if(inStory && !storyOpened){
+        storyOpened = true;
+        bookStories[currentStory].started = true;
+        bookStories[currentStory].StartStory();
+      }
+    }
+
+    if( Time.time - transitionToBookTime < transitionToBookRate ){
+
+    }else{
+      if( !opened ){
+        OnBookOpened();
+      }
     }
 
 
@@ -190,14 +268,21 @@ public class Book : Cycle
 
     inStory = true;
     storyID = id;
-    bookStories[id].started = true;
-    bookStories[id].SetActivePage();
+    currentStory = id;
+
+
     
   }
 
   public void CloseStory(){
+    if( inStory ){
+      transitionOutOfStoryTime = Time.time;
+    }
+
+    
     inStory = false;
-    transitionOutOfStoryTime = Time.time;
+    storyOpened = false;
+
   }
 
 

@@ -18,8 +18,6 @@ public class Journey : Cycle
   public int activatedMonolith;
   public bool inStory;
 
-  public bool startInStory;
-  public bool startInPages;
 
   public Tutorial tutorial;
 
@@ -79,29 +77,6 @@ public class Journey : Cycle
    public override void OnLive(){
     
     DisconnectMonolith(0);
-
-    if( startInStory  || startInPages ){
-
-      data.player.position = stories[currentStory].transform.position;
-
-      stories[currentStory].perimeter.EnterOuter();
-      stories[currentStory].perimeter.EnterInner();
-
-    }
-
-    if( startInPages ){
-
-      stories[currentStory].stories[stories[currentStory].currentStory].SetAllEvents();
-
-      stories[currentStory].StartStory();
-
-      // Unless we start in the first story, we are going to want our character to
-      // have landeded insted of falling
-      if( currentStory != 0){
-        data.playerControls.animator.Play("Grounded");
-      }
-    }
-
 
    }
 

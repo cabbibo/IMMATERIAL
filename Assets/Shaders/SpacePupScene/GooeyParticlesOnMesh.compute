@@ -86,7 +86,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 
 
-    force += GetRayForce( p.pos , .2 , 3 );//_DOWN * normalize(inLine) * .3 / (.5  +  length( inLine));
+   // force += GetRayForce( p.pos , .2 , 3 );//_DOWN * normalize(inLine) * .3 / (.5  +  length( inLine));
    
     if( length(force) > 10 ){ force = normalize(force) * 10; }
     if( length(p.vel) > 10 ){ p.vel = normalize(p.vel) * 10; }

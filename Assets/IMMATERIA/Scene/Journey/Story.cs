@@ -9,6 +9,7 @@ using UnityEngine;
 public class Story : Cycle
 {
 
+  public float frameBorder = .05f;
 
   // which id in the set of stories 
   public int id;
@@ -78,6 +79,10 @@ public class Story : Cycle
     for( int i = 0; i < pages.Length; i ++ ){
       pages[i].frameMPB.SetFloat("_Cutoff" , 1);
       pages[i].frame.borderLine.SetPropertyBlock( pages[currentPage].frameMPB );
+      pages[i].frame.borderLeft = frameBorder;
+      pages[i].frame.borderRight = frameBorder;
+      pages[i].frame.borderTop = frameBorder;
+      pages[i].frame.borderBottom = frameBorder;
     }
 
     transitioning = false;
@@ -143,6 +148,7 @@ public class Story : Cycle
         Release();
       
       }
+      
     }else{
 
       if( started && transitioning == false && pages[currentPage].locked ){

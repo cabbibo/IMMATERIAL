@@ -16,8 +16,17 @@ public class State : Cycle
   public float lastTimeStoryVisited;
   
   public bool inStory;
-  public bool inBook;
   public bool inPages; 
+  public bool inBook;
+  public bool inBookPages;
+
+
+  public bool startInStory;
+  public bool startInPages;
+  public bool startInBook;
+  public bool startInBookPages;
+
+
 
 
   public bool isMonolithOn;
@@ -29,9 +38,49 @@ public class State : Cycle
   public string animationState;
   private string oAnimationState;
 
+  public override void OnLive(){
+    
+
 
   //public string 
+    if( startInStory  || startInPages ){
 
+      data.player.position = data.journey.stories[data.journey.currentStory].transform.position;
+
+      data.journey.stories[data.journey.currentStory].perimeter.EnterOuter();
+      data.journey.stories[data.journey.currentStory].perimeter.EnterInner();
+
+    }
+
+
+    if( startInStory && !startInPages ){
+      data.cameraControls.SetFollowTarget();
+    }
+
+    if( startInPages ){
+
+      data.journey.stories[data.journey.currentStory].stories[data.journey.stories[data.journey.currentStory].currentStory].SetAllEvents();
+      data.journey.stories[data.journey.currentStory].StartStory();
+
+      // Unless we start in the first story, we are going to want our character to
+      // have landeded insted of falling
+      if( data.journey.currentStory != 0){
+        data.playerControls.animator.Play("Grounded");
+      }
+    }
+
+
+    if( startInBook ){
+      data.book.OpenBook();
+    }
+
+
+
+   /*   if( startInBookPages ){
+      data.book.OpenStory(data.book.currentStory);
+    }*/
+
+  }
 
 
 

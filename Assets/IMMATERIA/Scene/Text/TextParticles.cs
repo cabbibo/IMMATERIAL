@@ -166,7 +166,7 @@ public class TextParticles : LifeForm{
 
   public void SpawnFromCamera(){
 
-    emitterPosition = data.camera.position;
+    //emitterPosition = data.GetComponent<Camera>().position;
     setPage.YOLO();
 
   }

@@ -17,7 +17,7 @@ public class ToggleObjects : MonoBehaviour
       }
 
 
-      print("TURNING OFF");
+     // print("TURNING OFF");
     }
 
     public void TurnOn(){
@@ -30,6 +30,6 @@ public class ToggleObjects : MonoBehaviour
         cycles[i]._Activate();
       }
     
-      print("TURNING ON");
+      //print("TURNING ON");
     }
 }

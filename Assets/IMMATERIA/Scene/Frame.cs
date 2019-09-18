@@ -9,12 +9,21 @@ public class Frame : Cycle {
   public float distance;
   public float border;
 
+  public float borderLeft;
+  public float borderRight;
+  public float borderTop;
+  public float borderBottom;
+
+  public bool constant;
+
   private float _ratio;
 
   public LineRenderer borderLine;
 
   public Vector3 bottomLeft;
   public Vector3 bottomRight;
+
+
   public Vector3 topLeft;
   public Vector3 topRight;
   public Vector3 center;
@@ -50,13 +59,14 @@ public class Frame : Cycle {
   
   // Update is called once per frame
   public override void WhileLiving(float v) {
-    SetFrame();
+    if( constant ){ SetFrame(); }
     collider.transform.rotation = this.transform.rotation;
     collider.transform.position = center;
     collider.transform.localScale = new Vector3( (bottomLeft - bottomRight).magnitude , (bottomLeft - topLeft).magnitude , .001f);
   }
 
   public void SetFrame(){
+   // print( "setting");
 
     _ratio = (float)Screen.width / (float)Screen.height;
 
@@ -68,10 +78,13 @@ public class Frame : Cycle {
     cam.transform.position = transform.position;
     cam.transform.rotation = transform.rotation;
 
-    bottomLeft = Camera.main.ViewportToWorldPoint(new Vector3( border ,_ratio *border,distance));  
-    bottomRight = Camera.main.ViewportToWorldPoint(new Vector3(1- border,_ratio *border,distance));
-    topLeft = Camera.main.ViewportToWorldPoint(new Vector3(border,1-_ratio * border,distance));
-    topRight = Camera.main.ViewportToWorldPoint(new Vector3(1-border,1-_ratio * border,distance));
+
+
+
+    bottomLeft = Camera.main.ViewportToWorldPoint(new Vector3( borderLeft ,_ratio *borderBottom,distance));  
+    bottomRight = Camera.main.ViewportToWorldPoint(new Vector3(1- borderRight,_ratio *borderBottom ,distance));
+    topLeft = Camera.main.ViewportToWorldPoint(new Vector3(borderLeft,1-_ratio * borderTop,distance));
+    topRight = Camera.main.ViewportToWorldPoint(new Vector3(1-borderRight,1-_ratio * borderTop,distance));
 
 
     center = Camera.main.ViewportToWorldPoint(new Vector3( .5f , .5f , distance )); 

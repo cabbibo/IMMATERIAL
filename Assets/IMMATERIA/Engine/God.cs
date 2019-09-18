@@ -94,7 +94,7 @@ public void OnEnable(){
 public void OnDisable(){
 
 
-    print("god disabblee");
+  //  print("god disabblee");
     #if UNITY_EDITOR 
         EditorApplication.update -= Always;
         _Destroy();   
