@@ -41,7 +41,8 @@ public class State : Cycle
   public override void OnLive(){
     
 
-
+      data.book.CloseBook();
+      print("bookcaos");
   //public string 
     if( startInStory  || startInPages ){
 
@@ -71,6 +72,7 @@ public class State : Cycle
 
 
     if( startInBook ){
+      print("open books");
       data.book.OpenBook();
     }
 

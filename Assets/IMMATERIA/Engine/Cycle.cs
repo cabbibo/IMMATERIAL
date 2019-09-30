@@ -523,7 +523,7 @@ void SetStates(){
     Helpers
   */
   public void DebugThis( string s ){
-     Debug.Log( "Object Name : " + this.gameObject.name +"     || Script Name : "+this.GetType()+ "     || Message: " + s , this.gameObject );
+//     Debug.Log( "Object Name : " + this.gameObject.name +"     || Script Name : "+this.GetType()+ "     || Message: " + s , this.gameObject );
   }
 
   public void CheckSelfCycle(Cycle c){

@@ -1,0 +1,96 @@
+﻿#pragma kernel Set
+#pragma kernel Simulate
+#pragma kernel Transfer
+
+struct Vert{
+  float3 pos;
+  float3 vel;
+  float3 nor;
+  float3 og;
+  float2 uv;
+  float2 debug;
+};
+
+
+
+RWStructuredBuffer<Vert> _VertBuffer;
+RWStructuredBuffer<Vert> _ParticleBuffer;
+
+int _VertBuffer_COUNT;
+int _ParticleBuffer_COUNT;
+
+int _Size;
+int _SmoothSize;
+
+float3 _BottomLeft;
+float3 _BottomRight;
+float3 _TopLeft;
+float3 _TopRight;
+
+#include "../Chunks/safeID.cginc"
+
+
+
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Set(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+
+  int pID = safeID( threadID + u3GroupID.x * NR_THREADS , _VertBuffer_COUNT );
+
+  int dir = pID / _Size;
+
+  int inDir = pID % _Size;
+  float nDir = float(inDir)/float(_Size);
+
+  float3 dirs[4] = { _BottomLeft , _BottomRight, _TopRight, _TopLeft };
+
+  float3 down = dirs[dir];
+  float3 up   = dirs[(dir + 1)%4];
+
+  Vert v = _VertBuffer[pID];
+
+  v.og = down + ( up - down) * nDir;
+  v.pos = v.og;
+  v.uv = float2( nDir ,  float(dir));
+
+  _VertBuffer[pID] = v;
+
+}
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Simulate(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+
+  int pID = safeID( threadID + u3GroupID.x * NR_THREADS , _VertBuffer_COUNT );
+
+  Vert v = _VertBuffer[pID];
+
+  v.pos = v.og;
+
+  _VertBuffer[pID] = v;
+
+
+
+}
+
+
+float _Radius;
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = safeID( threadID + u3GroupID.x * NR_THREADS , _VertBuffer_COUNT );
+
+    
+    Vert v = _VertBuffer[pID];
+
+    _VertBuffer[pID] = v;
+
+
+
+}

@@ -34,6 +34,8 @@ public class Data : Cycle
   public SceneCircle sceneCircle;
   public Book book;
 
+  public Framer framer;
+
   public TextParticles textParticles;
   public GuideParticles guideParticles;
   public GuideParticles monolithParticles;
@@ -61,6 +63,8 @@ public class Data : Cycle
 
 
   public override void Create(){
+    
+    if( framer != null ){ SafePrepend(framer); }
     if( journey != null ){ SafePrepend(journey); }
     if( tween != null ){ SafePrepend(tween); }
     if( textParticles != null ){ SafePrepend(textParticles); }
@@ -77,6 +81,7 @@ public class Data : Cycle
     if( state != null ){ SafePrepend(state); }
     if( painter != null ){ SafePrepend(painter); }
     if( helper != null ){ SafePrepend(helper); }
+
   }
 
 

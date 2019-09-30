@@ -70,9 +70,20 @@ public class Form : Cycle {
   public ComputeBuffer MakeBuffer(){
 
     if( intBuffer == true ){
-      return new ComputeBuffer( count, sizeof(int) * structSize );
+
+      if( count > 0){
+        return new ComputeBuffer( count, sizeof(int) * structSize );
+      }else{
+        DebugThis("zero count");
+        return null;
+      }
     }else{
-      return new ComputeBuffer( count, sizeof(float) * structSize );
+      if( count > 0){
+        return new ComputeBuffer( count, sizeof(float) * structSize );
+      }else{
+        DebugThis("zero count");
+        return null;
+      }
     }
   }
 

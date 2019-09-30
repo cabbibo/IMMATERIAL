@@ -75,6 +75,7 @@ public class Book : Cycle
       opened = false;
       storyOpened = false;
       inStory = false;
+      active = false;
 
         data.journey.active = true;
 
@@ -86,6 +87,7 @@ public class Book : Cycle
     public void OpenBook(){
 
       started = true;
+      active = true;
 
       data.playerControls.animator.SetTrigger("LiftPhone");
 
@@ -123,6 +125,7 @@ public class Book : Cycle
 
     public void OnBookOpened(){
 
+      print("Book oPRNS");
 
       data.inputEvents.OnTap.AddListener( TapInBook );
       data.inputEvents.OnSwipeLeft.AddListener( LeftSwipe);
@@ -193,6 +196,7 @@ public class Book : Cycle
       data.inputEvents.OnSwipeRight.RemoveListener( RightSwipe );
 
       data.journey.active = true;
+      active = false;
 
     }
 
