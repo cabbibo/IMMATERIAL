@@ -1,6 +1,5 @@
 ﻿#pragma kernel Set
 #pragma kernel Simulate
-#pragma kernel Transfer
 
 struct Vert{
   float3 pos;
@@ -11,27 +10,31 @@ struct Vert{
   float2 debug;
 };
 
-
-
 RWStructuredBuffer<Vert> _VertBuffer;
-RWStructuredBuffer<Vert> _ParticleBuffer;
 
 int _VertBuffer_COUNT;
-int _ParticleBuffer_COUNT;
 
 int _Size;
 int _SmoothSize;
+int _Locked;
 
 float3 _BottomLeft;
 float3 _BottomRight;
 float3 _TopLeft;
 float3 _TopRight;
 
+float3 _RO;
+float3 _RD;
+float _DOWN;
+
 #include "../Chunks/safeID.cginc"
 
+#include "../Chunks/GetRayForce.cginc"
 
 
 
+#include "../Chunks/snoise.cginc"
+#include "../Chunks/curlNoise.cginc"
 
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
@@ -60,6 +63,8 @@ void Set(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 }
 
+
+
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
 void Simulate(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
@@ -67,29 +72,33 @@ void Simulate(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
   int pID = safeID( threadID + u3GroupID.x * NR_THREADS , _VertBuffer_COUNT );
 
-  Vert v = _VertBuffer[pID];
-
-  v.pos = v.og;
-
-  _VertBuffer[pID] = v;
 
 
+  Vert v = _VertBuffer[safeID(pID,_VertBuffer_COUNT)];
+  Vert vUp = _VertBuffer[safeID((pID+1)%_VertBuffer_COUNT,_VertBuffer_COUNT)];
+  Vert vDo = _VertBuffer[safeID((pID-1)%_VertBuffer_COUNT,_VertBuffer_COUNT)];
 
-}
+
+float3 force = 0;
+
+if( _Locked == 1 ){ force -= ( v.pos - v.og) * 10; }
+
+force += curlNoise( v.pos )* .01;
+force += GetRayForce( v.pos , -8 , 4 );
+
+force -= v.pos - vUp.pos;
+force -= v.pos - vDo.pos;
 
 
-float _Radius;
+  v.vel += force * .01;
 
-#define NR_THREADS 128
-[numthreads(NR_THREADS,1,1)]
-void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+  if( _Locked == 1 ){ v.vel *= .8; }else{ v.vel *= .99; }
 
-  int pID = safeID( threadID + u3GroupID.x * NR_THREADS , _VertBuffer_COUNT );
+  v.pos += v.vel;
 
-    
-    Vert v = _VertBuffer[pID];
 
-    _VertBuffer[pID] = v;
+
+  _VertBuffer[safeID(pID,_VertBuffer_COUNT)] = v;
 
 
 

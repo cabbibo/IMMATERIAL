@@ -15,7 +15,11 @@ public class FrameBuffer : Cycle
 
     public Life set;
     public Life simulate;
-    public Life transfer;
+
+    public TransferLifeForm transfer;
+
+    public int locked;
+    public float deathTime;
 
     private Vector3 topLeft;
     private Vector3 topRight;
@@ -28,15 +32,15 @@ public class FrameBuffer : Cycle
       verts.size = smoothedSize;
 
       SafeInsert(particles);
-      SafeInsert(verts);
-      SafeInsert(tris);
+      SafeInsert(transfer);
       SafeInsert(set);
       SafeInsert(simulate);
-      SafeInsert(transfer);
 
     }
 
     public override void Bind(){
+
+      set.BindPrimaryForm( "_VertBuffer", particles);
      
       set.BindInt( "_Size" , () => size );
 
@@ -44,6 +48,20 @@ public class FrameBuffer : Cycle
       set.BindVector3( "_TopRight"    , () => this.topRight     );
       set.BindVector3( "_BottomLeft"  , () => this.bottomLeft   );
       set.BindVector3( "_BottomRight" , () => this.bottomRight  );
+
+
+      simulate.BindPrimaryForm( "_VertBuffer", particles);
+      simulate.BindInt( "_Locked" , () => locked );
+      simulate.BindFloat( "_DeathTime" , () => deathTime );
+      data.BindAllData(simulate);
+
+      data.BindAllData(transfer.transfer);
+
+      transfer.transfer.BindInt("_NumVerts", () => this.size );
+      transfer.transfer.BindInt("_NumSmoothedVerts", () => this.smoothedSize );
+
+      transfer.transfer.BindFloat( "_DeathTime" , () => deathTime );
+    transfer.transfer.BindInt( "_Locked" , () => locked );
 
 
     }
@@ -57,7 +75,12 @@ public class FrameBuffer : Cycle
       bottomRight = frame.bottomRight;
 
       set.Live();
+      locked = 1;
+    }
 
+    public void Release(){
+      locked = 0;
+      deathTime = Time.time;
     }
 
 

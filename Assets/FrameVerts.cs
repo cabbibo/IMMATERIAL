@@ -6,7 +6,7 @@ public class FrameVerts : Particles
 {
     public int size;
     public override void SetCount(){
-      count = (size * 2)*4;
+      count = (size*2)*4;
     }
 
 }

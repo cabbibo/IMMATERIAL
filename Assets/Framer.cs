@@ -17,9 +17,10 @@ public class Framer : Cycle
 
 
     public void Set(Frame frame){
-      frames[currentFrame].Set(frame);
+      frames[currentFrame].Release();
       currentFrame ++;
       currentFrame %= frames.Length;
+      frames[currentFrame].Set(frame);
     }
 
 }

@@ -135,6 +135,8 @@ public class Story : Cycle
         oldTransitionPage = pages[currentPage-1];
         pages[currentPage-1].OnEndExit.Invoke();
 
+        data.framer.Set( pages[currentPage].frame );
+
       }else{
         
         transitioning = true;
@@ -176,6 +178,9 @@ public class Story : Cycle
         SetActivePage();
 
         oldTransitionPage = pages[currentPage+1];
+
+
+        data.framer.Set( pages[currentPage].frame );
 
          //pages[currentPage].OnEndEnter.Invoke();
          pages[currentPage+1].OnStartExit.Invoke();
@@ -279,6 +284,9 @@ public class Story : Cycle
     transitionStartTime = Time.time;
     SetActivePage(); 
     SetColliders( false );
+
+    
+        data.framer.Set( pages[currentPage].frame );
 
 
 //    print("STORY STARTED");
