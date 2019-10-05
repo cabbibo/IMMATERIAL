@@ -27,6 +27,7 @@ int _NumSmoothedVerts;
 
 float _DeathTime;
 float _Time;
+float _Fade;
 int _Locked;
 
 float _Distance;
@@ -108,12 +109,12 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     float3 y = normalize(cross( x , d));
 
   
-    float r = _Radius * _Distance;
+    float r = _Radius * _Distance * (1-_Fade);
 
     if( _CanEdgeSwipe == 1 && particleID == 3 ){ r *= (2 * (.5-abs(rowVal-.5)) +1);}
     if( _CanEdgeSwipe == 2 && particleID == 1 ){ r *= (2 * (.5-abs(rowVal-.5)) +1);}
 
-    if( _Locked == 0 ){ r *= (1-clamp( pow((_Time - _DeathTime) * .3,2) , 0, 1));}
+    //if( _Locked == 0 ){ r *= (1-clamp( pow((_Time - _DeathTime) * .3,2) , 0, 1));}
 
     //pos = cV.pos - (cV.pos - cV2.pos) * rowVal;
 

@@ -12,7 +12,7 @@ public class SpacePup : Cycle
   public Life resolve;
 
   public MeshVerts verts;
-  public MeshTris tris;
+  //public MeshTris tris;
 
   public Body body;
   public Simulation anchors;
@@ -28,13 +28,14 @@ public class SpacePup : Cycle
 
     particles.count = verts.meshFilter.sharedMesh.vertices.Length;
 
-    SafeInsert( verts );
+    
     SafeInsert( life );
+    SafeInsert( particles );
 
     SafeInsert(triLocation);
     SafeInsert( resolve );
 
-    SafeInsert( body ); // particles and tris added to body
+    SafeInsert( body ); 
     SafeInsert( anchors );
     SafeInsert( transformBinder );
 

@@ -14,6 +14,7 @@ public class Page : Cycle
     public MaterialPropertyBlock frameMPB;
     public bool locked;
     public bool mustContinue;
+    public float fade;
 
     public float baseHue;
 

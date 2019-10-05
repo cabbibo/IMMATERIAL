@@ -24,17 +24,14 @@ public class MeshVerts : Form {
   }
 
   public override void SetStructSize(){ 
-
     structSize = 12; 
   }
 
   public override void SetCount(){ 
-
     count = mesh.vertices.Length;
   }
 
   public override void Embody(){
-
 
     Vector3[] verts = mesh.vertices;
     Vector2[] uvs   = mesh.uv;

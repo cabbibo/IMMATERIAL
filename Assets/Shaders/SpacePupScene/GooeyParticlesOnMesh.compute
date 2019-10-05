@@ -94,7 +94,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     p.vel += force * .1;
     p.pos += p.vel;
-    p.vel *= .9;
+    p.vel *= .8;
     p.debug = length( p.pos - targetPos);
 
 
@@ -131,7 +131,7 @@ float3 getOffset( Particle p1 , Particle p2 , Vert v1 , Vert v2 ){
       }
 
     // Here is where the actual verlet goes down!
-    float3 translate = dif * .5 * difference;
+    float3 translate = dif * .3 * difference;
 
     return translate;
 
@@ -200,7 +200,7 @@ void Resolve (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 
       if( length( p.pos-p.resolver.xyz) != 0 ){
-        p.vel -= clamp( pow( length(p.pos - p.resolver.xyz) , 2 )* 100 , -.4 , .4) * normalize(p.pos-p.resolver.xyz);//
+        p.vel -= clamp( pow( length(p.pos - p.resolver.xyz) , 2 )* 100 , -.1 , .1) * normalize(p.pos-p.resolver.xyz);//
       }
 
       float3 nor = float3(0,1,0);

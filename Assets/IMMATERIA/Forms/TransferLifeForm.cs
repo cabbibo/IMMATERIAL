@@ -13,13 +13,15 @@ public class TransferLifeForm : LifeForm {
   public Form skeleton;
   public float radius;
 
-    public float[] transformArray;
+  public float[] transformArray;
 
 
   public override void Destroy(){
     Cycles.Remove( body );
     Cycles.Remove( transfer );
   }
+
+
   // Use this for initialization
   public override void _Create(){
 

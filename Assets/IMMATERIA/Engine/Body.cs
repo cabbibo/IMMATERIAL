@@ -14,6 +14,8 @@ public class Body : Cycle {
 
   public MaterialPropertyBlock mpb;
 
+  public bool skipFormBind;
+
   public override void _Create(){
 
     if( mpb == null ){ mpb = new MaterialPropertyBlock(); }
@@ -21,8 +23,10 @@ public class Body : Cycle {
     if( verts == null ){ verts = GetComponent<MeshVerts>(); }
     if( triangles == null ){ triangles = GetComponent<MeshTris>(); }
     
-    SafeInsert(verts);
-    SafeInsert(triangles);
+    if(!skipFormBind){
+      SafeInsert(verts);
+      SafeInsert(triangles);
+    }
     
 
     mpb.SetInt("_VertCount", verts.count);

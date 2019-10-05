@@ -44,6 +44,8 @@ public class Data : Cycle
   public Painter painter;
   public Helper helper;
 
+  public SharedMeshes sharedMeshes;
+
   //public Terrain terrain;
 
 
@@ -81,6 +83,7 @@ public class Data : Cycle
     if( state != null ){ SafePrepend(state); }
     if( painter != null ){ SafePrepend(painter); }
     if( helper != null ){ SafePrepend(helper); }
+    if( sharedMeshes != null ){ SafePrepend(sharedMeshes); }
 
   }
 

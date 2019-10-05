@@ -9,7 +9,6 @@ public class FrameBuffer : Cycle
     public int smoothedSize;
 
     public FrameParticles particles;
-
     public FrameVerts verts;
     public FrameTris tris;
 
@@ -17,10 +16,14 @@ public class FrameBuffer : Cycle
     public Life simulate;
 
     public TransferLifeForm transfer;
+    public InstanceTransfer corners;
 
     public int locked;
     public float deathTime;
     public float distance;
+
+
+    public Page currentPage;
 
     private Vector3 topLeft;
     private Vector3 topRight;
@@ -31,11 +34,13 @@ public class FrameBuffer : Cycle
 
       particles.size = size;
       verts.size = smoothedSize;
+      ((InstancedMeshVerts)corners.verts).countMultiplier = 1/(float)size;
 
       SafeInsert(particles);
       SafeInsert(transfer);
       SafeInsert(set);
       SafeInsert(simulate);
+      SafeInsert(corners);
 
     }
 
@@ -56,8 +61,9 @@ public class FrameBuffer : Cycle
       simulate.BindFloat( "_DeathTime" , () => deathTime );
       simulate.BindFloat( "_Distance" , () => distance );
       simulate.BindFloat( "_CanEdgeSwipe" , () => data.inputEvents.canEdgeSwipe );
-      data.BindAllData(simulate);
+      
 
+      data.BindAllData(simulate);
       data.BindAllData(transfer.transfer);
 
       transfer.transfer.BindInt("_NumVerts", () => this.size );
@@ -67,6 +73,13 @@ public class FrameBuffer : Cycle
       transfer.transfer.BindInt( "_Locked" , () => locked );
       transfer.transfer.BindFloat( "_Distance" , () => distance );
       transfer.transfer.BindFloat( "_CanEdgeSwipe" , () => data.inputEvents.canEdgeSwipe );
+
+      transfer.transfer.BindFloat( "_Fade" , () => currentPage.fade );
+
+
+
+      corners.transfer.BindFloat( "_Distance" , () => distance );
+      corners.transfer.BindFloat( "_Fade" , () => currentPage.fade );
 
 
     }
@@ -82,6 +95,7 @@ public class FrameBuffer : Cycle
       distance = page.frame.distance;
 
       transfer.body.mpb = page.frameMPB;
+      currentPage = page;
 
       set.Live();
       locked = 1;

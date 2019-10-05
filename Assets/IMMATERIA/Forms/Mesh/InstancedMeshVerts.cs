@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InstancedMeshVerts : MeshVerts {
+public class InstancedMeshVerts : Form {
 
   public MeshVerts verts;
-  public Form Base;
+  public Form baseForm;
   public int numMesh;
   public int vertsPerMesh;
+
+  public float countMultiplier;
   
   /*struct Vert{
     public Vector3 pos;
@@ -22,7 +24,7 @@ public class InstancedMeshVerts : MeshVerts {
   public override void SetCount(){ 
 
     vertsPerMesh = verts.count;
-    numMesh = Base.count;
+    if( baseForm != null ){ numMesh = (int)((float)baseForm.count * countMultiplier); }
 
     count = vertsPerMesh * numMesh;
 

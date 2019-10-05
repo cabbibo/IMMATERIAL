@@ -78,6 +78,7 @@ public class Story : Cycle
   public override void OnBirthed(){
     for( int i = 0; i < pages.Length; i ++ ){
       pages[i].frameMPB.SetFloat("_Cutoff" , 1);
+      pages[i].fade = 1;
       pages[i].frame.borderLeft = frameBorder;
       pages[i].frame.borderRight = frameBorder;
       pages[i].frame.borderTop = frameBorder;
@@ -305,6 +306,7 @@ public class Story : Cycle
   public void DoFade(float v ){
   
     pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-v);
+    pages[currentPage].fade = 1-v;
   
  //   print("fadio");
 //    print( 1-2*v);
@@ -329,6 +331,7 @@ public class Story : Cycle
 
     if( oldTransitionPage ){
       oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
+      oldTransitionPage.fade = v;
       oldTransitionPage.FadeOut.Invoke(v);
       hue = Mathf.Lerp( oldTransitionPage.baseHue , pages[currentPage].baseHue , v);
 
@@ -339,9 +342,11 @@ public class Story : Cycle
 
       data.textParticles.body.mpb.SetFloat("_BaseHue" , hue);
 
+
+      float m  = Mathf.Min((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff"));
     // doing this to make sure the frame doesn't "flash" in 
-    pages[currentPage].frameMPB.SetFloat("_Cutoff" ,Mathf.Min
-      ((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff")));
+    pages[currentPage].frameMPB.SetFloat("_Cutoff" ,m);
+    pages[currentPage].fade = m;
     pages[currentPage].FadeIn.Invoke(v);
 
 
