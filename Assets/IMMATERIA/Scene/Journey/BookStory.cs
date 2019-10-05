@@ -54,7 +54,6 @@ public class BookStory : Cycle
   public override void OnBirthed(){
     for( int i = 0; i < pages.Length; i ++ ){
       pages[i].frameMPB.SetFloat("_Cutoff" , 1);
-      pages[i].frame.borderLine.SetPropertyBlock( pages[currentPage].frameMPB );
     }
 
 
@@ -199,7 +198,6 @@ public class BookStory : Cycle
   public void DoFade(float v ){
   
     pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-v);
-    pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
   
  //   print("fadio");
 //    print( 1-2*v);
@@ -224,7 +222,6 @@ public class BookStory : Cycle
 
     if( oldTransitionPage ){
       oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
-      oldTransitionPage.frame.borderLine.SetPropertyBlock(oldTransitionPage.frameMPB);
       oldTransitionPage.FadeOut.Invoke(v);
       hue = Mathf.Lerp( oldTransitionPage.baseHue , pages[currentPage].baseHue , v);
 
@@ -240,7 +237,6 @@ public class BookStory : Cycle
     // doing this to make sure the frame doesn't "flash" in 
     pages[currentPage].frameMPB.SetFloat("_Cutoff" ,Mathf.Min
       ((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff")));
-    pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
     pages[currentPage].FadeIn.Invoke(v);
 
   }

@@ -29,17 +29,14 @@ float _DeathTime;
 float _Time;
 int _Locked;
 
+float _Distance;
+float _CanEdgeSwipe;
+
 #include "../Chunks/cubicCurve.cginc"
 #include "../Chunks/safeID.cginc"
 
-float3 cubicFromValue( in float val , in int particleID, out float3 upPos , out float3 doPos ){
+float3 cubicFromValue( in float val , in int particleID, out float3 upPos , out float3 doPos ,  out float3 og ){
 
-  float3 p0 = float3( 0. , 0. , 0. );
-  float3 v0 = float3( 0. , 0. , 0. );
-  float3 p1 = float3( 0. , 0. , 0. );
-  float3 v1 = float3( 0. , 0. , 0. );
-
-  float3 p2 = float3( 0. , 0. , 0. );
 
   float vPP = float(_NumVerts);
 
@@ -56,10 +53,6 @@ float3 cubicFromValue( in float val , in int particleID, out float3 upPos , out 
     baseDown += 1;
   }
 
-  /*if( baseUp == baseDown ){
-    baseDown += 1;
-    base += .1;
-  }*/
 
   float amount = base - float(baseUp);
 
@@ -67,54 +60,13 @@ float3 cubicFromValue( in float val , in int particleID, out float3 upPos , out 
 float3 pos;
   int bladeBase = (_NumVerts) * particleID;
 
- /* if( baseUp == 0 ){
+  Vert v1 = _SkeletonBuffer[ safeID( (baseUp     + bladeBase) % _SkeletonBuffer_COUNT , _SkeletonBuffer_COUNT) ];
+  Vert v2 = _SkeletonBuffer[ safeID( (baseDown   + bladeBase) % _SkeletonBuffer_COUNT , _SkeletonBuffer_COUNT) ];
 
-    p0 = _SkeletonBuffer[ safeID( baseUp       + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-    p1 = _SkeletonBuffer[ safeID( baseDown     + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-    p2 = _SkeletonBuffer[ safeID( baseDown + 1 + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-
-    v1 = .5 * ( p2 - p0 );
-
-  }else if( baseDown == _NumVerts-1 ){
-
-    p0 = _SkeletonBuffer[ safeID( baseUp     + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-    p1 = _SkeletonBuffer[ safeID( baseDown   + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-    p2 = _SkeletonBuffer[ safeID( baseUp - 1 + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-
-    v0 = .5 * ( p1 - p2 );
-
-  }else{
-
-    p0 = _SkeletonBuffer[ safeID( baseUp   + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-    p1 = _SkeletonBuffer[ safeID( baseDown + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-
-
-    float3 pMinus = float3(0,0,0);
-
-    pMinus = _SkeletonBuffer[ safeID( baseUp   - 1 + bladeBase, _SkeletonBuffer_COUNT) ].pos;
-    p2 =     _SkeletonBuffer[ safeID( baseDown + 1 + bladeBase, _SkeletonBuffer_COUNT) ].pos;
-
-    v1 = .5 * ( p2 - p0 );
-    v0 = .5 * ( p1 - pMinus );
-
-  }
-
-  float3 c0 = p0;
-  float3 c1 = p0 + v0/3.;
-  float3 c2 = p1 - v1/3.;
-  float3 c3 = p1;
-
-  pos = cubicCurve( amount , c0 , c1 , c2 , c3 );
-
-  upPos = cubicCurve( amount  + .01 , c0 , c1 , c2 , c3 );
-  doPos = cubicCurve( amount  - .01 , c0 , c1 , c2 , c3 );*/
-
-  float3 pos1 = _SkeletonBuffer[ safeID( baseUp     + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-  float3 pos2 = _SkeletonBuffer[ safeID( baseDown   + bladeBase , _SkeletonBuffer_COUNT) ].pos;
-
-  pos = pos1 + ( pos2 - pos1 ) * amount;
-  upPos = pos1 + ( pos2 - pos1 ) * (amount+.01);
-  doPos = pos1 + ( pos2 - pos1 ) * (amount-.01);
+  pos = lerp( v1.pos ,  v2.pos , amount);
+  upPos = lerp( v1.pos ,  v2.pos , amount+ .01);
+  doPos = lerp( v1.pos ,  v2.pos , amount- .01);
+  og = lerp( v1.tangent ,  v2.tangent , amount);
 
   return pos;
 
@@ -145,18 +97,21 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     int row = pID % _NumSmoothedVerts;
 
-    float rowVal = float(row) / float(_NumSmoothedVerts-1);
+    float rowVal = float(row) / float(_NumSmoothedVerts-2);
 
-    float3 upPos; float3 doPos;
+    float3 upPos; float3 doPos; float3 og;
 
-    float3 pos = cubicFromValue( rowVal , particleID , upPos , doPos );
+    float3 pos = cubicFromValue( rowVal , particleID , upPos , doPos , og );
 
     float3 d = normalize(100*upPos - 100*pos);
     float3 x = normalize(cross( normalize(d) , _CameraForward) );
     float3 y = normalize(cross( x , d));
 
   
-    float r = _Radius;
+    float r = _Radius * _Distance;
+
+    if( _CanEdgeSwipe == 1 && particleID == 3 ){ r *= (2 * (.5-abs(rowVal-.5)) +1);}
+    if( _CanEdgeSwipe == 2 && particleID == 1 ){ r *= (2 * (.5-abs(rowVal-.5)) +1);}
 
     if( _Locked == 0 ){ r *= (1-clamp( pow((_Time - _DeathTime) * .3,2) , 0, 1));}
 
@@ -176,8 +131,10 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     v.nor = -fNor;
     //v.uv = fUV;
     //v.tangent = fTan;
+    v.debug = float2( rowVal,particleID);//cV.debug;
     //v.debug = float2(float(particleID),length(v.pos-fPos));
     v.pos = fPos;
+    v.tangent = og;
     v.nor = normalize(cross(x,d)) * (1+.0001*float3( float(pID)/(float(_NumSmoothedVerts)*4),1,1));//normalize((cV.pos - cV2.pos));
 
     _VertBuffer[sID] = v;

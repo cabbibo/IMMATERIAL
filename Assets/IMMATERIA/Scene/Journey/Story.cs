@@ -78,7 +78,6 @@ public class Story : Cycle
   public override void OnBirthed(){
     for( int i = 0; i < pages.Length; i ++ ){
       pages[i].frameMPB.SetFloat("_Cutoff" , 1);
-      pages[i].frame.borderLine.SetPropertyBlock( pages[currentPage].frameMPB );
       pages[i].frame.borderLeft = frameBorder;
       pages[i].frame.borderRight = frameBorder;
       pages[i].frame.borderTop = frameBorder;
@@ -135,7 +134,7 @@ public class Story : Cycle
         oldTransitionPage = pages[currentPage-1];
         pages[currentPage-1].OnEndExit.Invoke();
 
-        data.framer.Set( pages[currentPage].frame );
+        data.framer.Set( pages[currentPage] );
 
       }else{
         
@@ -180,7 +179,7 @@ public class Story : Cycle
         oldTransitionPage = pages[currentPage+1];
 
 
-        data.framer.Set( pages[currentPage].frame );
+        data.framer.Set( pages[currentPage] );
 
          //pages[currentPage].OnEndEnter.Invoke();
          pages[currentPage+1].OnStartExit.Invoke();
@@ -286,7 +285,7 @@ public class Story : Cycle
     SetColliders( false );
 
     
-        data.framer.Set( pages[currentPage].frame );
+        data.framer.Set( pages[currentPage] );
 
 
 //    print("STORY STARTED");
@@ -306,7 +305,6 @@ public class Story : Cycle
   public void DoFade(float v ){
   
     pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-v);
-    pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
   
  //   print("fadio");
 //    print( 1-2*v);
@@ -331,7 +329,6 @@ public class Story : Cycle
 
     if( oldTransitionPage ){
       oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
-      oldTransitionPage.frame.borderLine.SetPropertyBlock(oldTransitionPage.frameMPB);
       oldTransitionPage.FadeOut.Invoke(v);
       hue = Mathf.Lerp( oldTransitionPage.baseHue , pages[currentPage].baseHue , v);
 
@@ -345,7 +342,6 @@ public class Story : Cycle
     // doing this to make sure the frame doesn't "flash" in 
     pages[currentPage].frameMPB.SetFloat("_Cutoff" ,Mathf.Min
       ((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff")));
-    pages[currentPage].frame.borderLine.SetPropertyBlock(pages[currentPage].frameMPB);
     pages[currentPage].FadeIn.Invoke(v);
 
 

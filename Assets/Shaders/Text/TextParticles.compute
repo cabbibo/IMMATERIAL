@@ -76,7 +76,7 @@ float3 _RayDirection;
 
 float3 _RO;
 float3 _RD;
-float3 _DOWN;
+float _DOWN;
 
 
 #include "../Chunks/GetRayForce.cginc"
@@ -395,7 +395,7 @@ void SimulationTest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
       force += -min((v.pos - v.lockPosition),1000) * .01;
 
       force += curlNoise( v.pos * .4 ) * .002 * min( pow((v.pos - v.lockPosition),4),3)/(t*t*.4+1);
-      force += GetRayForce( v.pos , .01 , 10 * length( tv.offset));
+      force += GetRayForce( v.pos , -.004 , 5 * length( tv.offset) );
 
     }else{
      

@@ -16,11 +16,11 @@ public class Framer : Cycle
     }
 
 
-    public void Set(Frame frame){
+    public void Set(Page page){
       frames[currentFrame].Release();
       currentFrame ++;
       currentFrame %= frames.Length;
-      frames[currentFrame].Set(frame);
+      frames[currentFrame].Set(page);
     }
 
 }

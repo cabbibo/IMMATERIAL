@@ -20,6 +20,7 @@ public class FrameBuffer : Cycle
 
     public int locked;
     public float deathTime;
+    public float distance;
 
     private Vector3 topLeft;
     private Vector3 topRight;
@@ -53,6 +54,8 @@ public class FrameBuffer : Cycle
       simulate.BindPrimaryForm( "_VertBuffer", particles);
       simulate.BindInt( "_Locked" , () => locked );
       simulate.BindFloat( "_DeathTime" , () => deathTime );
+      simulate.BindFloat( "_Distance" , () => distance );
+      simulate.BindFloat( "_CanEdgeSwipe" , () => data.inputEvents.canEdgeSwipe );
       data.BindAllData(simulate);
 
       data.BindAllData(transfer.transfer);
@@ -61,18 +64,24 @@ public class FrameBuffer : Cycle
       transfer.transfer.BindInt("_NumSmoothedVerts", () => this.smoothedSize );
 
       transfer.transfer.BindFloat( "_DeathTime" , () => deathTime );
-    transfer.transfer.BindInt( "_Locked" , () => locked );
+      transfer.transfer.BindInt( "_Locked" , () => locked );
+      transfer.transfer.BindFloat( "_Distance" , () => distance );
+      transfer.transfer.BindFloat( "_CanEdgeSwipe" , () => data.inputEvents.canEdgeSwipe );
 
 
     }
 
 
-    public void Set(Frame frame){
+    public void Set(Page page){
 
-      topLeft     = frame.topLeft;
-      bottomLeft  = frame.bottomLeft;
-      topRight    = frame.topRight;
-      bottomRight = frame.bottomRight;
+      topLeft     = page.frame.topLeft;
+      bottomLeft  = page.frame.bottomLeft;
+      topRight    = page.frame.topRight;
+      bottomRight = page.frame.bottomRight;
+
+      distance = page.frame.distance;
+
+      transfer.body.mpb = page.frameMPB;
 
       set.Live();
       locked = 1;

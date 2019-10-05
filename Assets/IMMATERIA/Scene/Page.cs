@@ -32,8 +32,6 @@ public class Page : Cycle
       text = GetComponent<TextAnchor>();
 
       if( frameMPB == null ){ frameMPB = new MaterialPropertyBlock(); }
-
-      frame.borderLine.SetPropertyBlock( frameMPB );
       
       SafeInsert(frame);
       SafeInsert(text);

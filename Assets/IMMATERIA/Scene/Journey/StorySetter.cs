@@ -69,8 +69,8 @@ public class StorySetter : Cycle
     
 //    print("DOBLSLSW");
     data.inputEvents.OnTap.AddListener( stories[currentStory].CheckForStart );
-    data.inputEvents.OnSwipeLeft.AddListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnSwipeRight.AddListener(  stories[currentStory].PreviousPage );
+    data.inputEvents.OnEdgeSwipeLeft.AddListener(  stories[currentStory].NextPage );
+    data.inputEvents.OnEdgeSwipeRight.AddListener(  stories[currentStory].PreviousPage );
 
     stories[currentStory].OnEnterInner.Invoke();
     stories[currentStory].DoFade(1);
@@ -89,14 +89,8 @@ public class StorySetter : Cycle
 
   public void ExitInner(){
     data.inputEvents.OnTap.RemoveListener(  stories[currentStory].CheckForStart );
-    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnSwipeRight.RemoveListener(  stories[currentStory].PreviousPage );
+    data.inputEvents.OnEdgeSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
+    data.inputEvents.OnEdgeSwipeRight.RemoveListener(  stories[currentStory].PreviousPage );
 
     stories[currentStory].OnExitInner.Invoke();
     stories[currentStory].DoFade(1);

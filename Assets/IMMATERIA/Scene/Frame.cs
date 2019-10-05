@@ -18,7 +18,7 @@ public class Frame : Cycle {
 
   private float _ratio;
 
-  public LineRenderer borderLine;
+  //public LineRenderer borderLine;
 
   public Vector3 bottomLeft;
   public Vector3 bottomRight;
@@ -39,9 +39,6 @@ public class Frame : Cycle {
 
   // Use this for initialization
   public override void Create() {
-///    this.gameObject.tag = "Frame";
-    borderLine = GetComponent<LineRenderer>();
-   // border = .0f;
 
     if( collider != null ){
       DestroyImmediate( collider.gameObject);
@@ -55,18 +52,21 @@ public class Frame : Cycle {
     collider.transform.parent = this.transform;
 
     SetFrame();
+
   }
   
   // Update is called once per frame
   public override void WhileLiving(float v) {
+   
     if( constant ){ SetFrame(); }
+   
     collider.transform.rotation = this.transform.rotation;
     collider.transform.position = center;
     collider.transform.localScale = new Vector3( (bottomLeft - bottomRight).magnitude , (bottomLeft - topLeft).magnitude , .001f);
+  
   }
 
   public void SetFrame(){
-   // print( "setting");
 
     _ratio = (float)Screen.width / (float)Screen.height;
 
@@ -78,9 +78,6 @@ public class Frame : Cycle {
     cam.transform.position = transform.position;
     cam.transform.rotation = transform.rotation;
 
-
-
-
     bottomLeft = Camera.main.ViewportToWorldPoint(new Vector3( borderLeft ,_ratio *borderBottom,distance));  
     bottomRight = Camera.main.ViewportToWorldPoint(new Vector3(1- borderRight,_ratio *borderBottom ,distance));
     topLeft = Camera.main.ViewportToWorldPoint(new Vector3(borderLeft,1-_ratio * borderTop,distance));
@@ -89,18 +86,6 @@ public class Frame : Cycle {
 
     center = Camera.main.ViewportToWorldPoint(new Vector3( .5f , .5f , distance )); 
 
-    //print("setting");
-
-    borderLine.SetPosition( 0 , bottomLeft );
-    borderLine.SetPosition( 1 , bottomRight );
-    borderLine.SetPosition( 2 , topRight );
-    borderLine.SetPosition( 3 , topLeft );
-
-
-    //borderLine.SetPosition( 4 , bottomLeft );
-
-    //transform.localPosition = new Vector3( 0, 0, distance);
-    // /transform.localRotation = Quaternion.identity;
     normal = transform.forward;
 
 
@@ -108,12 +93,9 @@ public class Frame : Cycle {
     right = -(bottomLeft - bottomRight).normalized;
 
 
-   // transform.localScale = new Vector3( (bottomLeft - bottomRight).magnitude , (bottomLeft - topLeft).magnitude , .1f );
-
     width = (bottomLeft - bottomRight).magnitude;
     height = (bottomLeft - topLeft).magnitude;
     
-
     cam.transform.position = tmpP;
     cam.transform.rotation = tmpR;
 

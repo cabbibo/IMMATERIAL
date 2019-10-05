@@ -12,6 +12,8 @@ public class InputEvents: Cycle {
   public EventTypes.FloatEvent      OnSwipeHorizontal;
   public EventTypes.BaseEvent       OnSwipeLeft;
   public EventTypes.BaseEvent       OnSwipeRight;
+  public EventTypes.BaseEvent       OnEdgeSwipeLeft;  // Left refers to direction not edge
+  public EventTypes.BaseEvent       OnEdgeSwipeRight; // Right refers to direction not edge
   public EventTypes.FloatEvent      OnSwipeVertical;
   public EventTypes.BaseEvent       OnSwipeUp;
   public EventTypes.BaseEvent       OnSwipeDown;
@@ -69,6 +71,9 @@ public class InputEvents: Cycle {
 
   public RaycastHit hit;
   public string hitTag;
+
+  public float swipeInCutoff;
+  public float canEdgeSwipe;
 
   void Start(){}
   
@@ -133,6 +138,17 @@ public class InputEvents: Cycle {
           touchID ++;
           startTime = Time.time;
           startPos = p;
+
+          if( startPos.x <  (float)Screen.width * swipeInCutoff ){
+            canEdgeSwipe = 1;
+          }else if( startPos.x >  (float)Screen.width - (float)Screen.width * swipeInCutoff ){
+            canEdgeSwipe = 2;
+          }else{
+            canEdgeSwipe = 0;
+          }
+
+          Shader.SetGlobalFloat("_CanEdgeSwipe" , canEdgeSwipe );
+
           whileDown();
           onDown();
       }
@@ -160,6 +176,10 @@ public class InputEvents: Cycle {
         JustUp = 1;
         endTime = Time.time;
         endPos = p;
+        canEdgeSwipe = 0;
+
+
+          Shader.SetGlobalFloat("_CanEdgeSwipe" , canEdgeSwipe );
         onUp();
       }      
 
@@ -228,6 +248,11 @@ public class InputEvents: Cycle {
   }
 
   void whileDown(){
+
+    if(Time.time - startTime > maxSwipeTime && canEdgeSwipe != 0 ){
+      canEdgeSwipe = 0;
+      Shader.SetGlobalFloat("_CanEdgeSwipe" , canEdgeSwipe );
+    }
     WhileDown.Invoke( ray );
   }
 
@@ -267,8 +292,18 @@ public class InputEvents: Cycle {
         
         if( difP.x < 0 ){
           OnSwipeLeft.Invoke();
+
+          if(Screen.width-startPos.x < (float)Screen.width * swipeInCutoff ){
+            OnEdgeSwipeLeft.Invoke();
+          }
         }else{
+
+     
           OnSwipeRight.Invoke();
+
+          if(startPos.x < (float)Screen.width * swipeInCutoff ){
+            OnEdgeSwipeRight.Invoke();
+          }
         }
       
 
