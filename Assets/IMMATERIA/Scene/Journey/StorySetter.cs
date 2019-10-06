@@ -18,6 +18,9 @@ public class StorySetter : Cycle
   public Story[] stories;
   public int currentStory;
 
+
+  public Cycle[] localCycles;
+
   public override void Create(){
 
 
@@ -62,7 +65,13 @@ public class StorySetter : Cycle
 
     stories[currentStory].DoFade(0);
     stories[currentStory].OnEnterOuter.Invoke();
+
+
     perimeter.OnDoFade.AddListener(stories[currentStory].DoFade);
+    
+
+    
+
   }
 
   public void EnterInner(){

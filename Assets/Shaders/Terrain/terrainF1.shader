@@ -206,7 +206,7 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
 
 
    // SHADOW PASS
-/*
+
     Pass
     {
       Tags{ "LightMode" = "ShadowCaster" }
@@ -268,7 +268,7 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
 
       ENDCG
     }
-  */
+  
 
 
   }

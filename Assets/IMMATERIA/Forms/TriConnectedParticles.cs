@@ -38,7 +38,7 @@ public class TriConnectedParticles : Particles {
 
   }
   public override void Embody(){
-//    print("EMBOZ");
+    print("EMBOZ");
 
    triVals = tris.GetIntData();
    connections = new int[count][][];

@@ -47,6 +47,8 @@ public void LateUpdate(){
 public void OnLevelWasLoaded(){
     print("WASDass");
 }
+
+
 public void OnEnable(){
 
     started = false;
