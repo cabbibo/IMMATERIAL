@@ -5,6 +5,7 @@ using UnityEngine;
 public class LandTiler : Cycle
 {
 
+  public bool alwaysRespawn;
   public LandTile[] Tiles;
 
   public float tileSize;
@@ -75,17 +76,20 @@ public class LandTiler : Cycle
 
     currentCenterX = 1;
     currentCenterY = 1;
-    Cycles.Clear();
 
     tileSize = 1/(numTiles *data.land.size);
+    t = tileSize  * 3;
+        hT = t/2;
 
+    if( Tiles.Length != 3 * 3  || Tiles == null || alwaysRespawn ){
+      
+    Cycles.Clear();
       DestroyMe();
 
         Tiles = new LandTile[3 * 3 ];
         tileObjects = new GameObject[3 * 3 ];
 
-        t = tileSize  * 3;
-        hT = t/2;
+        
   
         Tiles = new LandTile[3 * 3 ];
         
@@ -110,7 +114,10 @@ public class LandTiler : Cycle
       
 
       SafeInsert(setTile);
-      for( int i = 0; i < Tiles.Length; i++ ){
+   
+  }   
+
+  for( int i = 0; i < Tiles.Length; i++ ){
         _ID = i;
 
         _Offset = -Vector3.left * ((i%3)+.5f) * tileSize;
@@ -118,6 +125,7 @@ public class LandTiler : Cycle
 
         tileObjects[i].transform.position = Vector3.zero + _Offset;
     }
+
   }
 
   public override void Bind(){
@@ -125,7 +133,6 @@ public class LandTiler : Cycle
     
     setTile.BindVector3("_Offset", () => this._Offset );
     setTile.BindInt("_ID", () => this._ID );
-
  
   }
 

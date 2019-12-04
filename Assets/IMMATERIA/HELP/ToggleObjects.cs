@@ -27,6 +27,7 @@ public class ToggleObjects : MonoBehaviour
     
 
       for( int i = 0; i < cycles.Length; i++ ){
+
         cycles[i]._Activate();
       }
     

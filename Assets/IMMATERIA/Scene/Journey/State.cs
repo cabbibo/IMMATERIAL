@@ -38,11 +38,20 @@ public class State : Cycle
   public string animationState;
   private string oAnimationState;
 
+  public override void Create(){
+    
+    data.journey.currentStory = currentStory;
+    if( storiesVisited.Length != data.journey.stories.Length ){
+      storiesVisited = new bool[ data.journey.stories.Length ];
+    }
+  }
+
+  
   public override void OnLive(){
     
 
       data.book.CloseBook();
-      print("bookcaos");
+      
   //public string 
     if( startInStory  || startInPages ){
 
@@ -97,12 +106,13 @@ public class State : Cycle
 
 
 
-  public override void Create(){
-    if( storiesVisited.Length != data.journey.stories.Length ){
-      storiesVisited = new bool[ data.journey.stories.Length ];
-    }
-  }
 
+
+
+
+  public void PickUpBook(){
+    data.state.hasPickedUpBook = true;
+  }
 
 
   

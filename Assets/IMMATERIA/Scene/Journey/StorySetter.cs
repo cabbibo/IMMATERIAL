@@ -23,7 +23,13 @@ public class StorySetter : Cycle
 
   public override void Create(){
 
+    StoryCreate();
 
+
+
+  }
+
+  public virtual void StoryCreate(){
     SafeInsert( perimeter );
     uv =new Vector2( transform.position.x * data.land.size , transform.position.z * data.land.size);
 
@@ -33,11 +39,16 @@ public class StorySetter : Cycle
     }
 
 
+    for( int i = 0; i < localCycles.Length; i ++ ){
+      SafeInsert(localCycles[i]);
+    }
+
+
+
     perimeter.OnEnterOuter.AddListener(EnterOuter);
     perimeter.OnEnterInner.AddListener(EnterInner);
     perimeter.OnExitOuter.AddListener(ExitOuter);
     perimeter.OnExitInner.AddListener(ExitInner);
-
   }
 
   public override void Destroy(){
@@ -68,9 +79,12 @@ public class StorySetter : Cycle
 
 
     perimeter.OnDoFade.AddListener(stories[currentStory].DoFade);
-    
+ 
 
-    
+    /*for( int i = 0; i < localCycles.Length; i ++ ){
+       localCycles[i].SpinDown();
+      localCycles[i].SpinUp();
+    }*/
 
   }
 
@@ -93,6 +107,10 @@ public class StorySetter : Cycle
 
     stories[currentStory].OnExitOuter.Invoke();
     perimeter.OnDoFade.RemoveListener(stories[currentStory].DoFade);
+
+    /*for( int i = 0; i < localCycles.Length; i ++ ){
+      localCycles[i].SpinDown();
+    }*/
   }
 
 

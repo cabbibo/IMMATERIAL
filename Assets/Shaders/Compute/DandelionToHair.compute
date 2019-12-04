@@ -29,6 +29,7 @@ uint _SkeletonBuffer_COUNT;
 
 int _NumVertsPerHair;
 
+float _Time;
 float _Length;
 float _Delta;
 
@@ -170,6 +171,7 @@ void Force (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 i
     }
  //force *= 20000;
 
+ force += curlNoise( vert.pos + _Time);
     // Inertia: objects in motion stay in motion.
     float3 vel = getVel( vert.pos , vert.oPos);
 

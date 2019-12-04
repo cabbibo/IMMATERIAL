@@ -6,7 +6,6 @@ using System;
 using UnityEngine;
 using UnityEditor;//.EditorGUI;
 
-
 public class Life : Cycle {
 
   // automatically turns itself off
@@ -115,6 +114,8 @@ public class Life : Cycle {
   public event SetValues OnSetValues;
 
   public override void _Create(){
+
+    //DebugThis("Creatio");
     DoCreate();
     boundForms = new Dictionary<string, Form>();
     boundInts = new Dictionary<string, int>();
@@ -204,6 +205,8 @@ public class Life : Cycle {
 
   public void Live(){
 
+//    DebugThis("LIVING");
+
     if( OnSetValues != null ){ OnSetValues(shader,kernel); }
     
     GetNumGroups();
@@ -221,13 +224,15 @@ public class Life : Cycle {
 
 
     foreach(KeyValuePair<string,Form> form in boundForms){
-      if( debug == true ){ print("Bound Form : " + form.Key );}
+      if( debug == true ){ DebugThis( form.Key );}
       SetBuffer(form.Key , form.Value);
     }
 
-    if( debug == true ){ print("Bound Form : " + primaryName );}
+    if( debug == true ){ DebugThis( "PRIMARY FORM" + primaryForm );;}
     SetBuffer( primaryName , primaryForm );
 
+
+    // This
     foreach(KeyValuePair<string,int> form in boundInts){
       shader.SetInt(form.Key , form.Value);
     }
@@ -246,6 +251,7 @@ public class Life : Cycle {
   public virtual void _SetInternal(){    
     shader.SetFloat("_Time", Time.time);
     shader.SetFloat("_Delta", Time.deltaTime);
+    shader.SetFloat("_DT", Time.deltaTime);
   }
 
 
@@ -263,10 +269,11 @@ public class Life : Cycle {
       if( form._buffer != null ){
         shader.SetBuffer( kernel , name , form._buffer);
         shader.SetInt(name+"_COUNT" , form.count );
-        if( debug == true ){ print("Bound Form : " + form.gameObject );}
+        if( debug == true ){ DebugThis("Bound Form : " + form.gameObject );}
+        if( debug == true ){ DebugThis("Count : " + form.count );}
       }else{
         allBuffersSet = false;
-        print("YOUR BUFFER : " + name +  " IS NULL!");
+        DebugThis("YOUR BUFFER : " + name +  " IS NULL!");
       }
     }else{
  //     print("WAHT YR FORM IS NULL");
@@ -598,40 +605,51 @@ public class Life : Cycle {
   public void BindAttributes(){
     
     foreach( BoundInt b in boundIntList ){
+      if( debug == true ){ DebugThis( b.nameInShader  + " : " + b.lambda() );}
       shader.SetInt(b.nameInShader,b.lambda());
     }
 
     foreach( BoundFloat b in boundFloatList ){
+      if( debug == true ){ DebugThis( b.nameInShader  + " : " + b.lambda() );}
       shader.SetFloat(b.nameInShader,b.lambda());
     }
 
     foreach( BoundFloats b in boundFloatsList ){
+      if( debug == true ){ DebugThis( b.nameInShader  + " : " + b.lambda() );}
       shader.SetFloats(b.nameInShader,b.lambda());
     }
 
     foreach( BoundVector2 b in boundVector2List ){
+      if( debug == true ){ DebugThis( b.nameInShader  + " : " + b.lambda() );}
       shader.SetVector(b.nameInShader,b.lambda());
     }
 
     foreach( BoundVector3 b in boundVector3List ){
+      if( debug == true ){ DebugThis( b.nameInShader  + " : " + b.lambda() );}
       shader.SetVector(b.nameInShader,b.lambda());
     }
 
     foreach( BoundVector4 b in boundVector4List ){
+      if( debug == true ){ DebugThis( b.nameInShader  + " : " + b.lambda() );}
       shader.SetVector(b.nameInShader,b.lambda());
     }
 
     foreach( BoundMatrix b in boundMatrixList ){
+      if( debug == true ){ DebugThis( b.nameInShader  + " : " + b.lambda() );}
       shader.SetMatrix(b.nameInShader,b.lambda());
     }
 
     foreach( BoundTexture b in boundTextureList ){
+      if( debug == true ){ DebugThis( b.nameInShader  + " : " + b.lambda() );}
       shader.SetTexture(kernel,b.nameInShader,b.lambda());
     }
 
     foreach( BoundBuffer b in boundBufferList ){
+      if( debug == true ){ DebugThis( b.nameInShader  + " : " + b.lambda() );}
       shader.SetBuffer(kernel,b.nameInShader,b.lambda());
     }
+
+    if( debug == true ){ DebugThis("DOI:NGS"); }
 
   }
 

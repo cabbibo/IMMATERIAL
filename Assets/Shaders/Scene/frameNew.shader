@@ -3,6 +3,8 @@
 
     Properties {
         _Cutoff("_Cutoff" , float ) = 0
+
+    _MainTex ("Texture", 2D) = "white" {}
     }
     
     SubShader
@@ -30,8 +32,16 @@
             float _CanEdgeSwipe;
 
 
-            struct v2f { float4 pos : SV_POSITION; float3 nor : NORMAL; float2 debug : TEXCOORD0; float3 vel : TEXCOORD1;float3 dif : TEXCOORD2;};
+            struct v2f { 
+              float4 pos : SV_POSITION; 
+              float3 nor : NORMAL; 
+              float2 debug : TEXCOORD0; 
+              float3 vel : TEXCOORD1;
+              float3 dif : TEXCOORD2;
+              float2 uv : TEXCOORD3;
+            };
             float4 _Color;
+            sampler2D _MainTex;
 
             StructuredBuffer<Vert> _VertBuffer;
             StructuredBuffer<int> _TriBuffer;
@@ -45,6 +55,7 @@
                 o.vel = v.vel;
                 o.dif = v.pos - v.tan;
                 o.debug = v.debug;
+                o.uv = v.uv;
                 return o;
             }
 
@@ -57,6 +68,8 @@
                 if( _CanEdgeSwipe > 0 ){
                     col += length(v.dif);
                 }
+                col *= tex2D(_MainTex, float2(v.uv.x * 10 , v.uv.y * (1.0/6.0) ).yx );
+               // col = v.uv.x;
                 return float4(col , alpha);
             }
 

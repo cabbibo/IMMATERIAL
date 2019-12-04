@@ -26,6 +26,8 @@ public class Data : Cycle
   public State state;
   public Tween tween;
 
+  public AudioPlayer audio;
+
   public CameraController cameraControls;
   public Character playerControls;
   public InputEvents inputEvents;
@@ -74,7 +76,6 @@ public class Data : Cycle
     if( playerControls != null ){ SafePrepend(playerControls); }
     if( inputEvents != null ){ SafePrepend(inputEvents); }
     if( sceneCircle != null ){ SafePrepend(sceneCircle); }
-    if( land != null ){ SafePrepend(land); }
     if( book != null ){ SafePrepend(book); }
     if( guideParticles != null ){ SafePrepend(guideParticles); }
     if( monolithParticles != null ){ SafePrepend(monolithParticles); }
@@ -84,6 +85,8 @@ public class Data : Cycle
     if( painter != null ){ SafePrepend(painter); }
     if( helper != null ){ SafePrepend(helper); }
     if( sharedMeshes != null ){ SafePrepend(sharedMeshes); }
+    if( audio != null ){ SafePrepend(audio); }
+    if( land != null ){ SafePrepend(land); }
 
   }
 

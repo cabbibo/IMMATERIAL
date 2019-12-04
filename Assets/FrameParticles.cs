@@ -7,7 +7,6 @@ public class FrameParticles : Particles
   
   public int size;
   public override void SetCount(){
-    print("hellslslo");
     count = size * 4;
   }
 

@@ -8,7 +8,7 @@ public class Hair: Form {
   public int numVertsPerHair;
   public float length;
   public float variance;
-  public Material lineDebugMaterial;
+  //public Material lineDebugMaterial;
   public int numHairs;
 
   public float countMultiplier = 1;
@@ -24,20 +24,7 @@ public class Hair: Form {
     count = numHairs * numVertsPerHair; 
   }
 
-  public override void WhileDebug(){
-    
-    lineDebugMaterial.SetPass(0);
-    lineDebugMaterial.SetBuffer("_VertBuffer", _buffer);
-    lineDebugMaterial.SetInt("_Count",count);
-    lineDebugMaterial.SetInt("_NumVertsPerHair",numVertsPerHair);
-    Graphics.DrawProceduralNow(MeshTopology.Lines, count  * 2 );
 
-    debugMaterial.SetPass(0);
-    debugMaterial.SetBuffer("_VertBuffer", _buffer);
-    debugMaterial.SetInt("_Count",count);
-    Graphics.DrawProceduralNow(MeshTopology.Triangles, count  * 2 );
-
-  }
 
 
 }

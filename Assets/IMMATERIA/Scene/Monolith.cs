@@ -12,6 +12,7 @@ public class Monolith : Cycle
     public bool isBook;
 
     public GameObject[] storyMarkers;
+    public int whichStory;
 
     public float ratio;
 MaterialPropertyBlock mpb;
@@ -23,17 +24,26 @@ MaterialPropertyBlock mpb;
         if( storyMarkers[i] ){
         Cycles.Remove(storyMarkers[i].GetComponent<StoryMarker>());
         DestroyImmediate(storyMarkers[i]);
-}
+      }
       }
 
       Cycles.Clear();
     }
 
+
+ public override void Destroy(){
+      data.inputEvents.OnTap.RemoveListener( CheckHit );
+    }
+
+
     public override void Create(){
+
+
+      data.inputEvents.OnTap.RemoveListener( CheckHit );
+      data.inputEvents.OnTap.AddListener( CheckHit );
 
 //      print( "WHA : " + this.gameObject );
 
-      DestroyMe();
 
       ratio = (float)Screen.width / (float) Screen.height;
 
@@ -51,14 +61,14 @@ MaterialPropertyBlock mpb;
 //      print( monolith.rotation );
 
 
+      if( data.journey.monoStories.Length != storyMarkers.Length  || storyMarkers == null ){
+
+
+      DestroyMe();
       storyMarkers = new GameObject[data.journey.monoStories.Length];
       for( int i = 0; i < data.journey.monoStories.Length; i++ ){
           storyMarkers[i] = Instantiate( storyMarkerPrefab);
           
-          SafeInsert(storyMarkers[i].GetComponent<StoryMarker>());
-          storyMarkers[i].GetComponent<StoryMarker>().text.text = data.journey.monoStories[i].gameObject.name;
-          storyMarkers[i].GetComponent<StoryMarker>().storyName = data.journey.monoStories[i].gameObject.name;
-          storyMarkers[i].GetComponent<StoryMarker>().id = i;
           storyMarkers[i].transform.parent = transform;
           storyMarkers[i].transform.localPosition = Vector3.zero;
           storyMarkers[i].transform.localPosition += monolith.localScale.x * (Vector3.right) * ( (-.5f + data.journey.monoStories[i].uv.x) * .7f ); 
@@ -67,6 +77,7 @@ MaterialPropertyBlock mpb;
           storyMarkers[i].transform.localPosition -= monolith.localScale.z * (Vector3.forward)  * .5f;
 
       }
+    }
 
 
       /*
@@ -84,6 +95,7 @@ MaterialPropertyBlock mpb;
 
       mpb.SetVectorArray("_StoryPositions" , positions );
       mpb.SetInt("_NumStories" , positions.Length );
+      mpb.SetInt("_WhichStory" , whichStory );
       monolith.GetComponent<MeshRenderer>().SetPropertyBlock( mpb );
       
       if( isBook ){ transform.rotation = Quaternion.AngleAxis(90,Vector3.right);}
@@ -92,6 +104,16 @@ MaterialPropertyBlock mpb;
     }
 
 
+    public void CheckHit(){
 
+      for(int i = 0; i < storyMarkers.Length; i++ ){
+//      print(data.inputEvents.hitTag);
+        if( data.inputEvents.hitTag == "StartNode" && data.inputEvents.hit.collider == storyMarkers[i].GetComponent<Collider>() ){
+          data.journey.ConnectMonolith( i );
+          print( data.journey.monoStories[i].gameObject.name );
+        }
+      }
+
+    }
 
 }

@@ -24,8 +24,8 @@ public class Grass : Simulation
 
     public void Set(){
 
+      hair.set.YOLO();
       life.YOLO();
-      hair.Activate();
     }
 
 

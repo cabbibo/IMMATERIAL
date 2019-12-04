@@ -187,7 +187,7 @@ void Set (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id 
       float dist = length(vert.pos - _PlayerPosition);
       
        
-    vert.pos = base.pos - base.nor * l * (vert.debug.x/(.5+.1*dist));
+    vert.pos = base.pos + normalize(base.nor) * l * (vert.debug.x/(.5+.1*dist));
     vert.oPos = vert.pos;
 
 
@@ -227,7 +227,7 @@ void Collision (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
     float2 xz = 1*normalize( vert.pos.xz - _PlayerPosition.xz ) / (.1 + pow(length(vert.pos.xz - _PlayerPosition.xz), 10));
 
     force += float3(xz.x , 0 , xz.y );
-    //force += curlNoise( vert.pos * _NoiseSize + float3(0,_Time*_NoiseSpeed,0) ) * _NoiseForce;
+    force += curlNoise( vert.pos * _NoiseSize + float3(0,_Time*_NoiseSpeed,0) ) * _NoiseForce;
    // force += float3(0,_UpForce*vert.uv.x,0);
 
  /*float2 d = map( vert.pos );

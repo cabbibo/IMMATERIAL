@@ -8,13 +8,7 @@ public class FrameTris : IndexForm
 
   public FrameVerts verts;
   public override void SetCount(){
-
-    print("setting count");
-
     count = ((verts.size-1) * 3 * 2) * 4;
-
-    print(""+count);
-    
   }
 
   public override void Embody(){

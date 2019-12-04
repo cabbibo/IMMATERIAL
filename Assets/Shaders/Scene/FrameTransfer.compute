@@ -121,7 +121,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     float3 outVec = x;//float3(10,0,0);
     float3 fPos = pos + outVec * r * (float(flip)-.5);
 
-    float2 fUV = float2( rowVal , float( pID));
+    float2 fUV = float2( rowVal , float( flip));
     float3 fNor = normalize( outVec );
     float3 fTan = -normalize(cross(fNor,d));
 
@@ -130,7 +130,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
    
     v.nor = -fNor;
-    //v.uv = fUV;
+    v.uv = fUV;
     //v.tangent = fTan;
     v.debug = float2( rowVal,particleID);//cV.debug;
     //v.debug = float2(float(particleID),length(v.pos-fPos));

@@ -17,7 +17,7 @@
              {
 
               //print("mouse");
-                 Vector2 mousePos = Event.current.mousePosition*2;
+                 Vector2 mousePos = Event.current.mousePosition * 1.5f;
                  mousePos.y = Camera.current.pixelHeight - mousePos.y;
                  Ray ray = Camera.current.ScreenPointToRay(mousePos);
                  test.WhileDown(ray);

@@ -124,6 +124,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     int row = idInTube / 2;
     int col = pID % 2;
     Vert baseParticle  = _SkeletonBuffer[ safeID(particleID * _NumVertsPerHair, _SkeletonBuffer_COUNT) ];
+    //Vert baseParticle  = _SkeletonBuffer[ particleID * _NumVertsPerHair ];
     float rowVal = float(row) / float(_RibbonLength);
     float colVal =  (float(col)/float(2)) ;
 

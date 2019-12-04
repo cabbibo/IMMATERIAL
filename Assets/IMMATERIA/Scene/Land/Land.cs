@@ -25,6 +25,7 @@ public class Land : Cycle {
 
   public override void Create(){
 
+
     heightMap = new Texture2D(1024,1024);
 
     heightMap.wrapMode = TextureWrapMode.Clamp;
@@ -97,7 +98,7 @@ public class Land : Cycle {
 
     for( int i = 0; i < traceSteps; i++ ){
 
-      Vector3 pos = ro +rd * i *traceDist;
+      Vector3 pos = ro + rd * i *traceDist;
       float h = SampleHeight( pos );
 
       if( pos.y < h ){

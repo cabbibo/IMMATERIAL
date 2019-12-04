@@ -14,6 +14,19 @@ public class GodEditor : Editor
             god.Rebuild();
         }
 
+
+        if(GUILayout.Button("Save Current Forms"))
+        {
+            god.SaveAllForms();
+        }
+
+
+        if(GUILayout.Button("Full Rebuild"))
+        {
+            god.FullRebuild();
+        }
+
+
          DrawDefaultInspector();
 
 

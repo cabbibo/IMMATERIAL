@@ -80,7 +80,7 @@ public class Character : Cycle {
     OnGroundBook.SetActive(false);
     InHandBook.SetActive(true);
     epiphanyRing.Set();
-    data.state.hasPickedUpBook = true;
+    data.state.PickUpBook();
     animator.SetBool("PickUp", false);
   }
   

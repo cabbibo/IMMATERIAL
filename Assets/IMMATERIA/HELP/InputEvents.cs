@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-
-
 public class InputEvents: Cycle {
 
   public EventTypes.Vector2Event    OnSwipe;
@@ -94,25 +92,26 @@ public class InputEvents: Cycle {
 
     }
 
-    oP = p;
-    oDown = Down;
+    if( Application.isPlaying ){
+      oP = p;
+      oDown = Down;
 
-    oP2 = p2;
-    oDown2 = Down2;
+      oP2 = p2;
+      oDown2 = Down2;
 
-    #if UNITY_EDITOR 
-      MouseInput();
-    #elif UNITY_STANDALONE
-      MouseInput();
-    #else
-      TouchInput();
-    #endif
+      #if UNITY_EDITOR 
+        MouseInput();
+      #elif UNITY_STANDALONE
+        MouseInput();
+      #else
+        TouchInput();
+      #endif
 
     
+      RayOrigin = Camera.main.ScreenToWorldPoint( new Vector3( p.x , p.y , Camera.main.nearClipPlane ) );
+      RayDirection = (Camera.main.transform.position - RayOrigin).normalized;
 
-    RayOrigin = Camera.main.ScreenToWorldPoint( new Vector3( p.x , p.y , Camera.main.nearClipPlane ) );
-    RayDirection = (Camera.main.transform.position - RayOrigin).normalized;
-
+   
 
     ray.origin = RayOrigin;
     ray.direction = -RayDirection;//.normalized;
@@ -190,14 +189,14 @@ public class InputEvents: Cycle {
       if( JustDown == 1 ){ oP = p; }
       vel = p - oP;
 
+    }
+
   }
 
   void MouseInput(){
       if (Input.GetMouseButton (0)) {
         Down = 1;
         p  =  Input.mousePosition;///Input.GetTouch(0).position;
-
-
       }else{
         Down = 0;
         oP = p;
@@ -208,7 +207,6 @@ public class InputEvents: Cycle {
       }
 
       if( Input.GetMouseButton(1)){
-       
          p2 =   Input.mousePosition;
          Down2 = 1;
       }else{
@@ -247,7 +245,7 @@ public class InputEvents: Cycle {
       }
   }
 
-  void whileDown(){
+  public void whileDown(){
 
     if(Time.time - startTime > maxSwipeTime && canEdgeSwipe != 0 ){
       canEdgeSwipe = 0;
@@ -256,21 +254,21 @@ public class InputEvents: Cycle {
     WhileDown.Invoke( ray );
   }
 
-  void whileDownDelta(){
+  public void whileDownDelta(){
     WhileDownDelta.Invoke(p - oP);
   }
 
-  void whileDownDelta2(){
+  public void whileDownDelta2(){
     WhileDownDelta2.Invoke( p2 - oP2 );
   }
 
 
-  void onDown(){
+  public void onDown(){
     OnDown.Invoke();
 
   }
 
-  void onUp(){
+  public void onUp(){
     OnUp.Invoke();
 
 
@@ -320,7 +318,7 @@ public class InputEvents: Cycle {
 
     }else{
 
-      print(difP.magnitude);
+      //print(difP.magnitude);
       if( difT < tapSpeed && difP.magnitude < .1 ){
         OnTap.Invoke();
       }

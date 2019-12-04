@@ -23,7 +23,7 @@
 
 
       int _NumStories;
-      int _ThisStory;
+      int _WhichStory;
       int _ConnectedStory;
       float _HueStory;
       float3 _StoryPositions[30];
@@ -79,7 +79,7 @@
         o.rd = mPos.xyz - _WorldSpaceCameraPos;
 
         o.player = mPos.xyz - _PlayerPosition;
-        o.thisDif = mPos.xyz - _StoryPositions[_ThisStory];
+        o.thisDif = mPos.xyz - _StoryPositions[_WhichStory];
 
         return o;
 
@@ -114,7 +114,7 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
             }
         }
 
-        float3 thisDifVec = (_StoryPositions[_ThisStory] - v.ro);
+        float3 thisDifVec = (_StoryPositions[_WhichStory] - v.ro);
         float3 connectedDifVec = (_StoryPositions[_ConnectedStory]- v.ro);
 
         float thisDif = length(thisDifVec);
@@ -130,7 +130,7 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
 
         if( thisDif < .18 + .005 * sin(_Time.y*4)  ){ col = 1;}
         if( connectedDif < .135 + .005 * sin(_Time.y*4)  ){ col = float3(1,0,0);}
-        //if( closestID == _ThisStory ){ col *= 4;}
+        //if( closestID == _WhichStory ){ col *= 4;}
         float4 color = fixed4( col , 1. );
         return color;
       }

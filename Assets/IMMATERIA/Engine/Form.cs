@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using System;
+using System.IO;
 
 
 public class Form : Cycle {
 
 
   public int count;
+   public string saveName;
+  public bool alwaysRemake;
 
   [HideInInspector] public bool intBuffer;
 
@@ -19,8 +24,12 @@ public class Form : Cycle {
   [HideInInspector] public int totalMemory;  
 
   public Material debugMaterial;
+  protected MaterialPropertyBlock mpb;
 
+  public bool loadedFromFile;
   public override void _Create(){
+
+    if( mpb == null ){ mpb = new MaterialPropertyBlock(); }
     DoCreate();
     SetStructSize();
     SetCount();
@@ -31,7 +40,25 @@ public class Form : Cycle {
   public override void _OnGestate(){ 
     DoGestate();
     _buffer = MakeBuffer();
-    Embody();
+    _Embody();
+  }
+
+
+ public virtual void _Embody(){
+
+    if( String.IsNullOrEmpty(saveName) ){
+      saveName = Saveable.GetSafeName();// "entity"+ UnityEngine.Random.Range(0,10000000);
+    }
+
+    if( Saveable.Check(saveName) && !alwaysRemake ){
+      loadedFromFile = true;
+      Saveable.Load(this);
+    }else{
+      loadedFromFile = false;
+      Embody();
+      Saveable.Save(this);
+    }
+
   }
 
   
@@ -109,10 +136,12 @@ public class Form : Cycle {
   }
 
   public override void WhileDebug(){
-    debugMaterial.SetPass(0);
-    debugMaterial.SetBuffer("_VertBuffer", _buffer);
-    debugMaterial.SetInt("_Count",count);
-    Graphics.DrawProceduralNow(MeshTopology.Triangles, count * 3 * 2 );
+    mpb.SetBuffer("_VertBuffer", _buffer);
+    mpb.SetInt("_Count",count);
+    
+    Graphics.DrawProcedural(debugMaterial,  new Bounds(transform.position, Vector3.one * 5000), MeshTopology.Triangles, count * 3 * 2 , 1, null, mpb, ShadowCastingMode.Off, true, LayerMask.NameToLayer("Debug"));
+
   }
+
 
 }

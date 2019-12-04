@@ -43,8 +43,8 @@ public class LandTile : Cycle
     tiler.setTile.RebindPrimaryForm( "_VertBuffer" , verts );
     tiler.setTile.YOLO();
 
-   
     OnSet.Invoke();
+    
   }
 
 

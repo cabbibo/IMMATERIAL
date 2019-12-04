@@ -5,25 +5,25 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Cycle : MonoBehaviour{
 
- public bool created = false;
+ [HideInInspector] public bool created = false;
 
- public bool begunGestation = false;
- public bool gestating = false;
- public bool gestated = false;
+ [HideInInspector] public bool begunGestation = false;
+ [HideInInspector] public bool gestating = false;
+ [HideInInspector] public bool gestated = false;
 
- public bool begunBirth = false;
- public bool birthing = false;
- public bool birthed = false;
+ [HideInInspector] public bool begunBirth = false;
+ [HideInInspector] public bool birthing = false;
+ [HideInInspector] public bool birthed = false;
 
- public bool begunLive = false;
- public bool living = false;
- public bool lived = false;
+ [HideInInspector] public bool begunLive = false;
+ [HideInInspector] public bool living = false;
+ [HideInInspector] public bool lived = false;
 
- public bool begunDeath = false;
- public bool dying = false;
- public bool died = false;
+ [HideInInspector] public bool begunDeath = false;
+ [HideInInspector] public bool dying = false;
+ [HideInInspector] public bool died = false;
 
- public bool destroyed = true;
+ [HideInInspector] public bool destroyed = true;
 
   public bool debug = false;
   public bool active = false;
@@ -529,12 +529,29 @@ void SetStates(){
 
   }
 
+  public void SpinUp(){
+        _Destroy();
+        Reset(); 
+        _Create(); 
+        _OnGestate();
+        _OnGestated();
+        _OnBirth(); 
+        _OnBirthed();
+  }
+
+  public void SpinDown(){
+
+        _Destroy();
+        
+        Reset(); 
+  }
+
 
   /*
     Helpers
   */
   public void DebugThis( string s ){
-//     Debug.Log( "Object Name : " + this.gameObject.name +"     || Script Name : "+this.GetType()+ "     || Message: " + s , this.gameObject );
+     Debug.Log( "Object Name : " + this.gameObject.name +"     || Script Name : "+this.GetType()+ "     || Message: " + s , this.gameObject );
   }
 
   public void CheckSelfCycle(Cycle c){

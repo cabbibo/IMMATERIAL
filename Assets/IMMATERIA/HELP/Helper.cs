@@ -18,4 +18,20 @@ public class Helper : Cycle
     print("GOOD JOB U ONLOCKTIOD!");  
   }
 
+  public GameObject nodePrefab;
+  public GameObject[] nodes;
+
+
+  public override void OnLive(){
+
+    if( debug ){
+      for( int i = 0; i < nodes.Length; i++ ){
+        DestroyImmediate( nodes[i] );
+      }
+
+
+    }
+
+  }
+
 }

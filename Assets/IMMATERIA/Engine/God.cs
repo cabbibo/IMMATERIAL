@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-
 public class God : Cycle {
 
 public bool AllInEditMode;
@@ -11,7 +10,43 @@ private static God _instance;
   
 public bool started;
 
+public bool godPause;
+
+public List<Cycle> cycles;
+public List<Form> forms;
+public List<Life> lifes;
+public List<Binder> binders;
+public List<GameObject> objects;
+
 public override void Create(){
+   if( cycles == null ){ 
+        cycles = new List<Cycle>(); 
+    }
+    if( forms == null ){ 
+        forms = new List<Form>(); 
+    }
+
+    if( lifes == null ){ 
+        lifes = new List<Life>(); 
+    }
+
+    if( binders == null ){ 
+        binders = new List<Binder>(); 
+    }
+
+      if( objects == null ){ 
+        objects = new List<GameObject>(); 
+    }
+
+    cycles.Clear();
+    lifes.Clear();
+    forms.Clear();
+    binders.Clear();
+    objects.Clear();
+
+
+
+
 
     if( data != null ){
         SafePrepend(data);
@@ -19,17 +54,102 @@ public override void Create(){
         print("DUDE WHERE'S MY DATA");
     }
 
-    Application.targetFrameRate = 60;
+   //Application.targetFrameRate = 60;
 
 
 }
 
-
-public void OnRenderObject(){
-    if( created ){ _WhileDebug(); }
+public override void OnBirthed(){
+    GetCycleInfo( this );
 }
+
+public void GetCycleInfo( Cycle cycle ){
+
+
+    bool newGO = true;
+    foreach( GameObject o in objects ){
+        if( o == cycle.gameObject ){
+             newGO = false; 
+            print("SEEN");
+        }
+    }
+    if( newGO ){ objects.Add( cycle.gameObject ); }
+
+    cycles.Add( cycle );
+    
+    if( cycle is Form ){
+        forms.Add( (Form)cycle );
+    }
+    if( cycle is Life ){
+        lifes.Add( (Life)cycle );
+    }
+
+    if( cycle is Binder ){
+        binders.Add( (Binder)cycle );
+    }
+
+    foreach( Cycle c in cycle.Cycles ){
+        GetCycleInfo( c );
+    }
+
+}
+
+public void SaveAllForms(){
+
+    // No longer redeleting everything
+    /*foreach( Form f  in forms ){
+
+     if( Saveable.Check(f.saveName)){
+        Saveable.Delete(f.saveName);
+     }
+        
+    }
+
+    Saveable.ClearNames();*/
+
+    foreach( Form f in forms ){
+        //f.saveName = Saveable.GetSafeName();
+        Saveable.Save(f);
+    }
+}
+
+
+public void FullRebuild(){
+
+    foreach( Form f  in forms ){  
+     if( Saveable.Check(f.saveName)){
+        Saveable.Delete(f.saveName);
+     } 
+    new WaitForSeconds(5);
+
+     f.alwaysRemake = true;
+    }
+
+    Saveable.DeleteAll();
+    Reset();
+    OnDisable();
+    OnEnable();
+  
+  
+    Saveable.ClearNames();
+
+    foreach( Form f in forms ){
+        f.saveName = Saveable.GetSafeName();
+        Saveable.Save(f);
+        f.alwaysRemake = false;
+    
+    }
+
+    DebugThis("" +Saveable.CheckIfAllNamesSafe());
+
+     
+}
+
+
 
 public void LateUpdate(){
+
+    if(!godPause){
 
     if( started == false ){ 
         _OnLive(); 
@@ -39,17 +159,19 @@ public void LateUpdate(){
     if( birthing ){ _WhileBirthing(1);}
     if( living ){ _WhileLiving(1); }
     if( dying ){ _WhileDying(1); }
+
+    if( created ){ _WhileDebug(); }
+}
+
 }
 
 
-
-
-public void OnLevelWasLoaded(){
-    print("WASDass");
-}
 
 
 public void OnEnable(){
+
+
+
 
     started = false;
 
@@ -96,7 +218,7 @@ public void OnEnable(){
 public void OnDisable(){
 
 
-  //  print("god disabblee");
+    //print("god disabblee");
     #if UNITY_EDITOR 
         EditorApplication.update -= Always;
         _Destroy();   
@@ -114,10 +236,12 @@ public void OnDisable(){
 void Always(){    
   #if UNITY_EDITOR 
   if( AllInEditMode ){
-    EditorApplication.QueuePlayerLoopUpdate();
+    if(!godPause) EditorApplication.QueuePlayerLoopUpdate();
   }
   #endif
 }
+
+
 
 
 

@@ -221,7 +221,7 @@ void Collision (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
     float3 bN = -base.nor;//normalize(mul( transform,  float4(base.nor,0))).xyz;
     float3 s = float3(1,1,1);//mul( transform , float4(1,1,1,0)).xyz;
 
-    float3 force = bN * 4 * (1-vert.uv.x * vert.uv.x);//float3( 0 , base.nor , 0.0 );
+    float3 force = -bN * 4 * (1-vert.uv.x * vert.uv.x);//float3( 0 , base.nor , 0.0 );
 
     float2 xz = 1*normalize( vert.pos.xz - _PlayerPosition.xz ) / (.1 + pow(length(vert.pos.xz - _PlayerPosition.xz), 10));
 
@@ -233,7 +233,7 @@ void Collision (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
     float3 dif = vert.pos - c;
 
     if( length( dif ) < 5 ){
-      force += normalize( dif ) * 30;
+      //force += normalize( dif ) * 30;
     }
 
     force += GetCamRayForce(vert.pos, 201.1 , 3 ) / ( 1 + length( _CameraPosition - vert.pos));

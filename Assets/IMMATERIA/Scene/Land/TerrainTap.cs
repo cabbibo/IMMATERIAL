@@ -9,8 +9,11 @@ public class TerrainTap : Cycle
   public float tapTime;
    
    public void Tap(){
+    //print("helloos");
+    //print(data.inputEvents.hitTag);
 
       if( data.inputEvents.hitTag == "Untagged" && !data.state.inPages ){
+       // print("double hello");
    
       transform.position = data.land.Trace( data.inputEvents.ray.origin , data.inputEvents.ray.direction );
       data.playerControls.SetMoveTarget( transform );
