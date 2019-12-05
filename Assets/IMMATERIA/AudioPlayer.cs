@@ -8,40 +8,122 @@ public class AudioPlayer : Cycle{
   public int playID;
   public int oPlayID;
   public int numSources;
+  public int numLoopSources;
 
     public static AudioPlayer Instance { get; private set; }
 
     private static AudioPlayer _instance;
 
-    private GameObject[] objects;
-    private AudioSource[] sources;
+    public GameObject[] objects;
+    public GameObject[] loopObjects;
+    public AudioSource[] sources;
+    public SourcePlayer[] players;
+    public AudioSource[] loopSources;
+
+    public float loopBPM;
+    public int loopBars;
+    public int loopBPB;
+
     public Transform sourceTransform;
+    public Transform loopTransform;
+
+    public GameObject sourcePrefab;
 
     public override void Create(){
 
-        if( objects != null ){
+        if( objects == null || objects.Length != numSources  || loopSources.Length != numLoopSources || loopSources == null ){
+    
+
+            if( objects != null ){
             for( int i = 0; i < objects.Length; i++ ){
                 Object.DestroyImmediate(objects[i]);//.Destroy();
-            }
-        }
+            }}
 
-        if( Instance == null ){
-            Instance = this;
-            //DontDestroyOnLoad(gameObject);
-        }else{
-            //Destroy( gameObject);
-        }
+            if( loopObjects != null ){
+            for( int i = 0; i < loopObjects.Length; i++ ){
+                Object.DestroyImmediate(loopObjects[i]);//.Destroy();
+            }}
 
         sources = new AudioSource[numSources];
+        players = new SourcePlayer[numSources];
         objects = new GameObject[numSources];
 
         for( int i = 0; i < numSources; i++){
-            objects[i] = new GameObject();
+            objects[i] = Instantiate( sourcePrefab );
             objects[i].transform.parent = sourceTransform;
 
-            sources[i] = objects[i].AddComponent<AudioSource>() as AudioSource;
+            sources[i] = objects[i].GetComponent<AudioSource>();
             sources[i].dopplerLevel = 0;
             sources[i].playOnAwake = false;
+
+            players[i] = objects[i].GetComponent<SourcePlayer>();
+
+        }
+
+        loopSources = new AudioSource[numLoopSources];
+        loopObjects = new GameObject[numLoopSources];
+        for( int i = 0 ; i < numLoopSources; i++ ){ 
+
+            loopObjects[i] = new GameObject();
+            loopObjects[i].transform.parent = loopTransform;
+
+            loopSources[i] = loopObjects[i].AddComponent<AudioSource>();
+            loopSources[i].volume = 0;
+            loopSources[i].dopplerLevel = 0;
+            loopSources[i].playOnAwake = false;
+
+        }
+
+
+        }
+
+
+
+    }
+
+
+    public float loopStartTime = 0;
+
+    public void FadeLoop(int i , bool on){
+
+
+
+        float loopTime = (loopBPM / 60) * loopBPB * loopBars;
+        float fadeTime = ((loopStartTime + loopTime) - Time.time)/loopTime;
+
+        
+print("Time til newLoop " + fadeTime );
+       /* AddTween(function(){
+
+            })*/
+
+
+    }
+
+    public void fadeLoop( float v , int id ){
+      // if( !inOut ){ v = 1-v; }
+    }
+
+    public override void WhileLiving(float v){
+
+
+        if( Time.time - loopStartTime > (loopBPM / 60) * loopBPB * loopBars ){
+            NewLoop();
+        }
+
+    }
+
+    public override void OnBirthed(){
+        NewLoop();
+    }
+
+    public void NewLoop(){
+        loopStartTime = Time.time;// + (loopBPM / 60) * loopBPB * loopBars;
+        for( int i = 0; i < loopSources.Length; i++ ){
+            if( loopSources[i].clip != null ){
+                loopSources[i].Play();
+            }
+        
         }
     }
 
@@ -54,6 +136,28 @@ public class AudioPlayer : Cycle{
         playID ++;
         playID %= numSources;
     }
+
+    public void PlayOne( AudioClip clip ){
+        players[playID].Play(clip);
+        Next();
+    }
+
+    public void PlayGrain( AudioClip clip , float start , float length){
+        players[playID].Play(clip , start, length);
+        Next();
+    }
+
+     public void PlayGrain( AudioClip clip , float start , float length , AudioMixer mixer, string group){
+        players[playID].Play(clip , start, length , mixer, group);
+        Next();
+    }
+
+    public void Next(){
+        oPlayID = playID;
+        playID ++;
+        playID %= numSources;
+    }
+
 
 
     public void Play( AudioClip clip , float pitch){

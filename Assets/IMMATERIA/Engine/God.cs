@@ -70,7 +70,6 @@ public void GetCycleInfo( Cycle cycle ){
     foreach( GameObject o in objects ){
         if( o == cycle.gameObject ){
              newGO = false; 
-            print("SEEN");
         }
     }
     if( newGO ){ objects.Add( cycle.gameObject ); }

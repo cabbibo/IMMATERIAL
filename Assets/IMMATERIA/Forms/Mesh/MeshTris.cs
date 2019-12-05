@@ -13,6 +13,10 @@ public class MeshTris : IndexForm {
     count = values.Length;
   }
 
+  public override void Create(){
+    DebugThis("sdsds");
+  }
+
   public override void Embody(){ SetData(values); }
 
 }

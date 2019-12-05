@@ -14,7 +14,6 @@ public class IndexForm : Form {
     SetStructSize();
     SetCount();
     SetBufferType();
-    Create();
   }
   public override void SetBufferType(){  intBuffer = true; }
   public override void SetStructSize(){ structSize = 1; }
