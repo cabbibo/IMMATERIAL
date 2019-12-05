@@ -47,9 +47,7 @@ public class StoryAudio : Cycle
 
    public  void FadeClip(int i){
     data.audio.FadeLoop(i,clipsOn[i]);
-    //data.audio.loopSources[i].volume = clipsOn[i] ? 1 : 0;
    }
-
 
 
 }

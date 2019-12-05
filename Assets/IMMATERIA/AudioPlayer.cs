@@ -84,24 +84,32 @@ public class AudioPlayer : Cycle{
 
     public float loopStartTime = 0;
 
-    public void FadeLoop(int i , bool on){
-
-
+    public float timeTilLoop(){
 
         float loopTime = (loopBPM / 60) * loopBPB * loopBars;
-        float fadeTime = ((loopStartTime + loopTime) - Time.time)/loopTime;
-
-        
-print("Time til newLoop " + fadeTime );
-       /* AddTween(function(){
-
-            })*/
-
-
+        float fadeTime = ((loopStartTime + loopTime) - Time.time);
+        print(fadeTime);
+     return fadeTime;
     }
 
-    public void fadeLoop( float v , int id ){
-      // if( !inOut ){ v = 1-v; }
+    public void FadeLoop( int i , bool inOut){
+       if(inOut){ FadeInLoop(i); }else{FadeOutLoop(i);}
+    }
+
+    public void FadeInLoop(int i){
+        data.tween.AddTween( timeTilLoop() ,i , fadeInLoop );
+    }
+
+    public void FadeOutLoop( int i ){
+        data.tween.AddTween( timeTilLoop(),i , fadeOutLoop );
+    }
+
+    public void fadeInLoop( float v , int id ){
+        loopSources[id].volume = v;
+    }
+
+    public void fadeOutLoop( float v , int id ){
+        loopSources[id].volume = 1-v;
     }
 
     public override void WhileLiving(float v){

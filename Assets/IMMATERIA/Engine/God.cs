@@ -11,6 +11,7 @@ private static God _instance;
 public bool started;
 
 public bool godPause;
+public bool dontDoIt;
 
 public List<Cycle> cycles;
 public List<Form> forms;
@@ -179,14 +180,15 @@ public void OnEnable(){
 
     #if UNITY_EDITOR 
         EditorApplication.update += Always;
-
-         Reset();
-        _Destroy(); 
-        _Create(); 
-        _OnGestate();
-        _OnGestated();
-        _OnBirth(); 
-        _OnBirthed();
+        if(!dontDoIt){
+             Reset();
+            _Destroy(); 
+            _Create(); 
+            _OnGestate();
+            _OnGestated();
+            _OnBirth(); 
+            _OnBirthed();
+        }
 
     #else
 
