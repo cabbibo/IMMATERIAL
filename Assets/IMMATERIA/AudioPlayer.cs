@@ -190,6 +190,13 @@ public class AudioPlayer : Cycle{
         Play(clip);
     }
 
+    public void Play( AudioClip clip , int step , float volume, AudioMixer mixer, string group ){
+        float p = Mathf.Pow( 1.05946f , (float)step );
+        sources[playID].volume = volume;
+        sources[playID].pitch = p;
+        Play(clip);
+    }
+
     public void Play(AudioClip clip , int step , float volume,float location){
         float p = Mathf.Pow( 1.05946f , (float)step );
         sources[playID].volume = volume;

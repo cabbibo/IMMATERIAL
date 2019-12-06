@@ -118,6 +118,8 @@ public class Data : Cycle
     toBind.BindVector3("_RO", () => inputEvents.RO    );
     toBind.BindVector3("_RD", () => inputEvents.RD    );
     toBind.BindFloat("_DOWN", () => inputEvents.Down  );
+    toBind.BindFloat("_DOWNTWEEN", () => inputEvents.downTween  );
+    toBind.BindFloat("_DOWNTWEEN2", () => inputEvents.downTween2  );
 
   }
 

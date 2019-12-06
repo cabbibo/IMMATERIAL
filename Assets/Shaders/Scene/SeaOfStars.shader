@@ -121,9 +121,10 @@
 
         float3 tCol = texCUBE( _CubeMap , eyeRefl );
 
-        col = 2*tCol*tCol* tex2D(_ColorMap, float2(max(length(v.player.xz) * .003 , -.2) + _HueStart + rM * .1 ,0)) / (.4 + ( .05 * length( v.player.xz)));//-rM;//v.nor * .5 + .5;// tCol;//*tCol * tex2D(_ColorMap,float2(rM*.1+.7 - v.debug.y * .1 ,.5 )).rgb;// *(1-rM);//hsv(rM*rM*rM * 2.1,.5,rM);// + normalize(refl) * .5+.5;
+        col = tCol*tCol* tex2D(_ColorMap, float2(max(length(v.player.xz) * .003 , -.2) + _HueStart + rM * .1 ,0)) / (.4 + ( .05 * length( v.player.xz)));//-rM;//v.nor * .5 + .5;// tCol;//*tCol * tex2D(_ColorMap,float2(rM*.1+.7 - v.debug.y * .1 ,.5 )).rgb;// *(1-rM);//hsv(rM*rM*rM * 2.1,.5,rM);// + normalize(refl) * .5+.5;
         //col = v.tan * .5 + .5;
 
+        col *= (length(v.vel)-4) * (length(v.vel)-4) + .4;
         //col += hsv(dot(v.eye,v.nor) * -.1,.6,1) * (1-length(col));
         return float4( col , 1.);
             }

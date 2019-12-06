@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,18 +8,15 @@ public class Page : Cycle
 
     public Frame frame;
     public TextAnchor text;
-
-
     public float lerpSpeed;
     public Transform moveTarget;
     public Transform lerpTarget;
-
     public bool locked;
     public bool mustContinue;
-    public float fade;
 
+    public float fade;
     public float baseHue;
-    
+
     public MaterialPropertyBlock frameMPB;
 
     public EventTypes.BaseEvent  OnStartEnter;

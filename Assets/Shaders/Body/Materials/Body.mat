@@ -68,8 +68,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BeltBuckleHue: 0
-    - _BeltHue: 0.4
+    - _BeltBuckleHue: 0.44
+    - _BeltHue: 1.64
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -78,23 +78,31 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _HairHue: 0.9
-    - _HueBase: 0.4
+    - _HairHue: 1.06
+    - _HueBase: 0.46
     - _HueSize: 0.1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _PantsHue: 0.8
     - _Parallax: 0.02
-    - _ShirtShoesHue: 0
+    - _ShirtShoesHue: 0.24
     - _SkinHue: 0.7
     - _SmoothnessTextureChannel: 0
-    - _SocksHue: 0.3
+    - _SocksHue: -0.08
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Struct12: 0
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
+    - _Belt: {r: 0.44320956, g: 0.4221253, b: 0.4811321, a: 1}
+    - _BeltBuckle: {r: 0.4447377, g: 0.42577428, b: 0.49056602, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Eyes: {r: 1, g: 1, b: 1, a: 1}
+    - _Hair: {r: 0.5849056, g: 0.50765395, b: 0.50765395, a: 1}
+    - _Pants: {r: 0.2963688, g: 0.3407375, b: 0.3490566, a: 1}
+    - _ShirtShoes: {r: 0.33962262, g: 0.28835884, b: 0.28835884, a: 1}
+    - _Skin: {r: 0.6226415, g: 0.52466476, b: 0.42880028, a: 1}
+    - _Socks: {r: 0.5906016, g: 0.6802021, b: 0.7924528, a: 1}

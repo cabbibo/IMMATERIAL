@@ -22,6 +22,27 @@
     _PantsHue("_PantsHue", Float) = 0
     _EyesHue("_EyesHue", Float) = 0
 
+
+    _HairHue("_HairHue", Float) = 0
+    _BeltBuckleHue("_BeltBuckleHue", Float) = 0
+    _BeltHue("_BeltHue", Float) = 0
+    _ShirtShoesHue("_ShirtShoesHue", Float) = 0
+    _SocksHue("_SocksHue", Float) = 0
+    _SkinHue("_SkinHue", Float) = 0
+    _PantsHue("_PantsHue", Float) = 0
+    _EyesHue("_EyesHue", Float) = 0
+
+
+    _Hair("_Hair", Color) =   (1,1,1,1)
+    _BeltBuckle("_BeltBuckle", Color) =   (1,1,1,1)
+    _Belt("_Belt", Color) =   (1,1,1,1)
+    _ShirtShoes("_ShirtShoes", Color) =   (1,1,1,1)
+    _Socks("_Socks", Color) =   (1,1,1,1)
+    _Skin("_Skin", Color) =   (1,1,1,1)
+    _Pants("_Pants", Color) =   (1,1,1,1)
+    _Eyes("_Eyes", Color) =   (1,1,1,1)
+
+
     
 
   }
@@ -64,6 +85,15 @@
     float _SkinHue;
     float _PantsHue;
     float _EyesHue;
+
+    float3 _Hair;
+    float3 _BeltBuckle;
+    float3 _Belt;
+    float3 _ShirtShoes;
+    float3 _Socks;
+    float3 _Skin;
+    float3 _Pants;
+    float3 _Eyes;
 
     StructuredBuffer<Vert> _VertBuffer;
   StructuredBuffer<int> _TriBuffer;
@@ -189,35 +219,35 @@ float l = saturate( (20-dif)/20);
         float3 pCol = 0; 
         float hue = 0;
        if( _SubMeshID == 0 ){
-            pCol = DoEyes();
+            pCol = _Eyes;
             hue = _EyesHue;
         }else if( _SubMeshID == 1 ){
-            pCol = DoHair();
+            pCol = _Hair;
             hue = _HairHue;
         }else if( _SubMeshID == 2 ){
-            pCol = DoBeltBuckle();
+            pCol = _BeltBuckle;
             hue = _BeltBuckleHue;
         }else if( _SubMeshID == 3 ){
-            pCol = DoBelt();
+            pCol = _Belt;
             hue = _BeltHue;
         }else if( _SubMeshID == 4 ){
-            pCol = DoPants();
+            pCol = _Pants;
             hue = _PantsHue;
         }else if( _SubMeshID == 5 ){
-            pCol = DoShirtShoes();
+            pCol = _ShirtShoes;
             hue = _ShirtShoesHue;
         }else if( _SubMeshID == 6 ){
-            pCol = DoSocks();
+            pCol = _Socks;
             hue = _SocksHue;
         }else if( _SubMeshID == 7 ){
-            pCol = DoSkin();
+            pCol = _Skin;
             hue = _SkinHue;
 
 
         }
 
         //col *= tCol *1;
-        col *= tex2D(_ColorMap,float2( hue,0)) * .7 + .3;
+        col *= pCol;//float4(pCol,1);//tex2D(_ColorMap,float2( hue,0)) * .7 + .3;
 
 
 

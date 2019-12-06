@@ -23,6 +23,7 @@ public class InputEvents: Cycle {
   public EventTypes.Vector2Event    WhileDownDelta2;
   public EventTypes.BaseEvent       OnDebugTouch;
 
+  public GameObject MainCamera;
   public bool fakeSwipeLeft;
   public bool fakeSwipeRight;
   public bool fakeTapCenter;
@@ -67,11 +68,15 @@ public class InputEvents: Cycle {
 
   public int touchID = 0;
 
+  public float downTween;
+  public float downTween2;
+
   public RaycastHit hit;
   public string hitTag;
 
   public float swipeInCutoff;
   public float canEdgeSwipe;
+  public bool swipable;
 
   void Start(){}
   
@@ -148,8 +153,9 @@ public class InputEvents: Cycle {
 
           Shader.SetGlobalFloat("_CanEdgeSwipe" , canEdgeSwipe );
 
-          whileDown();
           onDown();
+
+          whileDown();
       }
 
 
@@ -190,6 +196,9 @@ public class InputEvents: Cycle {
       vel = p - oP;
 
     }
+
+    downTween = Mathf.Lerp( downTween , Down , .3f );
+    downTween2 = Mathf.Lerp( downTween , Down , .1f );
 
   }
 
@@ -251,6 +260,8 @@ public class InputEvents: Cycle {
       canEdgeSwipe = 0;
       Shader.SetGlobalFloat("_CanEdgeSwipe" , canEdgeSwipe );
     }
+
+    if( swipable ){ CheckSwipes(); }
     WhileDown.Invoke( ray );
   }
 
@@ -271,8 +282,7 @@ public class InputEvents: Cycle {
   public void onUp(){
     OnUp.Invoke();
 
-
-    float difT = endTime - startTime;
+ float difT = endTime - startTime;
     Vector2 difP = endPos - startPos;
 
 
@@ -281,9 +291,43 @@ public class InputEvents: Cycle {
   //  print( ratio );
 //    print( difT );
 
+    // now checking this every frame instead of just on up
+
     if( ratio > swipeSensitivity && difT > minSwipeTime && difT < maxSwipeTime ){
+    }else{
+
+      //print(difP.magnitude);
+      if( difT < tapSpeed && difP.magnitude < .1 ){
+        OnTap.Invoke();
+      }
+
+    }
+
+    swipable = true;
+
+   //print( difT );
+   //print( difP );
+   //print( ratio );
+  }
+
+
+
+  public void CheckSwipes(){
+
+
+     float difT = Time.time - startTime;
+    Vector2 difP =p- startPos;
+
+
+    float ratio = .01f * difP.magnitude / difT;
+
+  //  print( ratio );
+//    print( difT );
+
+if( ratio > swipeSensitivity && difT > minSwipeTime && difT < maxSwipeTime ){
       
       OnSwipe.Invoke( difP ); 
+
 
       if( Mathf.Abs(difP.x) > Mathf.Abs(difP.y) ){
         OnSwipeHorizontal.Invoke(difP.x);
@@ -315,21 +359,10 @@ public class InputEvents: Cycle {
         }
       } 
 
-
-    }else{
-
-      //print(difP.magnitude);
-      if( difT < tapSpeed && difP.magnitude < .1 ){
-        OnTap.Invoke();
-      }
-
+      swipable = false;
     }
 
 
-   //print( difT );
-   //print( difP );
-   //print( ratio );
   }
-
 
 }

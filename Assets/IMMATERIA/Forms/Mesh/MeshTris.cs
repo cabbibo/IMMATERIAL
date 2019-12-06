@@ -14,7 +14,6 @@ public class MeshTris : IndexForm {
   }
 
   public override void Create(){
-    DebugThis("sdsds");
   }
 
   public override void Embody(){ SetData(values); }

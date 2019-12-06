@@ -157,7 +157,7 @@ public class Character : Cycle {
       
       transform.position  = Vector3.Lerp(startLerpPos , lerpTarget.position , v);
       transform.rotation  = Quaternion.Slerp(startLerpRot , lerpTarget.rotation , v);
-    
+
       animator.SetFloat("Turn", 0, 0.1f, Time.deltaTime);
       animator.SetFloat("Forward", 0, 0.1f, Time.deltaTime);
 

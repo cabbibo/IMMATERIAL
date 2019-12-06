@@ -42,10 +42,6 @@ public class Story : Cycle
   public float transitionStartTime;
   public Page oldTransitionPage;
  
-
-  // Makes it so that we can move faster
-  public bool fast;
-
   public bool forward;
 
   public EventTypes.BaseEvent OnEnterOuter;
@@ -128,7 +124,7 @@ public class Story : Cycle
 
         transitioning = true;
         transitionSpeed = pages[currentPage].lerpSpeed;
-        if( fast ){ transitionSpeed = 1; }
+        if( data.state.fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
 
         SetActivePage();
@@ -142,7 +138,7 @@ public class Story : Cycle
         transitioning = true;
         transitionSpeed = pages[0].lerpSpeed;
 
-        if( fast ){ transitionSpeed = 1; }
+        if( data.state.fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
         oldTransitionPage = pages[currentPage-1];
         pages[currentPage-1].OnEndExit.Invoke();
@@ -172,7 +168,7 @@ public class Story : Cycle
         transitioning = true;
         //transitionSpeed = pages[currentPage].lerpSpeed;
 
-        if( fast ){ transitionSpeed = 1; }
+        if( data.state.fast ){ transitionSpeed = 1; }
         transitionStartTime = Time.time;
 
         SetActivePage();
@@ -190,7 +186,7 @@ public class Story : Cycle
           transitioning = true;
           transitionSpeed = pages[0].lerpSpeed;
           
-          if( fast ){ transitionSpeed = 1; }
+          if( data.state.fast ){ transitionSpeed = 1; }
           transitionStartTime = Time.time;
           oldTransitionPage = pages[currentPage+1];
 
@@ -280,7 +276,7 @@ public class Story : Cycle
     transitionSpeed = pages[currentPage].lerpSpeed;
     pages[currentPage].OnStartEnter.Invoke();
 
-    if( fast ){ transitionSpeed = 1; }
+    if( data.state.fast ){ transitionSpeed = 1; }
     transitionStartTime = Time.time;
     SetActivePage(); 
     SetColliders( false );

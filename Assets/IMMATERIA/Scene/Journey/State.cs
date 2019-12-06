@@ -21,11 +21,16 @@ public class State : Cycle
   public bool inBookPages;
 
 
+  public int startStory;
+  public int startPage;
+
   public bool startInStory;
   public bool startInPages;
   public bool startInBook;
   public bool startInBookPages;
 
+
+  public bool fast;
 
 
 
@@ -40,10 +45,15 @@ public class State : Cycle
 
   public override void Create(){
     
-    data.journey.currentStory = currentStory;
+    data.journey.currentStory = startStory;
     if( storiesVisited.Length != data.journey.stories.Length ){
       storiesVisited = new bool[ data.journey.stories.Length ];
     }
+  }
+
+  public void SetStartToCurrentStory(){
+     startStory = data.journey.currentStory;
+     startPage = data.journey.stories[data.journey.currentStory].stories[data.journey.stories[data.journey.currentStory].currentStory].currentPage;
   }
 
   
@@ -60,6 +70,7 @@ public class State : Cycle
       data.journey.stories[data.journey.currentStory].perimeter.EnterOuter();
       data.journey.stories[data.journey.currentStory].perimeter.EnterInner();
 
+      //data.journey.stories[data.journey.currentStory].
     }
 
 
@@ -68,6 +79,7 @@ public class State : Cycle
     }
 
     if( startInPages ){
+data.journey.stories[data.journey.currentStory].stories[data.journey.stories[data.journey.currentStory].currentStory].currentPage = startPage;
 
       data.journey.stories[data.journey.currentStory].stories[data.journey.stories[data.journey.currentStory].currentStory].SetAllEvents();
       data.journey.stories[data.journey.currentStory].StartStory();

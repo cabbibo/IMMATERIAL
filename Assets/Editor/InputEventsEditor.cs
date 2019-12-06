@@ -4,15 +4,28 @@
  using UnityEditor;
  
 [CustomEditor(typeof(InputEvents))]
-public class InputEventsEditor : Editor{
+public class InputEventsEditor : CycleEditor{
 
 
   public bool down;
    void OnSceneGUI(){
-        
+
       InputEvents events = (InputEvents)target;
       HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+((UnityEditor.SceneView)SceneView.sceneViews[0]).pivot = events.MainCamera.transform.position;
+((UnityEditor.SceneView)SceneView.sceneViews[0]).rotation = events.MainCamera.transform.rotation;
+//((UnityEditor.SceneView)SceneView.sceneViews[0]).cameraDistance = 0;//events.MainCamera.transform.rotation;
 
+SceneView.CameraSettings cameraSettings = new SceneView.CameraSettings();
+cameraSettings.fieldOfView = events.MainCamera.GetComponent<Camera>().fieldOfView;
+cameraSettings.nearClip = events.MainCamera.GetComponent<Camera>().nearClipPlane;
+cameraSettings.farClip = events.MainCamera.GetComponent<Camera>().farClipPlane;
+    
+
+((UnityEditor.SceneView)SceneView.sceneViews[0]).cameraSettings = cameraSettings;
+
+
+       // Camera.current.transform.position =events.MainCamera.transform.position;
       events.oP = events.p;
       events.oDown = events.Down;
     
@@ -116,7 +129,7 @@ public class InputEventsEditor : Editor{
         events.JustDown = 0;
       }
 
-      if( events.JustDown == 1 ){ events.oP = events.p; Debug.Log("Just Down"); }
+      if( events.JustDown == 1 ){ events.oP = events.p; }
       events.vel = events.p - events.oP;
 
         //print("mouse"); 
@@ -124,7 +137,13 @@ public class InputEventsEditor : Editor{
            
    }
 
-         
+
+    public override void OnInspectorGUI()
+    {
+
+      DrawDefaultInspector();
+
+    }
      
 
 }
