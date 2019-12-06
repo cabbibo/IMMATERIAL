@@ -332,6 +332,7 @@ public class GlobalEditWindow : EditorWindow
           GUILayout.BeginHorizontal();
           if(GUILayout.Button(""+f.gameObject.name , skin.GetStyle("GO_Button"))){
             EditorGUIUtility.PingObject( f.gameObject);
+            Selection.activeObject = f.gameObject;
             //+ " : " + f.GetType() +  " : " + f.count * f.structSize
           }
 
