@@ -74,8 +74,10 @@ public class State : Cycle
     }
 
 
+    data.journey.inStory = startInStory;
     if( startInStory && !startInPages ){
       data.cameraControls.SetFollowTarget();
+
     }
 
     if( startInPages ){

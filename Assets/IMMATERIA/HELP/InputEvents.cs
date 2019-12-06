@@ -261,7 +261,7 @@ public class InputEvents: Cycle {
       Shader.SetGlobalFloat("_CanEdgeSwipe" , canEdgeSwipe );
     }
 
-    if( swipable ){ CheckSwipes(); }
+    //if( swipable ){ CheckSwipes(); }
     WhileDown.Invoke( ray );
   }
 
@@ -291,6 +291,8 @@ public class InputEvents: Cycle {
   //  print( ratio );
 //    print( difT );
 
+    CheckSwipes();
+
     // now checking this every frame instead of just on up
 
     if( ratio > swipeSensitivity && difT > minSwipeTime && difT < maxSwipeTime ){
@@ -314,9 +316,9 @@ public class InputEvents: Cycle {
 
   public void CheckSwipes(){
 
-
-     float difT = Time.time - startTime;
-    Vector2 difP =p- startPos;
+    print("Checking swipes");
+     float difT = endTime - startTime;
+    Vector2 difP =endPos - startPos;
 
 
     float ratio = .01f * difP.magnitude / difT;
