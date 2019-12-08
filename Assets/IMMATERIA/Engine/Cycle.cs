@@ -27,7 +27,8 @@ public class Cycle : MonoBehaviour{
 
   public bool debug = false;
   public bool active = false;
-
+  public int executionID;
+  public Cycle parent;
   public Data data;
 
   public List<Cycle> Cycles;

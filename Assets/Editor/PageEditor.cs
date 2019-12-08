@@ -55,7 +55,7 @@ void OnEnable(){
 
         if( showProperties ){
 
-GUILayout.BeginVertical();
+            GUILayout.BeginVertical();
 
             EditorGUILayout.PropertyField(lerpSpeed    );
             EditorGUILayout.PropertyField(moveTarget   );
@@ -64,7 +64,6 @@ GUILayout.BeginVertical();
             EditorGUILayout.PropertyField(mustContinue );
             EditorGUILayout.PropertyField(fade         );
             EditorGUILayout.PropertyField(baseHue      );
-
 
             GUILayout.EndVertical();
     

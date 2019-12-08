@@ -60,8 +60,10 @@ public override void Create(){
 
 }
 
-public override void OnBirthed(){
+public override void OnGestate(){
     GetCycleInfo( this );
+}
+public override void OnBirthed(){
 }
 
 public void GetCycleInfo( Cycle cycle ){

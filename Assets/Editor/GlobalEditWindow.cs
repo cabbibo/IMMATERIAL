@@ -4,6 +4,14 @@ using UnityEditor;
 public class GlobalEditWindow : EditorWindow
 {
 
+
+
+     public void Update()
+ {
+     // This is necessary to make the framerate normal for the editor window.
+     Repaint();
+ }
+
     public GUISkin skin;
 
     // CONTROLS
@@ -26,6 +34,7 @@ public class GlobalEditWindow : EditorWindow
     public Data data;
     public InputEvents events;
     public State state;
+    public RenderTexture renderTexture;
 
 
 
@@ -86,11 +95,16 @@ public class GlobalEditWindow : EditorWindow
 
     void OnSceneGUI(SceneView sceneView){
 
-        HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
       
+        if(god != null ){
 
         if( lockToGameCamera ) LockCamera(sceneView);
-        if( doInputEvents ) DoInputEvents(sceneView);
+        if( doInputEvents ){
+
+          HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+          DoInputEvents(sceneView);
+        }
+      }
         
     
 
@@ -244,12 +258,19 @@ public class GlobalEditWindow : EditorWindow
     void OnGUI()
     {
 
+      if( skin == null ){ skin = (GUISkin)Resources.Load("GlobalEditSkin"); }
+        
       GUILayout.TextField("Global Editor",skin.GetStyle("Label"));
-
-      ShowControls();
-      ShowState();
+      
       ShowLinkedObjects();
-      ShowAllForms();
+
+      if( god != null ){
+        ShowControls();
+        ShowState();
+        ShowAllForms();
+        ShowSaveButtons();
+        ShowRender();
+      }
  
     }
     void ShowControls(){
@@ -311,6 +332,9 @@ public class GlobalEditWindow : EditorWindow
       
           label.text = "Skin";
           skin = (GUISkin)EditorGUILayout.ObjectField(label,skin,typeof(GUISkin),true);
+
+          label.text = "RenderTexture";
+          renderTexture = (RenderTexture)EditorGUILayout.ObjectField(label,renderTexture,typeof(RenderTexture),true);
   
         EndGroup();
       }
@@ -322,7 +346,7 @@ public class GlobalEditWindow : EditorWindow
 
       showForms = EditorGUILayout.Foldout(showForms, "All Forms");
       if( showForms ){
-
+ GuiLine();
          formScroll = EditorGUILayout.BeginScrollView (formScroll,
                                                       false,
                                                       false);
@@ -332,7 +356,7 @@ public class GlobalEditWindow : EditorWindow
           GUILayout.BeginHorizontal();
           if(GUILayout.Button(""+f.gameObject.name , skin.GetStyle("GO_Button"))){
             EditorGUIUtility.PingObject( f.gameObject);
-            Selection.activeObject = f.gameObject;
+            Selection.activeTransform = f.gameObject.transform;
             //+ " : " + f.GetType() +  " : " + f.count * f.structSize
           }
 
@@ -340,10 +364,101 @@ public class GlobalEditWindow : EditorWindow
           GUILayout.Label( " : " + f.GetType() );
           GUILayout.EndHorizontal();
         }
-        GUILayout.EndVertical();;
+        GUILayout.EndVertical();
         EditorGUILayout.EndScrollView();
 
+        GuiLine();
+
       }
+    }
+
+
+
+    public bool recursiveSave;
+    public bool recursiveLoad;
+
+    public void SaveCurrentForm(GameObject g){
+
+      if( g.GetComponent<Form>() != null ){
+        Form f = g.GetComponent<Form>();
+        Saveable.Save(f);
+        Debug.Log("Saving Form : " + f.GetType() + " || On Game Object || " + g.name);
+      }else{
+        Debug.Log("No  Forms On Object");
+      }
+
+        if( recursiveSave ){
+          Cycle[] cycles = g.GetComponents<Cycle>();
+          for( int i = 0; i < cycles.Length; i++ ){
+            for(int j =0; j < cycles[i].Cycles.Count; j++){
+            if( cycles[i].Cycles[j].gameObject != g ){
+              SaveCurrentForm( cycles[i].Cycles[j].gameObject );
+            }}
+          }
+        }
+      
+    }
+
+
+    public void LoadCurrentForm(GameObject g){
+
+      if( g.GetComponent<Form>() != null ){
+        Form f = g.GetComponent<Form>();
+        Saveable.Load(f);
+        Debug.Log("Saving Form : " + f.GetType() + " || On Game Object || " + g.name);
+      }else{
+        Debug.Log("No  Forms On Object");
+      }
+
+        if( recursiveLoad ){
+          Cycle[] cycles = g.GetComponents<Cycle>();
+          for( int i = 0; i < cycles.Length; i++ ){
+            for(int j =0; j < cycles[i].Cycles.Count; j++){
+            if( cycles[i].Cycles[j].gameObject != g ){
+              LoadCurrentForm( cycles[i].Cycles[j].gameObject );
+            }}
+          }
+        }
+      
+    }
+
+
+
+    void ShowSaveButtons(){
+
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        GUILayout.BeginVertical();
+         
+        GUILayout.BeginHorizontal();
+          if(GUILayout.Button("Save Current Form" , skin.GetStyle("SAVE_Button"))){
+            if( Selection.activeTransform != null) SaveCurrentForm(Selection.activeTransform.gameObject);
+          }
+          recursiveSave = EditorGUILayout.Toggle(recursiveSave,GUILayout.Width(30));
+        GUILayout.EndHorizontal();
+    EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        GUILayout.BeginHorizontal();
+          if(GUILayout.Button("Load Current Form" , skin.GetStyle("SAVE_Button"))){
+            if( Selection.activeTransform != null) LoadCurrentForm(Selection.activeTransform.gameObject);
+          }
+          recursiveLoad = EditorGUILayout.Toggle(recursiveLoad,GUILayout.Width(30));
+        GUILayout.EndHorizontal();
+      
+        GUILayout.EndVertical();
+
+      
+    }
+
+    void ShowRender(){
+
+Rect rect = EditorGUILayout.GetControlRect(false, 10 );
+
+       rect.height = rect.width;
+
+        EditorGUI.DrawPreviewTexture( rect , renderTexture);
     }
 
     void StartGroup(){
@@ -356,4 +471,16 @@ public class GlobalEditWindow : EditorWindow
       EditorGUI.indentLevel = indent ;
       EditorGUILayout.EndVertical();
     }
+
+    void GuiLine( int i_height = 1 )
+
+   {
+
+       Rect rect = EditorGUILayout.GetControlRect(false, i_height );
+
+       rect.height = i_height;
+
+       EditorGUI.DrawRect(rect, new Color ( 0.5f,0.5f,0.5f, 1 ) );
+
+   }
 }

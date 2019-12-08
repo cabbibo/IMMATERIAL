@@ -192,6 +192,8 @@ public class AudioPlayer : Cycle{
 
     public void Play( AudioClip clip , int step , float volume, AudioMixer mixer, string group ){
         float p = Mathf.Pow( 1.05946f , (float)step );
+        
+        sources[playID].outputAudioMixerGroup = mixer.FindMatchingGroups(group)[0];
         sources[playID].volume = volume;
         sources[playID].pitch = p;
         Play(clip);

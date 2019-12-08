@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 
 public class IndexForm : Form {
@@ -9,6 +10,8 @@ public class IndexForm : Form {
   public Form toIndex;
 
   public override void _Create(){
+
+    if( mpb == null ){ mpb = new MaterialPropertyBlock(); }
     if( toIndex == null ){ toIndex = GetComponent<Form>(); } 
     DoCreate();
     SetStructSize();
@@ -20,12 +23,13 @@ public class IndexForm : Form {
   
 
   public override void WhileDebug(){
-    debugMaterial.SetPass(0);
-    debugMaterial.SetBuffer("_VertBuffer", toIndex._buffer);
-    debugMaterial.SetBuffer("_TriBuffer", _buffer);
-    debugMaterial.SetInt("_Count",count);
-    debugMaterial.SetInt("_VertCount",toIndex.count);
-    Graphics.DrawProceduralNow(MeshTopology.Lines, (count-1) * 2 );
+
+    mpb.SetBuffer("_VertBuffer", toIndex._buffer);
+    mpb.SetBuffer("_TriBuffer", _buffer);
+    mpb.SetInt("_Count",count);
+    mpb.SetInt("_VertCount",toIndex.count);
+     Graphics.DrawProcedural(debugMaterial,  new Bounds(transform.position, Vector3.one * 5000), MeshTopology.Lines, count  * 2 , 1, null, mpb, ShadowCastingMode.Off, true, LayerMask.NameToLayer("Debug"));
+
   }
 
 }
