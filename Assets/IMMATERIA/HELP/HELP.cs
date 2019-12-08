@@ -81,6 +81,21 @@ public class HELP{
 
   }
 
+ public struct CycleInfo {
+    
+    public string name;
 
+    public int   type;
+    public int[] children;
+    public int parent;
 
+    public int lookupStart;
+    public int lookupLength;
+
+    public Vector3 position;
+    public Vector3 scenePosition;
+
+    public int active;
+
+  };
 }

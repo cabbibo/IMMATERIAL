@@ -39,6 +39,7 @@ Shader "Debug/BuildTreeLines" {
 
 
       StructuredBuffer<Vert> _VertBuffer;
+      StructuredBuffer<Vert> _InfoBuffer;
       StructuredBuffer<int> _ConnectionBuffer;
 
       //A simple input struct for our pixel shader step containing a position.
@@ -65,8 +66,9 @@ Shader "Debug/BuildTreeLines" {
 
          // int t1 = _ConnectionBuffer[baseConnection];
           Vert v1 = _VertBuffer[baseConnection];
-          int t2 = _ConnectionBuffer[v1.parent];
-          Vert v2 = _VertBuffer[v1.parent];
+          Vert i1 = _InfoBuffer[baseConnection];
+          int t2 = _ConnectionBuffer[i1.parent];
+          Vert v2 = _VertBuffer[i1.parent];
 
           o.which = 0;
           if( baseConnection == _SelectedVert || v1.parent == _SelectedVert ){

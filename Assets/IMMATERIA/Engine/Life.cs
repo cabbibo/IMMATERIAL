@@ -56,9 +56,6 @@ public class Life : Cycle {
   }
 
 
-
-
-
    public struct BoundVector2{
     public string nameInShader;
     public Func<Vector2> lambda;

@@ -563,4 +563,13 @@ void SetStates(){
       }
   }
 
+
+  public void AddBinders(){
+    Cycle[] cycles =  gameObject.GetComponents<Cycle>();
+
+    foreach( Cycle c in cycles ){
+      if( c is Binder ){ SafeInsert(c);}
+    }
+  }
+
 }

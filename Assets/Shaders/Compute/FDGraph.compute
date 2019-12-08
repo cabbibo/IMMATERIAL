@@ -1,10 +1,11 @@
 ﻿#pragma kernel Simulation
+#pragma kernel Resolve
 
 
 struct Vert{
   float3 pos;
   float3 vel;
-  float3 oPos;
+  float3 force;
   float3 tang;
   float lookupStart;
   float lookupLength;
@@ -13,9 +14,24 @@ struct Vert{
 };
 
 
+
+struct Info{
+  float3 pos;
+  float3 vel;
+  float3 force;
+  float3 tang;
+  float lookupStart;
+  float lookupLength;
+  float  parent;
+  float  level;
+};
+
+
+RWStructuredBuffer<Info> _InfoBuffer;
 RWStructuredBuffer<Vert> _VertBuffer;
 RWStructuredBuffer<int> _ConnectionBuffer;
 
+int _InfoBuffer_COUNT;
 int _VertBuffer_COUNT;
 int _ConnectionBuffer_COUNT;
 
@@ -32,36 +48,44 @@ void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
   if( pID < _VertBuffer_COUNT ){
     
     int sID = safeID( pID, _VertBuffer_COUNT );
+
     Vert v = _VertBuffer[sID];
+    Info info = _InfoBuffer[sID];
 
     float3 force = 0;
 
     float3 center = mul(_Transform,float4(0,0,0,1));
-    force = -normalize(v.pos -center) * 2.01;
+    force = -normalize(v.pos -center) * 0;
 
-    Vert parent = _VertBuffer[int(v.parent)];
+    Vert parent = _VertBuffer[int(info.parent)];
 
-    if( v.parent != pID ){
+    if( int(info.parent) != pID ){
         float3 dif =  (v.pos-parent.pos);
         if( length(dif) != 0 ){
-          force -= normalize(dif) * (length(dif)-(.4)) * 1.07;
-      } 
+          force -= normalize(dif) * (length(dif)-(.4)) * 10.07;
+        } 
     }
 
-    if( sID == 0 ){
-      v.pos = center;
-    }
-
-    
-
-
-    for( int i=0; i < v.lookupLength; i++){
-      int id = _ConnectionBuffer[v.lookupStart + i ];
+  
+    for( int i=0; i < info.lookupLength; i++){
+      int id = _ConnectionBuffer[info.lookupStart + i ];
       if( id != pID ){
         Vert oV = _VertBuffer[id];
         float3 dif =  -(v.pos - oV.pos);
         if( length(dif) != 0 ){
-          force -= normalize(dif)/length(dif) * .4;
+          force += normalize(dif) * (length(dif)-(.4)) * 4.07;
+        } 
+      }
+    }
+
+    Info parentInfo = _InfoBuffer[info.parent];
+    for( int i=0; i < parentInfo.lookupLength; i++){
+      int id = _ConnectionBuffer[parentInfo.lookupStart + i ];
+      if( id != pID ){
+        Vert oV = _VertBuffer[id];
+        float3 dif =  -(v.pos - oV.pos);
+        if( length(dif) != 0 ){
+          force -= normalize(dif) * .5;
         } 
       }
     }
@@ -71,21 +95,49 @@ void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
         Vert oV = _VertBuffer[i];
         float3 dif = v.pos - oV.pos;
         if( length(dif) > 0 ){ 
-          force += normalize(dif)/length(dif) * .05;
+          force += normalize(dif)/(.1+length(dif)) * .01;
         }
       }
     }
    
     if( length(force) > 100 ){ force = normalize(force) * 100; }
-    if( length(v.vel) > 100 ){ v.vel = normalize(v.vel) * 100; }
 
+    v.force = force;
 
-    v.vel += force * .01;
-    v.pos += v.vel;
-    v.vel *= .8;
-
+    if( sID == 0 ){
+      v.force = 0;
+      v.pos = center;
+    }
 
     _VertBuffer[sID] = v;
+
+
+  }
+
+}
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Resolve(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = threadID + u3GroupID.x * NR_THREADS;
+
+  if( pID < _VertBuffer_COUNT ){
+    
+    int sID = safeID( pID, _VertBuffer_COUNT );
+    Vert v = _VertBuffer[sID];
+
+    if( length(v.vel) > 100 ){ v.vel = normalize(v.vel) * 100; }
+    v.vel += v.force * .01;
+    v.pos += v.vel;
+    v.vel *= .9;
+
+      if( sID != 0 ){
+
+    _VertBuffer[sID] = v;
+    }
+
 
 
   }

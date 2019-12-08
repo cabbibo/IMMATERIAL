@@ -67,7 +67,7 @@ public class Data : Cycle
 
 
   public override void Create(){
-    
+    Cycles.Clear();
     if( framer != null ){ SafePrepend(framer); }
     if( journey != null ){ SafePrepend(journey); }
     if( tween != null ){ SafePrepend(tween); }

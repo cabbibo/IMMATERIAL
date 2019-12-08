@@ -12,17 +12,33 @@ public class CalcLife : Life{
   public bool readBack;
   
   public override void _Create(){
-     boundForms = new Dictionary<string, Form>();
-     boundInts = new Dictionary<string, int>();
-     boundAttributes = new List<BoundAttribute>();
-     FindKernel();
-     GetNumThreads();
-    // OnCreate();
-     
-     _buffer = new ComputeBuffer((int)count, 4 * sizeof(float));
-     
-     values = new float[count*4];
+   
 
+    /*
+      
+      Normal base class creation stuff!
+
+    */
+    DoCreate();
+    boundForms = new Dictionary<string, Form>();
+    boundInts = new Dictionary<string, int>();
+    boundAttributes = new List<BoundAttribute>();
+
+    boundIntList = new List<BoundInt>();
+    boundFloatList = new List<BoundFloat>();
+    boundFloatsList = new List<BoundFloats>();
+    boundVector2List = new List<BoundVector2>();
+    boundVector3List = new List<BoundVector3>();
+    boundVector4List = new List<BoundVector4>();
+    boundMatrixList = new List<BoundMatrix>();
+    boundTextureList = new List<BoundTexture>();
+    boundBufferList = new List<BoundBuffer>();
+    FindKernel();
+    GetNumThreads();
+  
+     
+    _buffer = new ComputeBuffer((int)count, 4 * sizeof(float));
+    values = new float[count*4];
     _buffer.SetData(values);
     
   }

@@ -10,21 +10,21 @@ public class BuildCycleTreeCPU : Cycle
 
     public Transform transformHolder;
 
-    public List<CycleInfo> cycleInfo;
+    public List<CycleInfoCPU> cycleInfo;
 
     public void Rebuild(){
 
-        foreach( CycleInfo ci in cycleInfo ){
+        foreach( CycleInfoCPU ci in cycleInfo ){
           DestroyImmediate(ci.gameObject);
         }
 
-       cycleInfo = new List<CycleInfo>();
+       cycleInfo = new List<CycleInfoCPU>();
 
-       CycleInfo ci2 = GetComponent<CycleInfo>();
+       CycleInfoCPU ci2 = GetComponent<CycleInfoCPU>();
        ci2.cycle = data; 
 
 
-        Spawn( GetComponent<CycleInfo>() , 1);
+        Spawn( GetComponent<CycleInfoCPU>() , 1);
 
 
     }
@@ -38,12 +38,12 @@ public class BuildCycleTreeCPU : Cycle
 
     }
 
-    public void Spawn( CycleInfo p_cycleInfo  , int currentLevel ){
+    public void Spawn( CycleInfoCPU p_cycleInfo  , int currentLevel ){
 
       int siblingCount = p_cycleInfo.cycle.Cycles.Count;
       int id = 0;
 
-      List<CycleInfo> childList = new List<CycleInfo>();
+      List<CycleInfoCPU> childList = new List<CycleInfoCPU>();
 
 
       foreach( Cycle c in p_cycleInfo.cycle.Cycles ){
@@ -53,7 +53,7 @@ public class BuildCycleTreeCPU : Cycle
         child.transform.localPosition = new Vector3( (int)id , -1 , Random.Range(-.99f,.99f) * 20 );
         child.transform.localScale = new Vector3( .6f , .6f, .6f );
         child.name ="" + c.gameObject.name + " || " + c.GetType();
-        CycleInfo ci = child.GetComponent<CycleInfo>();
+        CycleInfoCPU ci = child.GetComponent<CycleInfoCPU>();
 
 
 
@@ -78,7 +78,7 @@ public class BuildCycleTreeCPU : Cycle
 
       p_cycleInfo.children = childList;
 
-      foreach( CycleInfo ci in childList ){
+      foreach( CycleInfoCPU ci in childList ){
         ci.siblings = childList;
       }
 
@@ -96,7 +96,7 @@ public class BuildCycleTreeCPU : Cycle
 
       GameObject go;
       GameObject parent;
-      CycleInfo ci;
+      CycleInfoCPU ci;
       Vector3 force;
       Vector3 t1;
 
@@ -111,12 +111,12 @@ public class BuildCycleTreeCPU : Cycle
         t1 = ci.transform.position - ci.parent.transform.position;
         force += -t1 * .1f;
 
-        foreach( CycleInfo sibling in ci.siblings ){
+        foreach( CycleInfoCPU sibling in ci.siblings ){
           t1 = ci.transform.position - sibling.transform.position;
           force +=  (t1.normalized * ((100 / (1+4*(float)ci.level)) -t1.magnitude))  * .1f;
         }
 
-         foreach( CycleInfo sibling in cycleInfo ){
+         foreach( CycleInfoCPU sibling in cycleInfo ){
           t1 = ci.transform.position - sibling.transform.position;
           force += t1.normalized/(1+t1.magnitude) * .01f;//* ((100 / (1+(float)ci.level)) -t1.magnitude))  * .1f;
         }

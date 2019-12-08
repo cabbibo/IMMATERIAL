@@ -301,8 +301,6 @@ public class GlobalEditWindow : EditorWindow
         startStory = EditorGUILayout.IntField ("StartStory", startStory);
         startPage = EditorGUILayout.IntField ("StartPage", startPage);
 
-        Debug.Log(startInStory);
-
         state.startStory = startStory;
         state.startPage = startPage;
         state.startInStory = startInStory;

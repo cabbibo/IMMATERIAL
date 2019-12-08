@@ -12,9 +12,10 @@ public class CallGraph : EditorWindow
      Repaint();
  }
 
+    public Camera camera;
    
     public RenderTexture renderTexture;
-    public BuildCycleVerts verts;
+    public BuildTree buildTree;
 
 
 
@@ -33,16 +34,27 @@ public class CallGraph : EditorWindow
     void OnGUI()
     {
 
-   
+        Vector2 screenPos = Event.current.mousePosition;
+        //Debug.Log( screenPos );
         ShowRender();
    
+    }
+
+    bool allAssigned{
+      get { return (renderTexture != null && camera != null && buildTree != null ); }
     }
   
 
     void ShowRender(){
-if( renderTexture == null ) renderTexture = (RenderTexture)EditorGUILayout.ObjectField(renderTexture,typeof(RenderTexture),true);
+      buildTree = (BuildTree)EditorGUILayout.ObjectField(buildTree,typeof(BuildTree),true);
+      if( buildTree != null ){
+        camera = buildTree.camera;
+        renderTexture = camera.targetTexture;
+      }
 
-      if( renderTexture != null ){
+      if( allAssigned ){
+
+        camera.transform.LookAt(buildTree.transform);
         Rect rect = EditorGUILayout.GetControlRect(false, 10 );
 
        rect.height = rect.width;
