@@ -18,6 +18,7 @@ public class GlobalEditWindow : EditorWindow
     private bool showControls;
     public bool lockToGameCamera;
     public bool doInputEvents;
+    public bool godPause;
 
     // CONTROLS
 
@@ -282,7 +283,8 @@ public class GlobalEditWindow : EditorWindow
 
         lockToGameCamera = EditorGUILayout.Toggle ("Lock To Game Camera", lockToGameCamera);
         doInputEvents = EditorGUILayout.Toggle ("Do InputEvents", doInputEvents);
-
+        godPause = EditorGUILayout.Toggle ("God Pause", godPause);
+        god.godPause = godPause;
         EndGroup();
 
       }
@@ -301,10 +303,10 @@ public class GlobalEditWindow : EditorWindow
         startStory = EditorGUILayout.IntField ("StartStory", startStory);
         startPage = EditorGUILayout.IntField ("StartPage", startPage);
 
-        state.startStory = startStory;
-        state.startPage = startPage;
-        state.startInStory = startInStory;
-        state.startInPages = startInPages;
+       // state.startStory = startStory;
+       // state.startPage = startPage;
+       // state.startInStory = startInStory;
+       // state.startInPages = startInPages;
 
         EndGroup();
 

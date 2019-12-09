@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class ReduceLife : Life{
   
-  private float[] values;
+  public int numberGroups;
+  public float[] values;
   public Vector4 value;
   public ComputeBuffer _buffer;
   public uint count;
   
-  public override void Create(){
+  public override void _Create(){
     
     /*
       Normal base class creation stuff!
@@ -34,9 +35,7 @@ public class ReduceLife : Life{
   
     count = numThreads;
      
-    _buffer = new ComputeBuffer((int)numThreads, 4 * sizeof(float));
-    values = new float[numThreads*4];
-    _buffer.SetData(values);
+
 
 
 
@@ -48,22 +47,39 @@ public class ReduceLife : Life{
     shader.SetFloat("_Time", Time.time);
     shader.SetFloat("_Delta", Time.deltaTime);
     shader.SetBuffer(kernel, "_OutBuffer" , _buffer );///, Time.deltaTime);
+    shader.SetInt( "_OutBuffer_COUNT" , (int)count );///, Time.deltaTime);
 
   }
 
-  public override void AfterDispatch(){
+  public override void Bind(){
+    GetNumGroups();
+    _buffer = new ComputeBuffer((int)numGroups, 4 * sizeof(float));
+    values = new float[numGroups*4];
+    _buffer.SetData(values);
+  }
 
+  public override void AfterDispatch(){
+    numberGroups = numGroups;
     _buffer.GetData(values);
     float x = 0; float y = 0; float z = 0; float w = 0;
 
-    for( int i = 0; i < numThreads; i++ ){
-      x += values[i*4+0];
-      y += values[i*4+1];
-      z += values[i*4+2];
-      w += values[i*4+3];
+    Vector3 closest = Vector3.one * 100000;
+    float closestID = -1;
+
+    for( int i = 0; i < numGroups; i++ ){
+      Vector3 v = new Vector3( values[i*4+0]
+                             , values[i*4+1]
+                             , values[i*4+2] );
+
+      float id = values[i*4+3];
+
+      if( v.magnitude < closest.magnitude ){
+        closest = v;
+        closestID = id;
+      }
     }
 
-    value = new Vector4( x , y , z , w );
+    value = new Vector4( closest.x , closest.y , closest.z , closestID );
   }
 
 }

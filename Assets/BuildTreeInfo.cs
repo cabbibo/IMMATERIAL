@@ -22,9 +22,7 @@ public class BuildTreeInfo : Form
 
   public override void OnGestate(){
 
-    print( allCycles.Count-1 );
-    print( god.cycles.Count);
-    //if( allCycles.Count != god.cycles.Count){
+      //if( allCycles.Count != god.cycles.Count){
       lookupBuffer = new List<int>();
       allCycles = new List<Cycle>();
       allCyclesInfo = new List<HELP.CycleInfo>();
@@ -59,17 +57,27 @@ public class BuildTreeInfo : Form
 
       Cycle cycle = allCycles[cycleID];
 
+
+
       HELP.CycleInfo ci = new HELP.CycleInfo();
 
       ci.type = 0;
-      if( cycle is Form               ){ ci.type = 1;}
-      if( cycle is Life               ){ ci.type = 2;}
-      if( cycle is Binder             ){ ci.type = 3;}
-      if( cycle is Simulation         ){ ci.type = 4;}
-      if( cycle is TransferLifeForm   ){ ci.type = 5;} // should eventually be simulation?
+
+      if( cycle is Form               ){ ci.type = 1;  }
+      if( cycle is Life               ){ ci.type = 2;  }
+      if( cycle is Binder             ){ ci.type = 3;  }
+      if( cycle is Simulation         ){ ci.type = 4;  }
+      if( cycle is Page               ){ ci.type = 5;  }
+      if( cycle is Body               ){ ci.type = 6;  }
+      if( cycle is TransferLifeForm   ){ ci.type = 7;  } // should eventually be simulation?
+
+      ci.id = cycleID;
+      ci.cycle = cycle;
 
       ci.position = cycle.transform.position;
-
+      ci.name = "" + cycle.GetType();
+      ci.goName = "" + cycle.gameObject.name;
+      ci.go = cycle.gameObject;
       bool alreadyOne = false;
       if( cycle.parent ){
         
@@ -84,6 +92,9 @@ public class BuildTreeInfo : Form
         for( int i = 0; i < cycle.parent.Cycles.Count; i++ ){
           if( cycle.parent.Cycles[i] == cycle){ me = i; }
         }
+
+        ci.siblingID = me;
+        ci.siblingCount = cycle.parent.Cycles.Count;
 
         ci.position = allCyclesInfo[ci.parent].position + new Vector3((float)me , 1 , 0 );
 
@@ -143,14 +154,16 @@ public class BuildTreeInfo : Form
       values[index++] = ci.scenePosition.y;
       values[index++] = ci.scenePosition.z;
       
-      values[index++] = ci.active;
-      values[index++] = 0;
-      values[index++] = 0;
 
       values[index++] = 0;
       values[index++] = 0;
       values[index++] = 0;
-      
+
+
+      values[index++] = ci.active;
+      values[index++] = ci.type;
+      values[index++] = ci.siblingCount;
+
       values[index++] = ci.lookupStart;
       values[index++] = ci.lookupLength;
 

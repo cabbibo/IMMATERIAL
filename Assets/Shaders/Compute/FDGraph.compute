@@ -6,20 +6,24 @@ struct Vert{
   float3 pos;
   float3 vel;
   float3 force;
-  float3 tang;
+  float active;
+  float type;
+  float siblingCount;
   float lookupStart;
   float lookupLength;
   float  parent;
-  float  level;
+  float  debug;
 };
 
 
 
 struct Info{
   float3 pos;
-  float3 vel;
-  float3 force;
-  float3 tang;
+  float3 scenePos;
+  float3 BLAHBLAH;
+  float active;
+  float type;
+  float siblingCount;
   float lookupStart;
   float lookupLength;
   float  parent;
@@ -34,6 +38,25 @@ RWStructuredBuffer<int> _ConnectionBuffer;
 int _InfoBuffer_COUNT;
 int _VertBuffer_COUNT;
 int _ConnectionBuffer_COUNT;
+
+float3 _RO;
+float3 _RD;
+int _SelectedVert;
+int _ActiveVert;
+
+float3 VecToRay( float3 pos ){
+  
+  float3 p2 = _RO - _RD * 200;
+  float3 pa = pos - _RO;
+  float3 ba = _RO - p2;
+  float h =  dot(pa,ba)/dot(ba,ba);
+  float3 pOnLine = h * _RD* 200 +_RO;
+
+  float3 inLine = pos - pOnLine;
+
+  return  inLine;//normalize(inLine) * force *  (1 - clamp( length(inLine) / radius , 0 , 1));
+}
+
 
 float4x4 _Transform;
 
@@ -51,20 +74,33 @@ void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     Vert v = _VertBuffer[sID];
     Info info = _InfoBuffer[sID];
+    v.type = info.type;
 
     float3 force = 0;
 
     float3 center = mul(_Transform,float4(0,0,0,1));
-    force = -normalize(v.pos -center) * 0;
+    force = -(v.pos -center) * .01;
 
     Vert parent = _VertBuffer[int(info.parent)];
+    
+    float3 vec = VecToRay( v.pos );
+
+    vec = normalize( vec ) / (1 + length(vec) * length( vec));
+    if( pID == _SelectedVert ){
+      force -= vec;
+      v.vel = 0;
+    }else{
+      force += vec;
+    }
 
     if( int(info.parent) != pID ){
         float3 dif =  (v.pos-parent.pos);
         if( length(dif) != 0 ){
-          force -= normalize(dif) * (length(dif)-(.4)) * 10.07;
+          force -= normalize(dif) * (length(dif)-(.3)) * 8.07;
         } 
     }
+
+
 
   
     for( int i=0; i < info.lookupLength; i++){
@@ -73,7 +109,7 @@ void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
         Vert oV = _VertBuffer[id];
         float3 dif =  -(v.pos - oV.pos);
         if( length(dif) != 0 ){
-          force += normalize(dif) * (length(dif)-(.4)) * 4.07;
+          force += normalize(dif) * (length(dif)-(.3)) * 4.07;
         } 
       }
     }
@@ -95,7 +131,7 @@ void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
         Vert oV = _VertBuffer[i];
         float3 dif = v.pos - oV.pos;
         if( length(dif) > 0 ){ 
-          force += normalize(dif)/(.1+length(dif)) * .01;
+          force += normalize(dif)/(.1+length(dif)*length(dif)) * .1;
         }
       }
     }
@@ -131,11 +167,10 @@ void Resolve(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     if( length(v.vel) > 100 ){ v.vel = normalize(v.vel) * 100; }
     v.vel += v.force * .01;
     v.pos += v.vel;
-    v.vel *= .9;
+    v.vel *= .8;
 
-      if( sID != 0 ){
-
-    _VertBuffer[sID] = v;
+    if(  sID != 0  ){
+      _VertBuffer[sID] = v;
     }
 
 

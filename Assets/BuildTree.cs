@@ -1,27 +1,59 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class BuildTree :Cycle
 {
 
     public Camera camera;
+    public AudioClip[] hoverClips;
+    public AudioClip[] selectClips;
 
+    public Transform vectorRep;
+
+    public TextMesh typeLabel;
+    public TextMesh goLabel;
+    public TextMesh idLabel;
+    public TextMesh extraLabel;
+
+    public GameObject goToGO;
+    public GameObject saveGO;
+    public GameObject scriptGO;
+    public GameObject moreInfoGO;
+    public GameObject goToStoryGO;
+
+    public int selectedVert;
+    public int oSelectedVert;
+    public float selectedDist;
+    public float oSelectedDist;
+    public HELP.CycleInfo activeCycleInfo;
+    
     public BuildTreeVerts verts;
     public BuildTreeInfo info;
     public BuildTreeConnections connections;
 
     public Life sim;
     public Life resolve;
-    public Life closest;
+    public ReduceLife closest;
 
+    public int activeVert;
+
+    public float lastPlayTime;
+
+    public Ray ray;
+    public Vector3 _RO;
+    public Vector3 _RD;
+
+    public Vector3 target;
     public override void Create(){
+      lastPlayTime = 0;
       SafeInsert(info);
       SafeInsert(verts);
       SafeInsert(connections);
       SafeInsert(sim);
       SafeInsert(resolve);
-     // SafeInsert(closest);
+      SafeInsert(closest);
       AddBinders();
     }
 
@@ -30,11 +62,211 @@ public class BuildTree :Cycle
       sim.BindForm("_InfoBuffer",info);
       sim.BindForm("_ConnectionBuffer",connections);
 
+
+      sim.BindVector3("_RO" , () => _RO);
+      sim.BindVector3("_RD" , () => _RD);
+      sim.BindInt("_SelectedVert" , () => selectedVert );
+      sim.BindInt("_ActiveVert" , () => activeVert );
+
+      closest.BindPrimaryForm("_VertBuffer",verts);
+      closest.BindVector3("_RO" , () => _RO);
+      closest.BindVector3("_RD" , () => _RD);
+
+
+      resolve.BindInt("_SelectedVert" , () => selectedVert );
       resolve.BindPrimaryForm("_VertBuffer",verts);
       resolve.BindForm("_ConnectionBuffer",connections);
 
-     // closest.BindForm("_VertBuffer",verts);
 
     }
+
+    public override void WhileLiving( float v ){
+
+      oSelectedVert = selectedVert;
+      oSelectedDist = selectedDist;
+
+      vectorRep.position = _RO + _RD * 10;
+      int id  = (int)closest.value.w;
+      selectedDist = (new Vector3(closest.value.x , closest.value.y , closest.value.z )).magnitude;
+      info.selectedVert = selectedVert;
+      if(selectedVert < info.allCyclesInfo.Count && selectedVert >= 0){
+        typeLabel.text  = "" + info.allCyclesInfo[selectedVert].name;
+        goLabel.text    = "" + info.allCyclesInfo[selectedVert].goName;
+        idLabel.text    = "" + info.allCyclesInfo[selectedVert].id;
+        extraLabel.text = "" + info.allCyclesInfo[selectedVert].siblingCount;
+
+        typeLabel.color  = Color.white;
+        goLabel.color    = Color.white;
+        idLabel.color    = Color.white;
+        extraLabel.color = Color.white;
+      }else{
+
+        if( activeVert < info.allCyclesInfo.Count && activeVert >= 0 ){
+
+          typeLabel.text  = "" + info.allCyclesInfo[activeVert].name;
+          goLabel.text    = "" + info.allCyclesInfo[activeVert].goName;
+          idLabel.text    = "" + info.allCyclesInfo[activeVert].id;
+          extraLabel.text = "" + info.allCyclesInfo[activeVert].siblingCount;
+
+
+          typeLabel.color  = Color.red;
+          goLabel.color    = Color.red;
+          idLabel.color    = Color.red;
+          extraLabel.color = Color.red;
+        }else{
+
+          typeLabel.text  = "";
+          goLabel.text    = "";
+          idLabel.text    = "";
+          extraLabel.text = "";
+
+        }
+      }
+
+      if( oSelectedVert != id && selectedDist < 1){
+        OnNewVert(id);
+      }
+
+      if( selectedDist > 1 ){
+        OnNoVert();
+      }
+
+
+    
+
+    }
+
+    public void OnNewVert(int id){
+
+      selectedVert = id;
+
+      if( Time.time - lastPlayTime > .1f){
+        data.audio.Play( hoverClips[Random.Range(0,hoverClips.Length)]  , 2.01f, .3f);
+        lastPlayTime = Time.time;
+      }
+
+    }
+
+    public void OnNoVert(){
+      selectedVert = activeVert;
+    }
+
+    public void WindowMouseUp(){
+
+      Ray ray = new Ray( _RO , _RD );
+      RaycastHit hit;
+      if( Physics.Raycast( ray , out hit ) ){
+        
+        if( hit.collider.gameObject == saveGO ){
+          DoSave();
+        }else if( hit.collider.gameObject == goToGO ){
+          DoGoTo();
+        }else if( hit.collider.gameObject == scriptGO ){
+          DoScript();
+        }else if( hit.collider.gameObject == moreInfoGO ){
+          DoMoreInfo();
+        }else if( hit.collider.gameObject == goToStoryGO ){
+          GoToStory();
+        }
+      }else{
+
+      if(selectedDist < .5f ){
+        ActivateVert();
+      }
+
+      }
+
+      
+    }
+
+    public void WindowMouseDown(){
+
+    }
+
+    public void WindowMouseDrag(){
+
+    }
+
+    public void ActivateVert(){
+      activeCycleInfo = info.allCyclesInfo[selectedVert];
+      activeVert = activeCycleInfo.id;
+      HighlightGameObject();
+
+      data.audio.Play( selectClips[Random.Range(0,selectClips.Length)]  , 1.01f, .6f);
+
+      float [] d = new float[verts.structSize];
+      verts._buffer.GetData( d , 0 , (int)activeVert * verts.structSize , verts.structSize );
+      //GetData(Array data, int managedBufferStartIndex, int computeBufferStartIndex, int count);
+
+      target = new Vector3(d[0] , d[1] , d[2] );
+    }
+
+
+
+    public void HighlightGameObject(){
+      GameObject go = activeCycleInfo.go;
+      EditorGUIUtility.PingObject( go );    
+      Selection.activeTransform = activeCycleInfo.go.transform;
+    }
+
+    public void DoGoTo(){
+      SceneView scene = (SceneView) SceneView.sceneViews[0];
+      scene.pivot =  activeCycleInfo.go.transform.position;
+      scene.rotation =  activeCycleInfo.go.transform.rotation;
+    }
+
+    public void DoScript(){
+      var script = MonoScript.FromMonoBehaviour(activeCycleInfo.cycle); // gets script as an asset
+      AssetDatabase.OpenAsset(script); // opens script in your predefined script editor
+    }
+
+    public void DoSave(){
+      RecursiveSave( activeCycleInfo.cycle );
+    }
+
+    public void RecursiveSave( Cycle cycle ){
+
+      if( cycle is Form ){ Saveable.Save((Form)cycle); }
+      foreach( Cycle c in cycle.Cycles ){
+        RecursiveSave(c);
+      }
+
+    }
+
+    public void GoToStory(){
+      StepUp(activeCycleInfo.cycle.parent);
+    }
+
+    public void StepUp(Cycle c){
+      if( c is StorySetter ){
+        int story = 0;
+
+        for( int i = 0; i < data.journey.stories.Length; i++ ){
+          print( i );
+          if( data.journey.stories[i] == c ){
+            data.state.startInStory = true;
+            data.state.startInPages = true;
+            data.state.startStory = i;
+            data.state.startPage = 0;
+            data.god.Rebuild();
+            break;
+          }
+        }
+      }else{
+        if( c.parent != null ){
+          StepUp(c.parent);
+        }else{
+          print("NO STASODOD");
+        }
+      }
+    }
+
+
+  public void DoMoreInfo(){
+
+  }    
+
+
+
 
 }

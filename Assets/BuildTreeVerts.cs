@@ -14,14 +14,13 @@ public class BuildTreeVerts : Particles
   public override void SetCount(){}
 
   public override void OnGestate(){
-    print("counnnns");
     count = info.count;
-    print(count);
   }
 
 
   public override void Embody(){
 
+    print("EMBODY GETTING CALLLED");
     print( structSize );
     float[] values = new float[count * structSize];
 

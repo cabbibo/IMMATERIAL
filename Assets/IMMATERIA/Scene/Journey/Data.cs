@@ -18,7 +18,7 @@ public class Data : Cycle
 {
     
 
-  
+  public God god;
   public Transform camera;
   public Transform player;
 
@@ -67,6 +67,7 @@ public class Data : Cycle
 
 
   public override void Create(){
+    god = (God)parent;
     Cycles.Clear();
     if( framer != null ){ SafePrepend(framer); }
     if( journey != null ){ SafePrepend(journey); }

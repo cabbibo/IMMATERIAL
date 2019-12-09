@@ -6,11 +6,15 @@ public class CallGraph : EditorWindow
 
 
 
-  public void Update()
- {
-     // This is necessary to make the framerate normal for the editor window.
-     Repaint();
- }
+public void Update()
+{
+   // This is necessary to make the framerate normal for the editor window.
+
+   Repaint();
+}
+
+
+
 
     public Camera camera;
    
@@ -18,6 +22,11 @@ public class CallGraph : EditorWindow
     public BuildTree buildTree;
 
 
+    float viewWidth;
+    float startHeight;
+    float distance = 10;
+
+    public Vector3 target;
 
     // Add menu named "My Window" to the Window menu
     [MenuItem("Window/CallGraph")]
@@ -29,15 +38,56 @@ public class CallGraph : EditorWindow
         window.Show();
     }
 
+  
 
+    void OnSceneGUI(SceneView sceneView){
 
+  
+    }
+    public bool dragging;
+    Vector2 angle = new Vector2();
+    Vector2 angleForce = new Vector2();
     void OnGUI()
     {
 
-        Vector2 screenPos = Event.current.mousePosition;
-        //Debug.Log( screenPos );
+        Event e = Event.current;
+
         ShowRender();
    
+        //Debug.Log( screenPos );
+        if( allAssigned  && EditorWindow.focusedWindow == this ){
+
+         // Debug.Log( viewWidth );
+         // Debug.Log( camera.pixelHeight );
+         Vector2 mousePos = e.mousePosition * camera.pixelHeight/viewWidth ;
+          mousePos.y = camera.pixelHeight - mousePos.y;//* (camera.pixelHeight/viewWidth);
+          Ray ray = camera.ScreenPointToRay( mousePos );
+          
+          buildTree._RO = ray.origin;
+          buildTree._RD = ray.direction;
+
+      
+
+          if( e.type == EventType.ScrollWheel ){
+            distance += e.delta.y;
+          }
+
+          if( e.type == EventType.MouseDrag ){
+            dragging = true;
+            angleForce += e.delta;
+
+          }
+          if( e.type == EventType.MouseUp ){
+            if( !dragging ) buildTree.WindowMouseUp();
+            dragging = false;
+          }
+
+          GetInfo();
+
+          
+        }
+
+
     }
 
     bool allAssigned{
@@ -46,22 +96,55 @@ public class CallGraph : EditorWindow
   
 
     void ShowRender(){
-      buildTree = (BuildTree)EditorGUILayout.ObjectField(buildTree,typeof(BuildTree),true);
+      
+
+      if( buildTree == null) buildTree = (BuildTree)EditorGUILayout.ObjectField(buildTree,typeof(BuildTree),true);
+      
       if( buildTree != null ){
         camera = buildTree.camera;
         renderTexture = camera.targetTexture;
       }
 
-      if( allAssigned ){
+          Rect rect = EditorGUILayout.GetControlRect(false, 100 );
 
-        camera.transform.LookAt(buildTree.transform);
-        Rect rect = EditorGUILayout.GetControlRect(false, 10 );
+        if( rect.x > startHeight ){
+          startHeight = rect.x;
+        }
+        //Debug.Log( Screen.width );
+        rect.width = Screen.width / 1.5f;
+        rect.height = Screen.width / 1.5f;
+        viewWidth = rect.height;
 
-       rect.height = rect.width;
 
+        //Debug.Log( viewWidth );
         EditorGUI.DrawPreviewTexture( rect , renderTexture);
-      }
+
+
     }
 
+    void GetInfo(){
+
+
+      if( allAssigned ){
+
+        angle += angleForce * .005f;
+        angleForce *= .95f;
+
+        Quaternion q = Quaternion.Euler(angle.y,angle.x,0);
+        Vector3 direction;// = new Vector3( Mathf.Sin(angle.x),0 , -Mathf.Cos(angle.x) );
+        direction = q * Vector3.forward;
+
+        target = Vector3.Lerp( target , buildTree.target , .1f );
+        camera.transform.position = target + direction * distance;
+
+        camera.transform.LookAt(target);
+    
+      }
+
+
+    }
+
+
+    
   
 }

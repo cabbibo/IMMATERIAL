@@ -71,9 +71,13 @@ Shader "Debug/BuildTreeLines" {
           Vert v2 = _VertBuffer[i1.parent];
 
           o.which = 0;
-          if( baseConnection == _SelectedVert || v1.parent == _SelectedVert ){
+          if( baseConnection == _SelectedVert ){
             o.which = 1;
           } 
+
+          if( i1.parent == _SelectedVert ){
+            o.which = 2;
+          }
 
           //if( t1 < 30 && t2 < 30){
 
@@ -102,7 +106,7 @@ Shader "Debug/BuildTreeLines" {
       #include "../Chunks/hsv.cginc"
       //Pixel function returns a solid color for each point.
       float4 frag (varyings v) : COLOR {
-          return float4( hsv( v.which * .5 , 1,1) , 1 );
+          return float4( hsv( v.which * .4 , 1,1) , 1 );
       }
       ENDCG
 

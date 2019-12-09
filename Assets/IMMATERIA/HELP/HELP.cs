@@ -84,10 +84,17 @@ public class HELP{
  public struct CycleInfo {
     
     public string name;
+    public string goName;
+
+    public Cycle cycle;
+    public int id;
+    public GameObject go;
 
     public int   type;
     public int[] children;
     public int parent;
+    public int siblingID;
+    public int siblingCount;
 
     public int lookupStart;
     public int lookupLength;

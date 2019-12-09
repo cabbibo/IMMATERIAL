@@ -1,0 +1,101 @@
+﻿#pragma kernel CheckClosest
+#define NR_THREADS 16
+// want to use about 1-2k per 64 threads
+groupshared float4 accumVal[NR_THREADS];
+groupshared float4 interlockedFullValue;
+
+struct Vert{
+  float3 pos;
+  float3 oPos;
+  float3 nor;
+  float3 tang;
+  float2 uv;
+  float2 debug;
+};
+
+RWStructuredBuffer<Vert> _VertBuffer;
+uint _VertBuffer_COUNT;
+
+RWStructuredBuffer<float4> _OutBuffer;
+uint _OutBuffer_COUNT;
+
+float3 _RO;
+float3 _RD;
+#include "../Chunks/safeID.cginc"
+
+
+
+void interlockedClosestLength(float4 value , int threadid ){
+
+
+  GroupMemoryBarrierWithGroupSync();
+  accumVal[threadid] = value;
+
+  // accumulate a bit in parralel
+  GroupMemoryBarrierWithGroupSync();
+  if((threadid%4)==0){
+
+    float4 fVal = float4(10000000,10000,1000,-1);
+
+    for( int i = 0; i < 4; i++){
+      float4 v = accumVal[threadid + i ];
+      if( length(v.xyz) > 0 && length(v.xyz) < length(fVal.xyz) ){
+        fVal = v;
+      }
+
+    }
+
+    accumVal[threadid+0] = fVal;
+
+  }
+
+  GroupMemoryBarrierWithGroupSync();
+  if(threadid==0){
+    float4 result = accumVal[0];
+    for(int i=4; i<NR_THREADS; i+=4){
+      if( length(accumVal[i].xyz) > 0 && length(accumVal[i].xyz) < length(result.xyz) ){
+        result = accumVal[i];
+      }
+
+    }
+    interlockedFullValue = result;
+  }
+  GroupMemoryBarrierWithGroupSync();
+
+}
+
+
+
+float3 VecToRay( float3 pos ){
+  
+  float3 p2 = _RO - _RD * 200;
+  float3 pa = pos - _RO;
+  float3 ba = _RO - p2;
+  float h =  dot(pa,ba)/dot(ba,ba);
+  float3 pOnLine = h * _RD* 200 +_RO;
+
+  float3 inLine = pos - pOnLine;
+
+  return  inLine;//normalize(inLine) * force *  (1 - clamp( length(inLine) / radius , 0 , 1));
+}
+
+
+[numthreads(NR_THREADS,1,1)]
+void CheckClosest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = safeID( threadID + u3GroupID.x * NR_THREADS , _VertBuffer_COUNT );
+    // TODO: insert actual code here!
+
+  Vert v = _VertBuffer[pID];
+
+  float3 v2r = VecToRay( v.pos );
+
+  float4 val = float4( v2r , (float)pID);
+
+  interlockedClosestLength( val ,threadID );
+
+  if( threadID == 0 ){
+    _OutBuffer[ u3GroupID.x ] = interlockedFullValue;
+  }
+
+}

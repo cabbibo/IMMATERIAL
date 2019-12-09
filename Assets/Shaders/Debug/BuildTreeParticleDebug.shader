@@ -80,11 +80,12 @@ varyings vert (uint id : SV_VertexID){
 
 
       o.selected = 0;
-    if( base == _SelectedVert ){ extra *= 6; o.selected = 1;}
+    if( base == _SelectedVert ){ extra *= 3; o.selected = 1;}
       Vert v = _VertBuffer[base];
       o.worldPos = (v.pos) + extra * _Size;
       o.uv2 = uv;
       o.id = base;
+      o.debug = v.tang.y;
       o.pos = mul (UNITY_MATRIX_VP, float4(o.worldPos,1.0f));
 
   }
@@ -99,7 +100,7 @@ varyings vert (uint id : SV_VertexID){
 
           if( length( v.uv2 -.5) > .5 ){ discard;}
 
-          float3 col = hsv(  v.selected * .5,1,1);
+          float3 col = hsv( v.debug.x * .1,1,1);
           return float4(col,1 );
       }
 
