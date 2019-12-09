@@ -24,7 +24,6 @@ public void Update()
 
     float viewWidth;
     float startHeight;
-    float distance = 10;
 
     public Vector3 target;
 
@@ -38,6 +37,9 @@ public void Update()
         window.Show();
     }
 
+    public void OnEnable(){
+      buildTree = GameObject.Find("BuildTree").GetComponent<BuildTree>();
+    }
   
 
     void OnSceneGUI(SceneView sceneView){
@@ -47,6 +49,10 @@ public void Update()
     public bool dragging;
     Vector2 angle = new Vector2();
     Vector2 angleForce = new Vector2();
+    Vector2 sideForce = new Vector2();
+
+    float distance = 10;
+    float distanceForce;// = 10;
     void OnGUI()
     {
 
@@ -69,12 +75,16 @@ public void Update()
       
 
           if( e.type == EventType.ScrollWheel ){
-            distance += e.delta.y;
+            distanceForce += e.delta.y;
           }
 
           if( e.type == EventType.MouseDrag ){
             dragging = true;
-            angleForce += e.delta;
+            if( e.button == 0 ){
+              angleForce += e.delta * new Vector2(1,-1);
+            }else if( e.button == 2){
+              sideForce += e.delta;
+            }
 
           }
           if( e.type == EventType.MouseUp ){
@@ -129,6 +139,12 @@ public void Update()
 
         angle += angleForce * .005f;
         angleForce *= .95f;
+
+        buildTree.target += (-camera.transform.right * sideForce.x + camera.transform.up * sideForce.y) * .001f;
+        sideForce *= .95f;
+
+        distance += distanceForce * .05f;
+        distanceForce *= .95f;
 
         Quaternion q = Quaternion.Euler(angle.y,angle.x,0);
         Vector3 direction;// = new Vector3( Mathf.Sin(angle.x),0 , -Mathf.Cos(angle.x) );

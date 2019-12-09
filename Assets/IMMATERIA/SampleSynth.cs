@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using UnityEngine.Audio;
 
 
-[ExecuteAlways]
-public class SampleSynth : MonoBehaviour
+public class SampleSynth : Cycle
 {
 
     public AudioPlayer player;
@@ -33,7 +31,7 @@ public class SampleSynth : MonoBehaviour
   public float randomOffset;
 
 
-  public void Start(){
+  public override void Create(){
     currentStep = 0;
     currentStepID = 0;
     lastTime = 0;
@@ -41,10 +39,10 @@ public class SampleSynth : MonoBehaviour
   }
 
 
-  public void Update(){
+  public override void WhileLiving( float v ){
 
     if( Time.time - lastTime  > speed + randomOffset ){
-      lastTime = Time.time;
+      
       PlayGrain();
     } 
 
@@ -57,10 +55,14 @@ public class SampleSynth : MonoBehaviour
       float fLength = length + lengthRandomness * Random.Range( -.5f, .5f);
       float fPitch = pitch + pitchRandomness * Random.Range( -.5f, .5f);
 
+
       if( fLocation < 0 ){ fLocation = Mathf.Abs( fLocation ); }
       if( fLocation > clip.length ){ fLocation = clip.length-(fLocation - clip.length);}
 
+      //print( fLocation );
       player.Play( clip , fPitch , volume , fLocation , fLength , mixer, groupName);
+
+      lastTime = Time.time;
   }
 
 

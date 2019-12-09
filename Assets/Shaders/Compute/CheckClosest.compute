@@ -1,5 +1,6 @@
 ﻿#pragma kernel CheckClosest
-#define NR_THREADS 16
+#define NR_THREADS 64
+
 // want to use about 1-2k per 64 threads
 groupshared float4 accumVal[NR_THREADS];
 groupshared float4 interlockedFullValue;

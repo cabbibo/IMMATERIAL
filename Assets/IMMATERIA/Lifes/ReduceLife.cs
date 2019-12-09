@@ -9,6 +9,9 @@ public class ReduceLife : Life{
   public Vector4 value;
   public ComputeBuffer _buffer;
   public uint count;
+
+  public Vector3 closest;
+  public float closestID;
   
   public override void _Create(){
     
@@ -63,8 +66,8 @@ public class ReduceLife : Life{
     _buffer.GetData(values);
     float x = 0; float y = 0; float z = 0; float w = 0;
 
-    Vector3 closest = Vector3.one * 100000;
-    float closestID = -1;
+    closest = Vector3.one * 100000;
+    closestID = -1;
 
     for( int i = 0; i < numGroups; i++ ){
       Vector3 v = new Vector3( values[i*4+0]
@@ -80,6 +83,7 @@ public class ReduceLife : Life{
     }
 
     value = new Vector4( closest.x , closest.y , closest.z , closestID );
+  
   }
 
 }

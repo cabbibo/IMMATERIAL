@@ -138,6 +138,7 @@ public class AudioPlayer : Cycle{
     public void Play( AudioClip clip ){
 
         sources[playID].clip = clip;
+        //sources[playID].time = 0;
         sources[playID].Play();
 
         oPlayID = playID;
@@ -190,11 +191,12 @@ public class AudioPlayer : Cycle{
         Play(clip);
     }
 
-    public void Play( AudioClip clip , int step , float volume, AudioMixer mixer, string group ){
+    public void Play( AudioClip clip , int step , float volume , float location , AudioMixer mixer, string group ){
         float p = Mathf.Pow( 1.05946f , (float)step );
         
         sources[playID].outputAudioMixerGroup = mixer.FindMatchingGroups(group)[0];
         sources[playID].volume = volume;
+        sources[playID].time = location;
         sources[playID].pitch = p;
         Play(clip);
     }

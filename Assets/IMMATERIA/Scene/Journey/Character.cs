@@ -234,6 +234,9 @@ float d = 1;
     }
 
 }
+ if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0)){
+  animator.Play("Grounded");
+ }
 
       Rotate(forward , turn );
 

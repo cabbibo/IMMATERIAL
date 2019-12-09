@@ -62,7 +62,8 @@ public class BuildTreeInfo : Form
       HELP.CycleInfo ci = new HELP.CycleInfo();
 
       ci.type = 0;
-
+      if( cycle is God                ){ ci.type = -2; }
+      if( cycle is StorySetter        ){ ci.type = -1; }
       if( cycle is Form               ){ ci.type = 1;  }
       if( cycle is Life               ){ ci.type = 2;  }
       if( cycle is Binder             ){ ci.type = 3;  }

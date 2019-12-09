@@ -78,14 +78,16 @@ varyings vert (uint id : SV_VertexID){
     if( alternate == 4 ){ extra =  l + u; uv = float2(1,1); }
     if( alternate == 5 ){ extra = -l + u; uv = float2(0,1); }
 
+      Vert v = _VertBuffer[base];
+      o.debug = v.tang.y;
 
       o.selected = 0;
-    if( base == _SelectedVert ){ extra *= 3; o.selected = 1;}
-      Vert v = _VertBuffer[base];
+      if( base == _SelectedVert ){ extra *= 3; o.selected = 1;}
+      if( v.tang.y == -1 ){ extra *= 2; }
+      if( v.tang.y == -2 ){ extra *= 4; }
       o.worldPos = (v.pos) + extra * _Size;
       o.uv2 = uv;
       o.id = base;
-      o.debug = v.tang.y;
       o.pos = mul (UNITY_MATRIX_VP, float4(o.worldPos,1.0f));
 
   }
@@ -98,9 +100,15 @@ varyings vert (uint id : SV_VertexID){
       //Pixel function returns a solid color for each point.
       float4 frag (varyings v) : COLOR {
 
-          if( length( v.uv2 -.5) > .5 ){ discard;}
+          float l =(.5-length( v.uv2 -.5)) * 2;
+          if( l<0 ){ discard;}
+
+
 
           float3 col = hsv( v.debug.x * .1,1,1);
+          if( v.debug.x < 0 ){ col = 1;}
+          if( v.debug.x < -1 ){ col = hsv( l * .2 + _Time.y,1,1);}
+          
           return float4(col,1 );
       }
 

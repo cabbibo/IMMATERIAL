@@ -35,7 +35,6 @@ public class GlobalEditWindow : EditorWindow
     public Data data;
     public InputEvents events;
     public State state;
-    public RenderTexture renderTexture;
 
 
 
@@ -56,6 +55,27 @@ public class GlobalEditWindow : EditorWindow
         // Get existing open window or if none, make a new one:
         GlobalEditWindow window = (GlobalEditWindow)EditorWindow.GetWindow(typeof(GlobalEditWindow));
         window.Show();
+
+        Debug.Log( GameObject.Find("God") );
+       //GameObject g = GameObject.Find("God");
+
+       //god = g.GetComponent<God>();
+       //data = g.GetComponent<Data>();
+       //events = data.inputEvents;
+       //state = data.state;
+       //skin = (GUISkin)Resources.Load("GlobalEditSkin");
+
+    }
+
+    void OnEnable(){
+       Debug.Log( GameObject.Find("God") );
+       GameObject g = GameObject.Find("God");
+
+       god = g.GetComponent<God>();
+       data = g.GetComponent<Data>();
+       events = data.inputEvents;
+       state = data.state;
+       skin = (GUISkin)Resources.Load("GlobalEditSkin");
     }
 
      // Window has been selected
@@ -270,7 +290,6 @@ public class GlobalEditWindow : EditorWindow
         ShowState();
         ShowAllForms();
         ShowSaveButtons();
-        ShowRender();
       }
  
     }
@@ -333,9 +352,7 @@ public class GlobalEditWindow : EditorWindow
           label.text = "Skin";
           skin = (GUISkin)EditorGUILayout.ObjectField(label,skin,typeof(GUISkin),true);
 
-          label.text = "RenderTexture";
-          renderTexture = (RenderTexture)EditorGUILayout.ObjectField(label,renderTexture,typeof(RenderTexture),true);
-  
+    
         EndGroup();
       }
     }
@@ -452,14 +469,7 @@ public class GlobalEditWindow : EditorWindow
       
     }
 
-    void ShowRender(){
-
-Rect rect = EditorGUILayout.GetControlRect(false, 10 );
-
-       rect.height = rect.width;
-
-        EditorGUI.DrawPreviewTexture( rect , renderTexture);
-    }
+ 
 
     void StartGroup(){
       EditorGUILayout.BeginVertical();

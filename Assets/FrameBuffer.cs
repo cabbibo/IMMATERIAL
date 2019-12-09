@@ -14,6 +14,7 @@ public class FrameBuffer : Cycle
 
     public Life set;
     public Life simulate;
+    public ReduceLife checkClosest;
 
     public TransferLifeForm transfer;
     public InstanceTransfer corners;
@@ -30,6 +31,8 @@ public class FrameBuffer : Cycle
     private Vector3 bottomLeft;
     private Vector3 bottomRight;
 
+    public SampleSynth instrument;
+    
     public override void Create(){
 
       particles.size = size;
@@ -41,6 +44,7 @@ public class FrameBuffer : Cycle
       SafeInsert(set);
       SafeInsert(simulate);
       SafeInsert(corners);
+      SafeInsert(checkClosest);
 
     }
 
@@ -82,6 +86,12 @@ public class FrameBuffer : Cycle
       corners.transfer.BindFloat( "_Fade" , () => currentPage.fade );
 
 
+
+
+      checkClosest.BindPrimaryForm( "_VertBuffer", particles);
+      data.BindAllData(checkClosest);
+
+
     }
 
 
@@ -105,6 +115,8 @@ public class FrameBuffer : Cycle
       locked = 0;
       deathTime = Time.time;
     }
+
+
 
 
 }

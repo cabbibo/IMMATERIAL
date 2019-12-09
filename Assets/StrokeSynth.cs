@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 
 
-[ExecuteAlways]
-public class StrokeSynth : MonoBehaviour
+public class StrokeSynth : Cycle
 {
    
     public int[] steps;
@@ -21,13 +20,13 @@ public class StrokeSynth : MonoBehaviour
     
 
     // Update is called once per frame
-    void Update()
+    public override void WhileLiving( float v )
     {
       if( (events.p - lastPosition ).magnitude  > distToPlay){
 
         int step = steps[Random.Range(0, steps.Length)];
         AudioClip clip = clips[Random.Range(0, clips.Length)];
-        player.Play( clip , 12 , 1 * events.vel.magnitude, mixer,  group);
+        player.Play( clip , 12 , 1 * events.vel.magnitude,0, mixer,  group);
         lastPosition = events.p;
       }    
     }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+using UnityEngine.SceneManagement;
+
 public class BuildTree :Cycle
 {
 
@@ -17,8 +19,8 @@ public class BuildTree :Cycle
     public TextMesh idLabel;
     public TextMesh extraLabel;
 
+    public GameObject nameGO;
     public GameObject goToGO;
-    public GameObject saveGO;
     public GameObject scriptGO;
     public GameObject moreInfoGO;
     public GameObject goToStoryGO;
@@ -45,6 +47,7 @@ public class BuildTree :Cycle
     public Vector3 _RO;
     public Vector3 _RD;
 
+    public bool holdCenter;
     public Vector3 target;
     public override void Create(){
       lastPlayTime = 0;
@@ -81,54 +84,24 @@ public class BuildTree :Cycle
     }
 
     public override void WhileLiving( float v ){
+      if( holdCenter ){ target = transform.position; }
 
       oSelectedVert = selectedVert;
       oSelectedDist = selectedDist;
 
       vectorRep.position = _RO + _RD * 10;
+      vectorRep.LookAt(camera.transform);
       int id  = (int)closest.value.w;
       selectedDist = (new Vector3(closest.value.x , closest.value.y , closest.value.z )).magnitude;
       info.selectedVert = selectedVert;
-      if(selectedVert < info.allCyclesInfo.Count && selectedVert >= 0){
-        typeLabel.text  = "" + info.allCyclesInfo[selectedVert].name;
-        goLabel.text    = "" + info.allCyclesInfo[selectedVert].goName;
-        idLabel.text    = "" + info.allCyclesInfo[selectedVert].id;
-        extraLabel.text = "" + info.allCyclesInfo[selectedVert].siblingCount;
-
-        typeLabel.color  = Color.white;
-        goLabel.color    = Color.white;
-        idLabel.color    = Color.white;
-        extraLabel.color = Color.white;
-      }else{
-
-        if( activeVert < info.allCyclesInfo.Count && activeVert >= 0 ){
-
-          typeLabel.text  = "" + info.allCyclesInfo[activeVert].name;
-          goLabel.text    = "" + info.allCyclesInfo[activeVert].goName;
-          idLabel.text    = "" + info.allCyclesInfo[activeVert].id;
-          extraLabel.text = "" + info.allCyclesInfo[activeVert].siblingCount;
-
-
-          typeLabel.color  = Color.red;
-          goLabel.color    = Color.red;
-          idLabel.color    = Color.red;
-          extraLabel.color = Color.red;
-        }else{
-
-          typeLabel.text  = "";
-          goLabel.text    = "";
-          idLabel.text    = "";
-          extraLabel.text = "";
-
-        }
-      }
-
+     
       if( oSelectedVert != id && selectedDist < 1){
         OnNewVert(id);
-      }
+          }
 
       if( selectedDist > 1 ){
         OnNoVert();
+
       }
 
 
@@ -141,14 +114,26 @@ public class BuildTree :Cycle
       selectedVert = id;
 
       if( Time.time - lastPlayTime > .1f){
-        data.audio.Play( hoverClips[Random.Range(0,hoverClips.Length)]  , 2.01f, .3f);
+        data.audio.Play( hoverClips[Random.Range(0,hoverClips.Length)]  , 2.01f , .3f );
         lastPlayTime = Time.time;
       }
+
+       typeLabel.text  = ""   + info.allCyclesInfo[selectedVert].name;
+        goLabel.text    = "" + info.allCyclesInfo[selectedVert].goName;
+        idLabel.text    = "" + info.allCyclesInfo[selectedVert].id;
+        extraLabel.text = "" + info.allCyclesInfo[selectedVert].siblingCount;
+   
 
     }
 
     public void OnNoVert(){
       selectedVert = activeVert;
+
+
+        typeLabel.text  = "";
+        goLabel.text    = "";
+        idLabel.text    = "";
+        extraLabel.text = "";
     }
 
     public void WindowMouseUp(){
@@ -157,9 +142,7 @@ public class BuildTree :Cycle
       RaycastHit hit;
       if( Physics.Raycast( ray , out hit ) ){
         
-        if( hit.collider.gameObject == saveGO ){
-          DoSave();
-        }else if( hit.collider.gameObject == goToGO ){
+        if( hit.collider.gameObject == goToGO ){
           DoGoTo();
         }else if( hit.collider.gameObject == scriptGO ){
           DoScript();
@@ -190,6 +173,8 @@ public class BuildTree :Cycle
     public void ActivateVert(){
       activeCycleInfo = info.allCyclesInfo[selectedVert];
       activeVert = activeCycleInfo.id;
+      string title = "" + activeCycleInfo.goName + " || " + activeCycleInfo.name;
+      nameGO.GetComponent<TextMesh>().text  = title; 
       HighlightGameObject();
 
       data.audio.Play( selectClips[Random.Range(0,selectClips.Length)]  , 1.01f, .6f);
@@ -199,9 +184,23 @@ public class BuildTree :Cycle
       //GetData(Array data, int managedBufferStartIndex, int computeBufferStartIndex, int count);
 
       target = new Vector3(d[0] , d[1] , d[2] );
+
+      if( activeCycleInfo.type == -1 ){
+        moreInfoGO.SetActive( false );
+      }else if( activeCycleInfo.type == -2 ){
+        moreInfoGO.SetActive( false );
+      }else if( activeCycleInfo.type ==  0 ){
+        moreInfoGO.SetActive( false );
+      }else if( activeCycleInfo.type ==  1 ){
+        moreInfoGO.SetActive( true );
+        moreInfoGO.GetComponent<TextMesh>().text =  "Save Form";
+      }else if( activeCycleInfo.type == 2 ){
+        moreInfoGO.SetActive( true );
+        moreInfoGO.GetComponent<TextMesh>().text =  "Open Compute Shader";
+      }else{
+        moreInfoGO.SetActive( false );
+      }
     }
-
-
 
     public void HighlightGameObject(){
       GameObject go = activeCycleInfo.go;
@@ -234,7 +233,7 @@ public class BuildTree :Cycle
     }
 
     public void GoToStory(){
-      StepUp(activeCycleInfo.cycle.parent);
+      StepUp(activeCycleInfo.cycle);
     }
 
     public void StepUp(Cycle c){
@@ -264,8 +263,20 @@ public class BuildTree :Cycle
 
   public void DoMoreInfo(){
 
-  }    
+     if( activeCycleInfo.type == -1 ){
+        moreInfoGO.GetComponent<TextMesh>().text =  "THIS A STORY BRUV";
+      }else if( activeCycleInfo.type == -2 ){
+        data.god.godPause = !data.god.godPause;
+      }else if( activeCycleInfo.type ==  0 ){
+        moreInfoGO.GetComponent<TextMesh>().text =  "boring cycle";
+      }else if( activeCycleInfo.type ==  1 ){
+        DoSave();
+      }else if( activeCycleInfo.type == 2 ){
+        // var script = MonoScript.FromMonoBehaviour(((Life)activeCycleInfo.cycle).shader); // gets script as an asset
+        AssetDatabase.OpenAsset(((Life)activeCycleInfo.cycle).shader); // opens script in your predefined script editor
+      }
 
+  }    
 
 
 
