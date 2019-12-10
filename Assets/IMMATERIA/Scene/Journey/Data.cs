@@ -48,6 +48,8 @@ public class Data : Cycle
 
   public SharedMeshes sharedMeshes;
 
+  public CurrentCollisionCalculator gpuCollisions;
+
   //public Terrain terrain;
 
 
@@ -78,6 +80,7 @@ public class Data : Cycle
     if( inputEvents != null ){ SafePrepend(inputEvents); }
     if( sceneCircle != null ){ SafePrepend(sceneCircle); }
     if( book != null ){ SafePrepend(book); }
+    if( gpuCollisions != null ){ SafePrepend(gpuCollisions); }
     if( guideParticles != null ){ SafePrepend(guideParticles); }
     if( monolithParticles != null ){ SafePrepend(monolithParticles); }
     if( tiler != null ){ SafePrepend(tiler); }
@@ -121,6 +124,15 @@ public class Data : Cycle
     toBind.BindFloat("_DOWN", () => inputEvents.Down  );
     toBind.BindFloat("_DOWNTWEEN", () => inputEvents.downTween  );
     toBind.BindFloat("_DOWNTWEEN2", () => inputEvents.downTween2  );
+
+  }
+
+
+  public void BindGPUCollision(Life toBind){
+
+    toBind.BindVector3("_ClosestGPUCollision", () => gpuCollisions.life.closest    );
+    toBind.BindFloat("_ClosestGPUCollisionID", () => gpuCollisions.life.closestID  );
+    toBind.BindFloat("_ClosestGPUCollisionTime", () => gpuCollisions.life.closestTime  );
 
   }
 

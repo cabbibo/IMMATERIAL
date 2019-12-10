@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Framer : Cycle
 {
+
+  public bool doAudio;
     public FrameBuffer[] frames;
 
     public int currentFrame;
@@ -23,6 +25,7 @@ public class Framer : Cycle
 
     public void Set(Page page){
       frames[currentFrame].Release();
+      if( frames[currentFrame].currentPage == page ){ frames[currentFrame].ImmediateDeath(); }
       currentFrame ++;
       currentFrame %= frames.Length;
       frames[currentFrame].Set(page);
@@ -34,11 +37,11 @@ public class Framer : Cycle
       oClosest = closest;
       closest = (int)(frames[currentFrame].checkClosest.closestID);
 
-      if( closest != oClosest && Time.time - instrument.lastTime > .1f  ){
+      if( closest != oClosest && Time.time - instrument.lastTime > .1f && doAudio ){
         instrument.location = Random.Range(0 ,2.5f);
         instrument.pitch = data.inputEvents.vel.magnitude;
         instrument.volume = (.3f + 20 * frames[currentFrame].checkClosest.closest.magnitude);
-        print( instrument.volume );
+        //print( instrument.volume );
         instrument.PlayGrain();
       }
 

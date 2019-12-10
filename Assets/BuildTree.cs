@@ -37,7 +37,7 @@ public class BuildTree :Cycle
 
     public Life sim;
     public Life resolve;
-    public ReduceLife closest;
+    public ClosestLife closest;
 
     public int activeVert;
 
@@ -197,6 +197,9 @@ public class BuildTree :Cycle
       }else if( activeCycleInfo.type == 2 ){
         moreInfoGO.SetActive( true );
         moreInfoGO.GetComponent<TextMesh>().text =  "Open Compute Shader";
+      }else if( activeCycleInfo.type == 6 ){
+        moreInfoGO.SetActive( true );
+        moreInfoGO.GetComponent<TextMesh>().text =  "Open Shader";
       }else{
         moreInfoGO.SetActive( false );
       }
@@ -274,6 +277,8 @@ public class BuildTree :Cycle
       }else if( activeCycleInfo.type == 2 ){
         // var script = MonoScript.FromMonoBehaviour(((Life)activeCycleInfo.cycle).shader); // gets script as an asset
         AssetDatabase.OpenAsset(((Life)activeCycleInfo.cycle).shader); // opens script in your predefined script editor
+      }else if( activeCycleInfo.type == 6 ){
+        AssetDatabase.OpenAsset(((Body)activeCycleInfo.cycle).material.shader); // opens script in your predefined script editor
       }
 
   }    

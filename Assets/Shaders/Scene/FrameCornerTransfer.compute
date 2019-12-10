@@ -33,6 +33,9 @@ int _VertsPerMesh;
 float _CountMultiplier;
 float _Distance;
 float _Fade;
+float _DeathTime;
+int _Locked;
+float _Time;
 
 
 #include "../Chunks/safeID.cginc"
@@ -54,7 +57,17 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     Vert v = _VertBuffer[safeID(pID,_VertBuffer_COUNT)];
 
 
-    v.pos      = p.pos + b.pos * _Radius * _Distance * (1-_Fade);// = v;
+  float r = _Radius * _Distance;
+
+  if( _Locked == 1 ){
+    r *= (1-_Fade); 
+  }else{
+    r  *=  1/(1+(_Time - _DeathTime));
+  }
+
+
+
+    v.pos      = p.pos + b.pos *  r;// = v;
     v.nor      = b.nor;
     v.tangent  = b.tangent;
     v.uv       = b.uv;

@@ -316,7 +316,7 @@ public class InputEvents: Cycle {
 
   public void CheckSwipes(){
 
-    print("Checking swipes");
+    //print("Checking swipes");
      float difT = endTime - startTime;
     Vector2 difP =endPos - startPos;
 

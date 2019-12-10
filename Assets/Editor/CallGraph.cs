@@ -37,10 +37,6 @@ public void Update()
         window.Show();
     }
 
-    public void OnEnable(){
-      buildTree = GameObject.Find("BuildTree").GetComponent<BuildTree>();
-    }
-  
 
     void OnSceneGUI(SceneView sceneView){
 
@@ -101,21 +97,19 @@ public void Update()
     }
 
     bool allAssigned{
-      get { return (renderTexture != null && camera != null && buildTree != null ); }
+     
+      get { 
+        if( buildTree == null ){  buildTree = GameObject.Find("BuildTree").GetComponent<BuildTree>(); } 
+
+        camera = buildTree.camera;
+        renderTexture = camera.targetTexture;
+        return (renderTexture != null && camera != null && buildTree != null ); 
+      }
     }
   
 
     void ShowRender(){
-      
-
-      if( buildTree == null) buildTree = (BuildTree)EditorGUILayout.ObjectField(buildTree,typeof(BuildTree),true);
-      
-      if( buildTree != null ){
-        camera = buildTree.camera;
-        renderTexture = camera.targetTexture;
-      }
-
-          Rect rect = EditorGUILayout.GetControlRect(false, 100 );
+             Rect rect = EditorGUILayout.GetControlRect(false, 100 );
 
         if( rect.x > startHeight ){
           startHeight = rect.x;

@@ -48,6 +48,8 @@
     
         float3 _PlayerPosition;
 
+        float _ClosestGPUCollisionID;
+        float _ClosestGPUCollisionTime;
 
         struct varyings {
             float4 pos      : SV_POSITION;
@@ -107,6 +109,8 @@
         //if( d.a < .9 ){discard;}
         if( length(d.xyz) > 1.5 ){discard;}
 
+
+
        // if( length(v.tan)> .5){ discard;}
         
         float3 fNor = normalize(v.nor + 1*sin(length(v.tan) * 30) *normalize(v.tan) );
@@ -125,6 +129,8 @@
         //col = v.tan * .5 + .5;
 
         col *= (length(v.vel)-4) * (length(v.vel)-4) + .4;
+        if( abs(v.debug.x - _ClosestGPUCollisionID) < .1 ){ col += 1 * saturate( 10 / (_Time.y - _ClosestGPUCollisionTime)); }
+       // col = _Time.y -_ClosestGPUCollisionTime;
         //col += hsv(dot(v.eye,v.nor) * -.1,.6,1) * (1-length(col));
         return float4( col , 1.);
             }

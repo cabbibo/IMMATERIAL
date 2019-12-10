@@ -128,14 +128,10 @@ public class BuildTreeInfo : Form
 
 
     }
-
-
-    print( allCyclesInfo.Count);
   }
 
   public override void Embody(){
 
-    print( structSize );
     float[] values = new float[count * structSize];
 
    //print( count );

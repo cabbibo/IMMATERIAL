@@ -6,7 +6,7 @@ public class GlobalEditWindow : EditorWindow
 
 
 
-     public void Update()
+  public void Update()
  {
      // This is necessary to make the framerate normal for the editor window.
      Repaint();
@@ -67,15 +67,19 @@ public class GlobalEditWindow : EditorWindow
 
     }
 
-    void OnEnable(){
-       Debug.Log( GameObject.Find("God") );
-       GameObject g = GameObject.Find("God");
+
+
+    void Assign(){
+
+      if( god == null ){
+         GameObject g = GameObject.Find("God");
 
        god = g.GetComponent<God>();
        data = g.GetComponent<Data>();
        events = data.inputEvents;
        state = data.state;
        skin = (GUISkin)Resources.Load("GlobalEditSkin");
+      }
     }
 
      // Window has been selected
@@ -115,7 +119,7 @@ public class GlobalEditWindow : EditorWindow
     */
 
     void OnSceneGUI(SceneView sceneView){
-
+      Assign();
       
         if(god != null ){
 
@@ -279,7 +283,8 @@ public class GlobalEditWindow : EditorWindow
     void OnGUI()
     {
 
-      if( skin == null ){ skin = (GUISkin)Resources.Load("GlobalEditSkin"); }
+      Assign();
+
         
       GUILayout.TextField("Global Editor",skin.GetStyle("Label"));
       
@@ -322,10 +327,10 @@ public class GlobalEditWindow : EditorWindow
         startStory = EditorGUILayout.IntField ("StartStory", startStory);
         startPage = EditorGUILayout.IntField ("StartPage", startPage);
 
-       // state.startStory = startStory;
-       // state.startPage = startPage;
-       // state.startInStory = startInStory;
-       // state.startInPages = startInPages;
+        state.startStory = startStory;
+        state.startPage = startPage;
+        state.startInStory = startInStory;
+        state.startInPages = startInPages;
 
         EndGroup();
 

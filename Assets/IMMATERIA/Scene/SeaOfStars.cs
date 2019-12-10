@@ -27,6 +27,7 @@ public class SeaOfStars : Simulation
       life.active = true;
       body.transfer.active = true;
       body.showBody = true;
+      
   }
 
   public override void Deactivate(){

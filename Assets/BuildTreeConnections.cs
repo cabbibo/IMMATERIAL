@@ -8,7 +8,6 @@ public class BuildTreeConnections : IndexForm
 
   int[] values;
   public override void OnGestate(){
-    print("EXECUTE SECONDS");
     values = ((BuildTreeVerts)toIndex).info.lookupBuffer.ToArray();
     count = values.Length;
   }

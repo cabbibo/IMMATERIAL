@@ -1,9 +1,17 @@
 ﻿#pragma kernel CheckClosest
 #define NR_THREADS 64
 
+
+struct Out{
+  float3 closest;
+  float  id;
+  float3 pos;
+  float  distance;
+};
+
 // want to use about 1-2k per 64 threads
-groupshared float4 accumVal[NR_THREADS];
-groupshared float4 interlockedFullValue;
+groupshared Out accumVal[NR_THREADS];
+groupshared Out interlockedFullValue;
 
 struct Vert{
   float3 pos;
@@ -17,7 +25,9 @@ struct Vert{
 RWStructuredBuffer<Vert> _VertBuffer;
 uint _VertBuffer_COUNT;
 
-RWStructuredBuffer<float4> _OutBuffer;
+
+
+RWStructuredBuffer<Out> _OutBuffer;
 uint _OutBuffer_COUNT;
 
 float3 _RO;
@@ -26,7 +36,7 @@ float3 _RD;
 
 
 
-void interlockedClosestLength(float4 value , int threadid ){
+void interlockedClosestLength( Out value   , int threadid ){
 
 
   GroupMemoryBarrierWithGroupSync();
@@ -36,31 +46,42 @@ void interlockedClosestLength(float4 value , int threadid ){
   GroupMemoryBarrierWithGroupSync();
   if((threadid%4)==0){
 
-    float4 fVal = float4(10000000,10000,1000,-1);
+    Out fOut;
+    fOut.closest = 100000;
+    fOut.id = -1;
+    fOut.pos = 0;
+    fOut.distance = 100000;
 
     for( int i = 0; i < 4; i++){
-      float4 v = accumVal[threadid + i ];
-      if( length(v.xyz) > 0 && length(v.xyz) < length(fVal.xyz) ){
-        fVal = v;
+      Out v = accumVal[threadid + i ];
+      if( length(v.closest) > 0 && length(v.closest) < length(fOut.closest) ){
+        fOut = v;
       }
-
     }
-
-    accumVal[threadid+0] = fVal;
+    accumVal[threadid+0] = fOut;
 
   }
 
   GroupMemoryBarrierWithGroupSync();
   if(threadid==0){
-    float4 result = accumVal[0];
+    Out fOut = accumVal[0];
+      fOut.closest = 100000;
+    fOut.id = -1;
+    fOut.pos = 0;
+    fOut.distance = 100000;
+    //fOut = accumVal[0];
+
     for(int i=4; i<NR_THREADS; i+=4){
-      if( length(accumVal[i].xyz) > 0 && length(accumVal[i].xyz) < length(result.xyz) ){
-        result = accumVal[i];
+      Out v = accumVal[i];
+
+      if(length(v.closest) > 0 && length(v.closest) < length(fOut.closest) ){
+         fOut = v;
       }
 
     }
-    interlockedFullValue = result;
+    interlockedFullValue = fOut;
   }
+
   GroupMemoryBarrierWithGroupSync();
 
 }
@@ -74,6 +95,10 @@ float3 VecToRay( float3 pos ){
   float3 ba = _RO - p2;
   float h =  dot(pa,ba)/dot(ba,ba);
   float3 pOnLine = h * _RD* 200 +_RO;
+
+  if( h  <= 0 ){
+    pOnLine = float3(10000,10000,10000);
+  }
 
   float3 inLine = pos - pOnLine;
 
@@ -91,7 +116,11 @@ void CheckClosest(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
   float3 v2r = VecToRay( v.pos );
 
-  float4 val = float4( v2r , (float)pID);
+  Out val;
+  val.closest = v2r;
+  val.id = float(pID);
+  val.pos = v.pos;
+  val.distance = length( v.pos - _RO );
 
   interlockedClosestLength( val ,threadID );
 

@@ -85,6 +85,9 @@ public class FrameBuffer : Cycle
       corners.transfer.BindFloat( "_Distance" , () => distance );
       corners.transfer.BindFloat( "_Fade" , () => currentPage.fade );
 
+      corners.transfer.BindInt( "_Locked" , () => locked );
+      corners.transfer.BindFloat( "_DeathTime" , () => deathTime );
+
 
 
 
@@ -97,6 +100,7 @@ public class FrameBuffer : Cycle
 
     public void Set(Page page){
 
+      print("Page FRame Set :" + gameObject);
       topLeft     = page.frame.topLeft;
       bottomLeft  = page.frame.bottomLeft;
       topRight    = page.frame.topRight;
@@ -112,8 +116,14 @@ public class FrameBuffer : Cycle
     }
 
     public void Release(){
+      print("Page FRame Released :" + gameObject);
       locked = 0;
       deathTime = Time.time;
+    }
+
+    public void ImmediateDeath(){
+      locked = 0;
+      deathTime = Time.time-100;
     }
 
 

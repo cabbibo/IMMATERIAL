@@ -79,10 +79,10 @@ varyings vert (uint id : SV_VertexID){
     if( alternate == 5 ){ extra = -l + u; uv = float2(0,1); }
 
       Vert v = _VertBuffer[base];
-      o.debug = v.tang.y;
+      o.debug.x = v.tang.y;
 
       o.selected = 0;
-      if( base == _SelectedVert ){ extra *= 3; o.selected = 1;}
+      if( base == _SelectedVert ){ extra *= 5; o.selected = 1;}
       if( v.tang.y == -1 ){ extra *= 2; }
       if( v.tang.y == -2 ){ extra *= 4; }
       o.worldPos = (v.pos) + extra * _Size;
@@ -108,7 +108,7 @@ varyings vert (uint id : SV_VertexID){
           float3 col = hsv( v.debug.x * .1,1,1);
           if( v.debug.x < 0 ){ col = 1;}
           if( v.debug.x < -1 ){ col = hsv( l * .2 + _Time.y,1,1);}
-          
+          col +=  v.selected;
           return float4(col,1 );
       }
 
