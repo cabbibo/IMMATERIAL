@@ -114,7 +114,7 @@ public class BuildTree :Cycle
       selectedVert = id;
 
       if( Time.time - lastPlayTime > .1f){
-        data.audio.Play( hoverClips[Random.Range(0,hoverClips.Length)]  , 2.01f , .3f );
+        //data.audio.Play( hoverClips[Random.Range(0,hoverClips.Length)]  , 2.01f , .3f );
         lastPlayTime = Time.time;
       }
 
@@ -177,7 +177,7 @@ public class BuildTree :Cycle
       nameGO.GetComponent<TextMesh>().text  = title; 
       HighlightGameObject();
 
-      data.audio.Play( selectClips[Random.Range(0,selectClips.Length)]  , 1.01f, .6f);
+      //data.audio.Play( selectClips[Random.Range(0,selectClips.Length)]  , 1.01f, .6f);
 
       float [] d = new float[verts.structSize];
       verts._buffer.GetData( d , 0 , (int)activeVert * verts.structSize , verts.structSize );

@@ -5,17 +5,32 @@ using UnityEngine;
 public class StoryAudio : Cycle
 {
 
-  public AudioClip[] loopClips;
+  
 
-   public bool[] clipsOn;
-   public bool[] oldClipsOn;
+
+   public AudioClip[] loopClips;
+
+   public int[] audioInfo;
+   public int[] oAudioInfo;
 
    public override void Create(){
 
-    if( loopClips.Length != clipsOn.Length || clipsOn == null || oldClipsOn == null || loopClips.Length != oldClipsOn.Length ){
-      clipsOn = new bool[ loopClips.Length ];
-      oldClipsOn = new bool[ loopClips.Length ];
+    if( loopClips == null ){
+      loopClips = new AudioClip[0];
     }
+
+    if( audioInfo == null || oAudioInfo == null ){
+      audioInfo = new int[ loopClips.Length ];
+      oAudioInfo = new int[ loopClips.Length ];
+    }
+    
+    if( loopClips.Length != audioInfo.Length || 
+        loopClips.Length != oAudioInfo.Length ){
+
+      audioInfo = new int[ loopClips.Length ];
+      oAudioInfo = new int[ loopClips.Length ];
+    }
+
 
    }
 
@@ -25,6 +40,7 @@ public class StoryAudio : Cycle
       DebugThis("NOT ENOUGH SOURCES IN THE AUDIO LOOP SOURCES");
     }
 
+    print("ACTIVADO");
     for( int i = 0; i < loopClips.Length; i++ ){
       data.audio.loopSources[i].clip = loopClips[i];
     }
@@ -37,17 +53,18 @@ public class StoryAudio : Cycle
 
     for( int i = 0; i < loopClips.Length; i++ ){
 
-      if( clipsOn[i] != oldClipsOn[i] ){
-        FadeClip(i);
-        oldClipsOn[i] = clipsOn[i];
+      if( audioInfo[i] != oAudioInfo[i] ){
+        print("NEW DATZA");
+        FadeLoop(i);
+        oAudioInfo[i] = audioInfo[i];
       }
     } 
    }
 
 
-   public  void FadeClip(int i){
-    data.audio.FadeLoop(i,clipsOn[i]);
-   }
+  public  void FadeLoop(int i){
+    data.audio.FadeLoop(i,audioInfo[i]);
+  }
 
 
 }

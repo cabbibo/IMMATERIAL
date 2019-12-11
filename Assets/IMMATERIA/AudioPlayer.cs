@@ -89,11 +89,20 @@ public class AudioPlayer : Cycle{
         float loopTime = (loopBPM / 60) * loopBPB * loopBars;
         float fadeTime = ((loopStartTime + loopTime) - Time.time);
         print(fadeTime);
-     return fadeTime;
+        return fadeTime;
     }
 
-    public void FadeLoop( int i , bool inOut){
-       if(inOut){ FadeInLoop(i); }else{FadeOutLoop(i);}
+    public void FadeLoop( int i , int inOut){
+
+        if( inOut  ==  0 ){
+            FadeOutLoop(i);
+        }else if( inOut == 1 ){
+            FadeInLoop(i);
+        }else if( inOut == 2 ){
+
+        }else if( inOut == 3 ){
+
+        }
     }
 
     public void FadeInLoop(int i){

@@ -37,6 +37,9 @@ void OnEnable(){
         if( showCycleInfo ){
           var indent = EditorGUI.indentLevel;
           EditorGUI.indentLevel = indent + 1;
+
+            //EditorGUILayout.ObjectField("Script", MonoScript.FromMonoBehaviour((target.TypeOf) target), typeof(target.TypeOf), false);
+    
           
             EditorGUILayout.PropertyField(debug  );
             EditorGUILayout.PropertyField(active );

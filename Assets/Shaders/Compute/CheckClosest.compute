@@ -65,11 +65,6 @@ void interlockedClosestLength( Out value   , int threadid ){
   GroupMemoryBarrierWithGroupSync();
   if(threadid==0){
     Out fOut = accumVal[0];
-      fOut.closest = 100000;
-    fOut.id = -1;
-    fOut.pos = 0;
-    fOut.distance = 100000;
-    //fOut = accumVal[0];
 
     for(int i=4; i<NR_THREADS; i+=4){
       Out v = accumVal[i];

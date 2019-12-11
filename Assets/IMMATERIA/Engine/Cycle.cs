@@ -79,7 +79,11 @@ public class Cycle : MonoBehaviour{
     Create();
 
 
-
+    if( Cycles == null ){
+      DebugThis(" SOMEHOW CYCLES IS NULL ");
+      Cycles = new List<Cycle>();
+    }
+    
     for (int i = Cycles.Count - 1; i >= 0; i--){
         if (Cycles[i] == null ){
             Cycles.RemoveAt(i);
@@ -344,7 +348,10 @@ public class Cycle : MonoBehaviour{
   public virtual void Destroy(){}
 
   protected void DoDestroy(){
-    //=   print( Cycles );
+    if( Cycles == null ){
+      DebugThis(" SOMEHOW CYCLES IS NULL ");
+      Cycles = new List<Cycle>();
+    }
     for (int i = Cycles.Count - 1; i >= 0; i--){
         if (Cycles[i] == null ){
             Cycles.RemoveAt(i);

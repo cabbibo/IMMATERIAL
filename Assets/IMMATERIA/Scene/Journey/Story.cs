@@ -66,6 +66,8 @@ public class Story : Cycle
 
   public override void Create(){
     for( int i = 0; i < pages.Length; i ++ ){
+      pages[i].setter = setter;
+      pages[i].story = this;
       SafeInsert(pages[i]);
     }
     started = false;
@@ -212,7 +214,15 @@ public class Story : Cycle
     data.textParticles.Release();
     
     data.cameraControls.SetLerpTarget( pages[currentPage].transform , transitionSpeed );
-   
+    
+    if( pages[currentPage].audioInfo.Length == setter.audio.audioInfo.Length ){
+      print( "WE DOING IT GRANDE");
+      for( int i = 0; i < setter.audio.audioInfo.Length; i++ ){
+        setter.audio.audioInfo[i] = pages[currentPage].audioInfo[i];
+      }
+    }else{
+      DebugThis("WHOA WE GOT AN AUDIO PROBLEM");
+    }
     if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget ); }
     if( pages[currentPage].lerpTarget ){ data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , transitionSpeed ); }
     if( pages[currentPage].moveTarget &&  pages[currentPage].lerpTarget ){ Debug.LogError("this page has multiple targets"); }

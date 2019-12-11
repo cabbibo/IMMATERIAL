@@ -18,6 +18,7 @@ public class StorySetter : Cycle
   public Story[] stories;
   public int currentStory;
 
+  public StoryAudio audio;
 
   public Cycle[] localCycles;
 
@@ -30,6 +31,8 @@ public class StorySetter : Cycle
   }
 
   public virtual void StoryCreate(){
+
+
     SafeInsert( perimeter );
     uv =new Vector2( transform.position.x * data.land.size , transform.position.z * data.land.size);
 
@@ -43,12 +46,23 @@ public class StorySetter : Cycle
       SafeInsert(localCycles[i]);
     }
 
+    if( audio == null ){ 
+      StoryAudio a = GetComponent<StoryAudio>();
+      if( a == null ){ 
+        a = gameObject.AddComponent<StoryAudio>();
+        a._Create();
+      }
+      audio = a;
+    }
 
+    SafeInsert( audio );
 
     perimeter.OnEnterOuter.AddListener(EnterOuter);
     perimeter.OnEnterInner.AddListener(EnterInner);
     perimeter.OnExitOuter.AddListener(ExitOuter);
     perimeter.OnExitInner.AddListener(ExitInner);
+
+
   }
 
   public override void Destroy(){
@@ -90,13 +104,16 @@ public class StorySetter : Cycle
 
   public void EnterInner(){
     
-//    print("DOBLSLSW");
+    print("DOBLSLSW");
     data.inputEvents.OnTap.AddListener( stories[currentStory].CheckForStart );
     data.inputEvents.OnEdgeSwipeLeft.AddListener(  stories[currentStory].NextPage );
     data.inputEvents.OnEdgeSwipeRight.AddListener(  stories[currentStory].PreviousPage );
 
     stories[currentStory].OnEnterInner.Invoke();
     stories[currentStory].DoFade(1);
+    
+    _Activate();
+
 
   }
 

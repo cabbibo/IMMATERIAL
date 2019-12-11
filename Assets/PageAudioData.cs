@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class PageAudioData : Cycle
 {
-  public bool[] clipsOn;
+  public int[] audioInfo;
   public StoryAudio storyAudio;
   public override void Create(){
-    if( clipsOn.Length != storyAudio.clipsOn.Length){
-      clipsOn = new bool[storyAudio.clipsOn.Length];
+    if( audioInfo.Length != storyAudio.audioInfo.Length){
+      audioInfo = new int[storyAudio.audioInfo.Length];
     }
   }
 
   public void turnOn(){
-    for( int i = 0; i < storyAudio.clipsOn.Length; i++ ){
-      storyAudio.clipsOn[i] = clipsOn[i];
+    for( int i = 0; i < storyAudio.audioInfo.Length; i++ ){
+      storyAudio.audioInfo[i] = audioInfo[i];
     }
   }
 }

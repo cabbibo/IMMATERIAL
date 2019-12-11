@@ -28,6 +28,11 @@ public class Page : Cycle
     public EventTypes.FloatEvent  FadeIn;
     public EventTypes.FloatEvent  FadeOut;
 
+    public StorySetter setter;
+    public Story        story;
+
+    public int[] audioInfo;
+
     public override void Create(){
       frame = GetComponent<Frame>();
       text = GetComponent<TextAnchor>();
@@ -36,6 +41,20 @@ public class Page : Cycle
       
       SafeInsert(frame);
       SafeInsert(text);
+
+        
+    }
+
+    public override void OnGestate(){
+        if( audioInfo == null ){ audioInfo = new int[setter.audio.audioInfo.Length]; }
+
+
+        // currently no setter on the book projection pages!
+        if( setter != null ){
+            if( audioInfo.Length != setter.audio.audioInfo.Length){
+              audioInfo = new int[setter.audio.audioInfo.Length];
+            }
+        }
     }
 
     public void Lock(){

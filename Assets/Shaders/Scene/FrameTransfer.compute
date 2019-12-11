@@ -114,8 +114,11 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     if( _Locked == 1 ){
       r *= (1-_Fade); 
     }else{
-      r  *=  1/(1+(_Time - _DeathTime));
+      r  *=  1/(1+pow( (_Time - _DeathTime),2));
+      if( _Time - _DeathTime > 5 ){ r = 0; }
     }
+
+
 
     if( _CanEdgeSwipe == 1 && particleID == 3 ){ r *= (2 * (.5-abs(rowVal-.5)) +1);}
     if( _CanEdgeSwipe == 2 && particleID == 1 ){ r *= (2 * (.5-abs(rowVal-.5)) +1);}
@@ -133,6 +136,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
    
     Vert v = _VertBuffer[sID];
+    // if radius is so dang small, just erase it!
 
    
     v.nor = -fNor;
