@@ -12,6 +12,9 @@ public class Framer : Cycle
 
     public SampleSynth instrument;
 
+    public float minPlayTime;
+    public float maxDist;
+
 
     public int oClosest;
     public int closest;
@@ -36,11 +39,15 @@ public class Framer : Cycle
 
       oClosest = closest;
       closest = (int)(frames[currentFrame].checkClosest.closestID);
+      float m =  frames[currentFrame].checkClosest.closest.magnitude;
+      if( closest != oClosest && Time.time - instrument.lastTime > minPlayTime + Random.Range(0,minPlayTime * .2f) && doAudio && m < maxDist ){
+        //instrument.location = Random.Range(0 ,10.5f);
 
-      if( closest != oClosest && Time.time - instrument.lastTime > .1f && doAudio ){
-        instrument.location = Random.Range(0 ,2.5f);
-        instrument.pitch = data.inputEvents.vel.magnitude;
-        instrument.volume = (.3f + 20 * frames[currentFrame].checkClosest.closest.magnitude);
+        float v = (maxDist - m ) / maxDist;
+
+        minPlayTime = (1-v) * .3f;
+        instrument.pitch = Mathf.Clamp( v + data.inputEvents.vel.magnitude * .1f , .1f , 10.5f);
+        instrument.volume = .3f * v;
         //print( instrument.volume );
         instrument.PlayGrain();
       }

@@ -115,7 +115,7 @@ cameraSettings.farClip = events.MainCamera.GetComponent<Camera>().farClipPlane;
 
       if( events.Down == 0 && events.oDown == 1 ){
         events.JustUp = 1;
-        Debug.Log("Just Up");
+        //Debug.Log("Just Up");
         events.endTime = Time.time;
         events.endPos = events.p;
         events.canEdgeSwipe = 0;

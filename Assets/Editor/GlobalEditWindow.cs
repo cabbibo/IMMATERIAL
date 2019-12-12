@@ -27,6 +27,7 @@ public class GlobalEditWindow : EditorWindow
     public bool startInStory;
     public int startPage;
     public int startStory;
+    public bool fast;
 
 
     //LINKED OBJECTS
@@ -326,11 +327,13 @@ public class GlobalEditWindow : EditorWindow
         startInPages = EditorGUILayout.Toggle ("StartInPages", startInPages);
         startStory = EditorGUILayout.IntField ("StartStory", startStory);
         startPage = EditorGUILayout.IntField ("StartPage", startPage);
+        fast = EditorGUILayout.Toggle ("Fast", fast);
 
         state.startStory = startStory;
         state.startPage = startPage;
         state.startInStory = startInStory;
         state.startInPages = startInPages;
+        state.fast = fast;
 
         EndGroup();
 

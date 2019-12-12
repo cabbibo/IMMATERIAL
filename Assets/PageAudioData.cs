@@ -12,9 +12,4 @@ public class PageAudioData : Cycle
     }
   }
 
-  public void turnOn(){
-    for( int i = 0; i < storyAudio.audioInfo.Length; i++ ){
-      storyAudio.audioInfo[i] = audioInfo[i];
-    }
-  }
 }

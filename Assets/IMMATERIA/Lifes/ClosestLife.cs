@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class ClosestLife : Life{
   
@@ -32,6 +33,8 @@ public class ClosestLife : Life{
 
   public bool tmpActive;
 
+
+Queue<AsyncGPUReadbackRequest> _requests = new Queue<AsyncGPUReadbackRequest>();
   
   public override void _Create(){
     
@@ -95,18 +98,7 @@ public class ClosestLife : Life{
   }
 
 
-  public override void AfterDispatch(){
-
-        oClosest = closest;
-    oClosestID = closestID;
-
-    if( active ){
-    numberGroups = numGroups;
-    _buffer.GetData(values);
-    float x = 0; float y = 0; float z = 0; float w = 0;
-    
-
-    
+  public void GetAllData(float[] values){
     closest = Vector3.one * 100000;
     closestID = -1;
     Vector3 v;
@@ -133,12 +125,24 @@ public class ClosestLife : Life{
     }
 
     value = new Vector4( closest.x , closest.y , closest.z , closestID );
+  }
+  public override void AfterDispatch(){
 
-      if( closestID != oClosestID ){
-        closestTime = Time.time;
-      }
+    oClosest = closest;
+    oClosestID = closestID;
+
+    if( active ){
+
+      numberGroups = numGroups;
+
+        _buffer.GetData(values);
+        GetAllData(values);
+      
     }
-
+    
+    if( closestID != oClosestID ){
+      closestTime = Time.time;
+    }
     active = tmpActive;
 
   }

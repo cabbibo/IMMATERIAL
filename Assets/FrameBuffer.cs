@@ -14,7 +14,7 @@ public class FrameBuffer : Cycle
 
     public Life set;
     public Life simulate;
-    public ReduceLife checkClosest;
+    public ClosestLife checkClosest;
 
     public TransferLifeForm transfer;
     public InstanceTransfer corners;
@@ -100,7 +100,7 @@ public class FrameBuffer : Cycle
 
     public void Set(Page page){
 
-      print("Page FRame Set :" + gameObject);
+      //print("Page FRame Set :" + gameObject);
       topLeft     = page.frame.topLeft;
       bottomLeft  = page.frame.bottomLeft;
       topRight    = page.frame.topRight;
@@ -116,7 +116,6 @@ public class FrameBuffer : Cycle
     }
 
     public void Release(){
-      print("Page FRame Released :" + gameObject);
       locked = 0;
       deathTime = Time.time;
     }

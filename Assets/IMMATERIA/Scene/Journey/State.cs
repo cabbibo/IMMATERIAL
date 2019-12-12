@@ -5,8 +5,28 @@ using UnityEngine;
 public class State : Cycle
 {
 
+
+
+
   public bool hasFallen;
   public bool hasPickedUpBook;
+  public int whichStoryLoop;
+  public bool monolithParticlesEmitting;
+  public int  whichMonolithEmitting;
+
+
+/*
+  public bool spacePuppyVisited;
+  public bool crystalsVisited;
+  public bool spacePuppyContent;
+  public bool dandelionsVisited;
+  public bool lighthouseVisited;
+  public bool lighthouseContent;
+  public bool pitOfGoldVisited;
+  public bool kelpTonguesVisited;
+*/
+
+
 
   public bool[] storiesVisited;
 
@@ -21,6 +41,10 @@ public class State : Cycle
   public bool inBookPages;
 
 
+
+
+  public int currentConnectedMonolith;
+
   public int startStory;
   public int startPage;
 
@@ -28,6 +52,8 @@ public class State : Cycle
   public bool startInPages;
   public bool startInBook;
   public bool startInBookPages;
+
+
 
 
   public bool fast;
@@ -99,6 +125,13 @@ data.journey.stories[data.journey.currentStory].stories[data.journey.stories[dat
       data.book.OpenBook();
     }
 
+    if( hasPickedUpBook ){
+      PickUpBook();
+    }else{
+      PutDownBook();
+    }
+
+
 
 
    /*   if( startInBookPages ){
@@ -123,8 +156,19 @@ data.journey.stories[data.journey.currentStory].stories[data.journey.stories[dat
 
 
 
+  public void PutDownBook(){
+    data.playerControls.epiphanyRing.circle.body.mpb.SetFloat("_StartTime" , Time.time );
+    data.playerControls.epiphanyRing.circle.body.mpb.SetFloat("_Setting" , 0 );
+    data.playerControls.epiphanyRing.UnSet();
+    data.playerControls.OnGroundBook.SetActive(true);
+    data.playerControls.InHandBook.SetActive(false);
+    data.state.hasPickedUpBook = false;
+  }
 
   public void PickUpBook(){
+    data.playerControls.epiphanyRing.Set();
+    data.playerControls.OnGroundBook.SetActive(false);
+    data.playerControls.InHandBook.SetActive(true);
     data.state.hasPickedUpBook = true;
   }
 

@@ -55,6 +55,7 @@ public class StorySetter : Cycle
       audio = a;
     }
 
+      audio.setter = this;
     SafeInsert( audio );
 
     perimeter.OnEnterOuter.AddListener(EnterOuter);
@@ -88,11 +89,11 @@ public class StorySetter : Cycle
   public void EnterOuter(){
     CheckWhichStory();
 
-    stories[currentStory].DoFade(0);
-    stories[currentStory].OnEnterOuter.Invoke();
+    CS.DoFade(0);
+    CS.OnEnterOuter.Invoke();
 
 
-    perimeter.OnDoFade.AddListener(stories[currentStory].DoFade);
+    perimeter.OnDoFade.AddListener(CS.DoFade);
  
 
     /*for( int i = 0; i < localCycles.Length; i ++ ){
@@ -103,14 +104,14 @@ public class StorySetter : Cycle
   }
 
   public void EnterInner(){
-    
-    print("DOBLSLSW");
-    data.inputEvents.OnTap.AddListener( stories[currentStory].CheckForStart );
-    data.inputEvents.OnEdgeSwipeLeft.AddListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnEdgeSwipeRight.AddListener(  stories[currentStory].PreviousPage );
 
-    stories[currentStory].OnEnterInner.Invoke();
-    stories[currentStory].DoFade(1);
+
+    data.inputEvents.OnTap.AddListener( CS.CheckForStart );
+    data.inputEvents.OnEdgeSwipeLeft.AddListener(  CS.NextPage );
+    data.inputEvents.OnEdgeSwipeRight.AddListener(  CS.PreviousPage );
+
+    CS.OnEnterInner.Invoke();
+    CS.DoFade(1);
     
     _Activate();
 
@@ -120,10 +121,10 @@ public class StorySetter : Cycle
   public void ExitOuter(){
 
 //    print("StorySetter exiting outer : " + gameObject.name );
-    stories[currentStory].DoFade(0);
+    CS.DoFade(0);
 
-    stories[currentStory].OnExitOuter.Invoke();
-    perimeter.OnDoFade.RemoveListener(stories[currentStory].DoFade);
+    CS.OnExitOuter.Invoke();
+    perimeter.OnDoFade.RemoveListener(CS.DoFade);
 
     /*for( int i = 0; i < localCycles.Length; i ++ ){
       localCycles[i].SpinDown();
@@ -132,19 +133,43 @@ public class StorySetter : Cycle
 
 
   public void ExitInner(){
-    data.inputEvents.OnTap.RemoveListener(  stories[currentStory].CheckForStart );
-    data.inputEvents.OnEdgeSwipeLeft.RemoveListener(  stories[currentStory].NextPage );
-    data.inputEvents.OnEdgeSwipeRight.RemoveListener(  stories[currentStory].PreviousPage );
+    data.inputEvents.OnTap.RemoveListener(  CS.CheckForStart );
+    data.inputEvents.OnEdgeSwipeLeft.RemoveListener(  CS.NextPage );
+    data.inputEvents.OnEdgeSwipeRight.RemoveListener(  CS.PreviousPage );
 
-    stories[currentStory].OnExitInner.Invoke();
-    stories[currentStory].DoFade(1);
+    CS.OnExitInner.Invoke();
+    CS.DoFade(1);
 //    print("exitInner");
   }
 
 
   public void StartStory(){
-    stories[currentStory].StartStory();
+    CS.StartStory();
   }
+
+  public Story CS{
+    get{ return stories[currentStory]; }
+  }
+
+   public Page CP{
+    get{ return CS.pages[CS.currentPage]; }
+  }
+
+  public void CheckForStart(){
+
+  }
+
+  public void NextPage(){
+
+  }
+
+  public void PreviousPage(){
+
+  }
+
+
+
+
   
 
 

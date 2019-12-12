@@ -6,14 +6,19 @@ public class StoryAudio : Cycle
 {
 
   
+    public StorySetter setter;
 
+    public AudioClip[] startClips;
+    public AudioClip[] endClips;
 
+    //public AudioClip baseLoop;
    public AudioClip[] loopClips;
 
    public int[] audioInfo;
    public int[] oAudioInfo;
 
    public override void Create(){
+
 
     if( loopClips == null ){
       loopClips = new AudioClip[0];
@@ -36,16 +41,29 @@ public class StoryAudio : Cycle
 
    public override void Activate(){
 
+
     if( data.audio.loopSources.Length < loopClips.Length ){
       DebugThis("NOT ENOUGH SOURCES IN THE AUDIO LOOP SOURCES");
     }
 
-    print("ACTIVADO");
     for( int i = 0; i < loopClips.Length; i++ ){
       data.audio.loopSources[i].clip = loopClips[i];
     }
 
-    data.audio.NewLoop();
+
+    for( int i = 0; i < loopClips.Length; i++ ){
+        FadeLoop(i);
+        oAudioInfo[i] = audioInfo[i];
+    } 
+
+   }
+
+   public override void Deactivate(){
+    for( int i = 0; i < loopClips.Length; i++ ){
+        audioInfo[i] = 0;
+        FadeLoop(i);
+        oAudioInfo[i] = audioInfo[i];
+    } 
 
    }
 
@@ -54,7 +72,6 @@ public class StoryAudio : Cycle
     for( int i = 0; i < loopClips.Length; i++ ){
 
       if( audioInfo[i] != oAudioInfo[i] ){
-        print("NEW DATZA");
         FadeLoop(i);
         oAudioInfo[i] = audioInfo[i];
       }
@@ -62,8 +79,28 @@ public class StoryAudio : Cycle
    }
 
 
-  public  void FadeLoop(int i){
-    data.audio.FadeLoop(i,audioInfo[i]);
+  public void FadeLoop(int i){
+    data.audio.FadeLoop(i , audioInfo[i] , setter.CS.transitionSpeed );
+  }
+
+  public void Enter(){
+
+    print("ENNTNT");
+
+    data.audio.globalLooper.FadeOut();
+
+    for( int i = 0; i < audioInfo.Length; i++ ){
+      data.audio.FadeLoop(i , audioInfo[i] , data.audio.globalLooper.fadeOutSpeed );
+    }
+  }
+
+  public void Exit(){
+
+    print("EXITS");
+    data.audio.globalLooper.FadeIn();
+    for( int i = 0; i < audioInfo.Length; i++ ){
+      data.audio.FadeLoop(i , 0 , data.audio.globalLooper.fadeInSpeed );
+    }
   }
 
 

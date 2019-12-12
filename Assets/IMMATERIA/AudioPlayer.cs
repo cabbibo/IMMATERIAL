@@ -9,6 +9,9 @@ public class AudioPlayer : Cycle{
   public int oPlayID;
   public int numSources;
   public int numLoopSources;
+  public int numGlobalLoopSources;
+
+  public AudioMixer master;
 
     public static AudioPlayer Instance { get; private set; }
 
@@ -16,9 +19,11 @@ public class AudioPlayer : Cycle{
 
     public GameObject[] objects;
     public GameObject[] loopObjects;
+    public GameObject[] globalLoopObjects;
     public AudioSource[] sources;
     public SourcePlayer[] players;
     public AudioSource[] loopSources;
+    public AudioSource[] globalLoopSources;
 
     public float loopBPM;
     public int loopBars;
@@ -26,12 +31,17 @@ public class AudioPlayer : Cycle{
 
     public Transform sourceTransform;
     public Transform loopTransform;
+    public Transform globalLoopTransform;
+
+    public GlobalLooper globalLooper;
 
     public GameObject sourcePrefab;
 
     public override void Create(){
 
-        if( objects == null || objects.Length != numSources  || loopSources.Length != numLoopSources || loopSources == null ){
+        if( objects == null || objects.Length != numSources  || 
+            loopSources.Length != numLoopSources || loopSources == null  || 
+            globalLoopSources.Length != numGlobalLoopSources || globalLoopSources == null   ){
     
 
             if( objects != null ){
@@ -42,6 +52,12 @@ public class AudioPlayer : Cycle{
             if( loopObjects != null ){
             for( int i = 0; i < loopObjects.Length; i++ ){
                 Object.DestroyImmediate(loopObjects[i]);//.Destroy();
+            }}
+
+
+             if( globalLoopObjects != null ){
+            for( int i = 0; i < globalLoopObjects.Length; i++ ){
+                Object.DestroyImmediate(globalLoopObjects[i]);//.Destroy();
             }}
 
         sources = new AudioSource[numSources];
@@ -72,53 +88,78 @@ public class AudioPlayer : Cycle{
             loopSources[i].dopplerLevel = 0;
             loopSources[i].playOnAwake = false;
 
+            loopSources[i].outputAudioMixerGroup = master.FindMatchingGroups("Loops")[0];
+
+        }
+
+        print("WHA : " + numGlobalLoopSources);
+        globalLoopSources = new AudioSource[numGlobalLoopSources];
+        globalLoopObjects = new GameObject[numGlobalLoopSources];
+        for( int i = 0 ; i < numGlobalLoopSources; i++ ){ 
+
+            globalLoopObjects[i] = new GameObject();
+            globalLoopObjects[i].transform.parent = globalLoopTransform;
+
+            globalLoopSources[i] = globalLoopObjects[i].AddComponent<AudioSource>();
+            globalLoopSources[i].volume = 0;
+            globalLoopSources[i].dopplerLevel = 0;
+            globalLoopSources[i].playOnAwake = false;
+            globalLoopSources[i].outputAudioMixerGroup = master.FindMatchingGroups("GlobalLoops")[0];
+
         }
 
 
+
         }
 
 
+
+        SafeInsert(globalLooper);
 
     }
 
 
     public float loopStartTime = 0;
 
-    public float timeTilLoop(){
-
-        float loopTime = (loopBPM / 60) * loopBPB * loopBars;
-        float fadeTime = ((loopStartTime + loopTime) - Time.time);
-        print(fadeTime);
-        return fadeTime;
+    public float loopTime{
+        get{ return (loopBPM / 60) * loopBPB * loopBars; }
     }
 
-    public void FadeLoop( int i , int inOut){
+    public float timeTilLoop{
 
-        if( inOut  ==  0 ){
-            FadeOutLoop(i);
-        }else if( inOut == 1 ){
-            FadeInLoop(i);
-        }else if( inOut == 2 ){
-
-        }else if( inOut == 3 ){
-
+        get{
+            float fadeTime = ((loopStartTime + loopTime) - Time.time);
+            return fadeTime;
         }
     }
 
-    public void FadeInLoop(int i){
-        data.tween.AddTween( timeTilLoop() ,i , fadeInLoop );
+    public void FadeLoop( int i , float v, float t ){
+        StartCoroutine(Fade(loopSources[i],loopSources[i].volume,v,t));
     }
 
-    public void FadeOutLoop( int i ){
-        data.tween.AddTween( timeTilLoop(),i , fadeOutLoop );
+    public void FadeGlobalLoop( int i , float v, float t ){
+        StartCoroutine(Fade(globalLoopSources[i],globalLoopSources[i].volume,v,t));
     }
 
-    public void fadeInLoop( float v , int id ){
-        loopSources[id].volume = v;
+
+     IEnumerator Fade( AudioSource a , float sv ,float v,  float time  ){
+        for (float i = 0; i < time; i += Time.deltaTime ){
+            a.volume = Mathf.SmoothStep( sv , v , (i/time));
+            yield return null;
+        }
     }
 
-    public void fadeOutLoop( float v , int id ){
-        loopSources[id].volume = 1-v;
+    IEnumerator FadeIn( AudioSource a  , float time ){
+        for (float i = 0; i < time; i += Time.deltaTime ){
+            a.volume = i/time;
+            yield return null;
+        }
+    }
+    IEnumerator FadeOut( AudioSource a , float time  ){
+        for (float i = 0; i < time; i += Time.deltaTime ){
+            a.volume = 1-(i/time);
+            yield return null;
+        }
     }
 
     public override void WhileLiving(float v){
@@ -142,6 +183,14 @@ public class AudioPlayer : Cycle{
             }
         
         }
+
+
+        for( int i = 0; i < globalLoopSources.Length; i++ ){
+            if( globalLoopSources[i].clip != null ){
+                globalLoopSources[i].Play();
+            }
+        }
+
     }
 
     public void Play( AudioClip clip ){
@@ -180,13 +229,17 @@ public class AudioPlayer : Cycle{
 
     public void Play( AudioClip clip , float pitch){
 
+        sources[playID].outputAudioMixerGroup = master.FindMatchingGroups("Default")[0];
         sources[playID].volume = 1;
+        sources[playID].time = 0;
         sources[playID].pitch = pitch;
         Play(clip);
     }
 
     public void Play( AudioClip clip , float pitch , float volume){
 
+        sources[playID].outputAudioMixerGroup = master.FindMatchingGroups("Default")[0];
+        sources[playID].time = 0;
         sources[playID].volume = volume;
         sources[playID].pitch = pitch;
         Play(clip);

@@ -30,8 +30,9 @@ public class gpuNextTouchInstrument : Cycle
     bool inAndNewClosest = ((c.closestID != c.oClosestID) && (c.closest.magnitude < maxDist));
     bool nowIn = ((c.closest.magnitude < maxDist) && (c.oClosest.magnitude >= maxDist));
     bool overPlayTime = ((Time.time - lastPlayTime) > minPlayTime+ randomness * Random.Range(-.99f,.99f));
-    //print( (c.closestID != c.oClosestID) );
+
     if( ( inAndNewClosest || nowIn ) && overPlayTime ){
+
 
       float v = (c.closestDist - closestVolumeDist) / furthestVolumeDist;// , c.closestDist);
 
@@ -41,12 +42,13 @@ public class gpuNextTouchInstrument : Cycle
       v = 1-v;
 
       v = Mathf.SmoothStep( 0,1,v);
-      print(v);
+     // print(v);
 
       v = v*v;
       v = volumeMultiplier * v;
     
-      data.audio.Play( clips[Random.Range(0,clips.Length)]  ,  2.01f , v );
+      AudioClip clip = clips[Random.Range(0,clips.Length)];
+      data.audio.Play( clip ,  24 , v , 0  , data.audio.master , "TouchSounds" );
       lastPlayTime = Time.time;
     }
 

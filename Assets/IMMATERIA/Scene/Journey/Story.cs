@@ -115,38 +115,25 @@ public class Story : Cycle
 
   public void NextPage(){
 
-
-//    print("NEXXX");
     if( started && transitioning == false && !pages[currentPage].locked ){
 
       forward = true;
-      currentPage ++;
+
       
-      if( currentPage < pages.Length ){
+      if( currentPage < pages.Length-1 ){
 
-        transitioning = true;
-        transitionSpeed = pages[currentPage].lerpSpeed;
-        if( data.state.fast ){ transitionSpeed = 1; }
-        transitionStartTime = Time.time;
+        oldTransitionPage = pages[currentPage];
+        currentPage ++;
 
-        SetActivePage();
-        oldTransitionPage = pages[currentPage-1];
-        pages[currentPage-1].OnEndExit.Invoke();
-
-        data.framer.Set( pages[currentPage] );
+        PageTurn();
 
       }else{
-        
-        transitioning = true;
-        transitionSpeed = pages[0].lerpSpeed;
 
-        if( data.state.fast ){ transitionSpeed = 1; }
-        transitionStartTime = Time.time;
-        oldTransitionPage = pages[currentPage-1];
-        pages[currentPage-1].OnEndExit.Invoke();
+        oldTransitionPage = pages[currentPage];
         currentPage = 0;
-        Release();
-      
+        LeaveStoryEnd();
+        
+   
       }
       
     }else{
@@ -158,30 +145,57 @@ public class Story : Cycle
 
   }
 
+
+  public void SetUpTransition(){
+     // Set up transition
+     transitioning = true;
+     transitionSpeed = pages[currentPage].lerpSpeed;
+     if( data.state.fast ){ transitionSpeed = 1; }
+     transitionStartTime = Time.time;
+  }
+
+  public void PageTurn(){
+     
+      
+    data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
+      SetUpTransition();
+      SetActivePage();
+      if( forward ){
+        oldTransitionPage.OnEndExit.Invoke();
+      }else{
+        oldTransitionPage.OnStartExit.Invoke();
+      }
+
+     data.framer.Set( pages[currentPage] );
+
+  }
+
+  public void LeaveStoryEnd(){
+
+      
+      
+    data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
+      SetUpTransition();
+      oldTransitionPage.OnEndExit.Invoke();
+      
+    setter.audio.Exit();
+      Release();
+      
+  }
+
   public void PreviousPage(){
     
     if( started && transitioning == false && !pages[currentPage].mustContinue ){
 
       forward = false;
-      currentPage --;
+     
       
-      if( currentPage >= 0 ){
-
-        transitioning = true;
-        //transitionSpeed = pages[currentPage].lerpSpeed;
-
-        if( data.state.fast ){ transitionSpeed = 1; }
-        transitionStartTime = Time.time;
-
-        SetActivePage();
-
-        oldTransitionPage = pages[currentPage+1];
-
-
-        data.framer.Set( pages[currentPage] );
-
-         //pages[currentPage].OnEndEnter.Invoke();
-         pages[currentPage+1].OnStartExit.Invoke();
+      if( currentPage > 0 ){
+        
+        oldTransitionPage = pages[currentPage];
+        currentPage --;
+        
+        PageTurn();
 
       }else{
         if( !cantUnstart ){
@@ -216,13 +230,13 @@ public class Story : Cycle
     data.cameraControls.SetLerpTarget( pages[currentPage].transform , transitionSpeed );
     
     if( pages[currentPage].audioInfo.Length == setter.audio.audioInfo.Length ){
-      print( "WE DOING IT GRANDE");
       for( int i = 0; i < setter.audio.audioInfo.Length; i++ ){
         setter.audio.audioInfo[i] = pages[currentPage].audioInfo[i];
       }
     }else{
       DebugThis("WHOA WE GOT AN AUDIO PROBLEM");
     }
+
     if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget ); }
     if( pages[currentPage].lerpTarget ){ data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , transitionSpeed ); }
     if( pages[currentPage].moveTarget &&  pages[currentPage].lerpTarget ){ Debug.LogError("this page has multiple targets"); }
@@ -232,7 +246,7 @@ public class Story : Cycle
 
   public void OnLockPage(){
 
-//    print("ON LOCK PAGE");
+    data.audio.Play( setter.audio.startClips[Random.Range(0,setter.audio.startClips.Length)] , 1f , .11f);
     transitionSpeed = pages[currentPage].lerpSpeed;
     data.textParticles.Set( pages[currentPage].text );
 
@@ -276,7 +290,7 @@ public class Story : Cycle
   
   public void StartStory(){
 
-
+    setter.audio.Enter();
     data.state.inPages = true;
 
     started = true;
@@ -313,23 +327,17 @@ public class Story : Cycle
   
     pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-v);
     pages[currentPage].fade = 1-v;
-  
- //   print("fadio");
-//    print( 1-2*v);
+
   }
 
   public void DoBetweenFade(){
 
     float v = (Time.time - transitionStartTime) / transitionSpeed;
 
-
     if( v > 1){ 
 
       transitioning = false;
-
-      if( started ){ 
-        OnLockPage();
-      }
+      if( started ){ OnLockPage(); }
     
     }
 
@@ -341,31 +349,20 @@ public class Story : Cycle
       oldTransitionPage.FadeOut.Invoke(v);
       hue = Mathf.Lerp( oldTransitionPage.baseHue , pages[currentPage].baseHue , v);
 
-    }else{
-
     }
 
 
-      data.textParticles.body.mpb.SetFloat("_BaseHue" , hue);
+    data.textParticles.body.mpb.SetFloat("_BaseHue" , hue);
 
 
-      float m  = Mathf.Min((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff"));
+    float m  = Mathf.Min((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff"));
     // doing this to make sure the frame doesn't "flash" in 
     pages[currentPage].frameMPB.SetFloat("_Cutoff" ,m);
     pages[currentPage].fade = m;
     pages[currentPage].FadeIn.Invoke(v);
 
-
-
-
-
-//    print("fad btwx");
-
-
   }
 
-  public void FadeIn( float v ){
 
-  }
 
 }

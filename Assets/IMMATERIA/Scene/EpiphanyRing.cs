@@ -20,7 +20,10 @@ public class EpiphanyRing : Cycle
 
     public float startTime;
 
+    public bool setting;
+
     public override void Create(){
+      setting = false;
 
       //_Activate();
       SafeInsert(body);
@@ -37,6 +40,7 @@ public class EpiphanyRing : Cycle
       
 
       _Activate();
+      setting = true;
 
        
       startTime = Time.time;
@@ -74,9 +78,15 @@ public class EpiphanyRing : Cycle
     } 
 
     public override void WhileLiving( float v ){
-      if( Time.time -startTime > 10 ){
+      if( Time.time -startTime > 10 && setting ){
         circle._Deactivate();
         _Deactivate();
       }
     }
+
+
+    public void UnSet(){
+      circle._Activate();
+    }
+
 }

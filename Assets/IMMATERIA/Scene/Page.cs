@@ -46,14 +46,16 @@ public class Page : Cycle
     }
 
     public override void OnGestate(){
-        if( audioInfo == null ){ audioInfo = new int[setter.audio.audioInfo.Length]; }
-
-
+        
         // currently no setter on the book projection pages!
         if( setter != null ){
+            
+            if( audioInfo == null ){ audioInfo = new int[setter.audio.audioInfo.Length]; }
+
             if( audioInfo.Length != setter.audio.audioInfo.Length){
               audioInfo = new int[setter.audio.audioInfo.Length];
             }
+
         }
     }
 
