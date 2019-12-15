@@ -8,10 +8,10 @@ public class Journey : Cycle
   public bool NOSTORIES;
 
 
-  public StorySetter[] stories;
+  public StorySetter[] setters;
 
-  public MonolithStorySetter[] monoStories;
-  public StorySetter[] nonMonoStories;
+  public MonolithStorySetter[] monoSetters;
+  public StorySetter[] nonMonoSetters;
 
   public int currentStory;
   public int connectedStory;
@@ -35,30 +35,30 @@ public class Journey : Cycle
     if( !NOSTORIES ){
 
 
-      int numMonoStories = 0;
+      int numMonoSetters = 0;
 
-      for( int i = 0; i < stories.Length; i++ ){
-        SafeInsert( stories[i] );
-        if( stories[i] is MonolithStorySetter ){
-          numMonoStories ++;
+      for( int i = 0; i < setters.Length; i++ ){
+        SafeInsert( setters[i] );
+        if( setters[i] is MonolithStorySetter ){
+          numMonoSetters ++;
         }
       }
 
       int monoIndex = 0;
       int nonMonoIndex = 0;
 
-//      print( numMonoStories );
+//      print( numMonoSetters );
 
-      monoStories = new MonolithStorySetter[ numMonoStories ];
-      nonMonoStories = new StorySetter[ stories.Length - numMonoStories ];
+      monoSetters = new MonolithStorySetter[ numMonoSetters ];
+      nonMonoSetters = new StorySetter[ setters.Length - numMonoSetters ];
 
-      for( int i = 0; i < stories.Length; i++ ){
-        if( stories[i] is MonolithStorySetter ){
-          stories[i].id = monoIndex;
-          monoStories[monoIndex] = (MonolithStorySetter)stories[i];
+      for( int i = 0; i < setters.Length; i++ ){
+        if( setters[i] is MonolithStorySetter ){
+          setters[i].id = monoIndex;
+          monoSetters[monoIndex] = (MonolithStorySetter)setters[i];
           monoIndex ++;
         }else{
-          nonMonoStories[nonMonoIndex] = stories[i];
+          nonMonoSetters[nonMonoIndex] = setters[i];
           nonMonoIndex ++;
         }
       }
@@ -67,7 +67,7 @@ public class Journey : Cycle
     }else{
 
       Cycles.Clear();
-      SafeInsert( stories[currentStory] );
+      SafeInsert( setters[currentStory] );
     }
 
 
@@ -85,7 +85,7 @@ public class Journey : Cycle
     activatedMonolith = id;
     Shader.SetGlobalInt("_ConnectedStory" , connectedStory );
     data.monolithParticles._Emit = 1;
-    data.monolithParticles._EmitterPosition = monoStories[id].monolith.transform.position;
+    data.monolithParticles._EmitterPosition = monoSetters[id].monolith.transform.position;
   }
 
   public void DisconnectMonolith(int id){

@@ -243,9 +243,9 @@ public class BuildTree :Cycle
       if( c is StorySetter ){
         int story = 0;
 
-        for( int i = 0; i < data.journey.stories.Length; i++ ){
+        for( int i = 0; i < data.journey.setters.Length; i++ ){
           print( i );
-          if( data.journey.stories[i] == c ){
+          if( data.journey.setters[i] == c ){
             data.state.startInStory = true;
             data.state.startInPages = true;
             data.state.startStory = i;

@@ -38,7 +38,7 @@ public class GuideParticles : Simulation
   }
 
   public void EmitAtMonolith( int i ){
-    SetEmitterPosition(data.journey.monoStories[i].monolith.transform.position);
+    SetEmitterPosition(data.journey.monoSetters[i].monolith.transform.position);
     EmitOn();
   }
 

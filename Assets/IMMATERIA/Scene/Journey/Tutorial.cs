@@ -130,12 +130,12 @@ public class Tutorial : Cycle
       inOrOut = true;
       currentRenderer = swipeForwardMoveText;
       data.tween.AddTween( .5f , tweenMaterial  );
-      data.inputEvents.OnSwipeUp.AddListener(  switchToTap );
+      data.inputEvents.OnSwipeDown.AddListener(  switchToTap );
     }
 
     public void switchToTap(){
 
-      data.inputEvents.OnSwipeUp.RemoveListener(  switchToTap );
+      data.inputEvents.OnSwipeDown.RemoveListener(  switchToTap );
       inOrOut = false;
       currentRenderer = swipeForwardMoveText;
       data.tween.AddTween(.5f,tweenMaterial,tapAdd);

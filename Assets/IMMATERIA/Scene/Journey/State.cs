@@ -47,6 +47,7 @@ public class State : Cycle
 
   public int startStory;
   public int startPage;
+  public int startSubStory;
 
   public bool startInStory;
   public bool startInPages;
@@ -72,14 +73,16 @@ public class State : Cycle
   public override void Create(){
     
     data.journey.currentStory = startStory;
-    if( storiesVisited.Length != data.journey.stories.Length ){
-      storiesVisited = new bool[ data.journey.stories.Length ];
+    if( storiesVisited.Length != data.journey.setters.Length ){
+      storiesVisited = new bool[ data.journey.setters.Length ];
     }
   }
 
   public void SetStartToCurrentStory(){
      startStory = data.journey.currentStory;
-     startPage = data.journey.stories[data.journey.currentStory].stories[data.journey.stories[data.journey.currentStory].currentStory].currentPage;
+     StorySetter setter = data.journey.setters[startStory];
+     startSubStory = setter.currentStory;
+     startPage = setter.stories[startSubStory].currentPage;
   }
 
   
@@ -91,12 +94,20 @@ public class State : Cycle
   //public string 
     if( startInStory  || startInPages ){
 
-      data.player.position = data.journey.stories[data.journey.currentStory].transform.position;
+      data.player.position = data.journey.setters[data.journey.currentStory].transform.position;
 
-      data.journey.stories[data.journey.currentStory].perimeter.EnterOuter();
-      data.journey.stories[data.journey.currentStory].perimeter.EnterInner();
+      if( startSubStory >= 0 ){
+        if( data.journey.setters[startStory].stories[startSubStory] != null ){
+          SetSubStoryState(data.journey.setters[startStory].stories[startSubStory]);
+          data.journey.setters[data.journey.currentStory].perimeter.EnterOuter();
+          data.journey.setters[data.journey.currentStory].perimeter.EnterInner();
+        }else{
+          Debug.Log("NO SUB STORY!!!");
+        }
+      }
 
-      //data.journey.stories[data.journey.currentStory].
+
+      //data.journey.setters[data.journey.currentStory].
     }
 
 
@@ -107,10 +118,10 @@ public class State : Cycle
     }
 
     if( startInPages ){
-data.journey.stories[data.journey.currentStory].stories[data.journey.stories[data.journey.currentStory].currentStory].currentPage = startPage;
+data.journey.setters[data.journey.currentStory].stories[data.journey.setters[data.journey.currentStory].currentStory].currentPage = startPage;
 
-      data.journey.stories[data.journey.currentStory].stories[data.journey.stories[data.journey.currentStory].currentStory].SetAllEvents();
-      data.journey.stories[data.journey.currentStory].StartStory();
+      data.journey.setters[data.journey.currentStory].stories[data.journey.setters[data.journey.currentStory].currentStory].SetAllEvents();
+      data.journey.setters[data.journey.currentStory].StartStory();
 
       // Unless we start in the first story, we are going to want our character to
       // have landeded insted of falling
@@ -154,6 +165,13 @@ data.journey.stories[data.journey.currentStory].stories[data.journey.stories[dat
 
 
 
+  public void Fall(){
+
+  }
+
+  public void Stand(){
+    
+  }
 
 
   public void PutDownBook(){
@@ -173,6 +191,9 @@ data.journey.stories[data.journey.currentStory].stories[data.journey.stories[dat
   }
 
 
+  public void SetSubStoryState( Story s ){
+    
+  }
   
 
 }

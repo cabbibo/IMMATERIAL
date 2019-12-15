@@ -4,89 +4,320 @@ using UnityEngine;
 
 public class PageTurner : Cycle
 {
+  
+  public StorySetter setter;
+  public Story story;
+  public int currentPage;
+
   public Page[] pages;
-  private Vector3 ro;
-  private Vector3 rd;
 
-  public bool autoTurn;
-  public bool lerpToPage;
+  public bool started;
+  public bool transitioning;
 
-  private float switchTime;
-  public override void Create(){
 
-    switchTime = 0;
+/*
+  // The words should be coming from the camera
+  public void SpawnFromCamera(){
+    spawnFromCamera = true;
+  }
+  
+  // the words should be coming from the player
+  public void SpawnFromPlayer(){
+    spawnFromCamera = false;
+  }
+
+
+  public override void OnBirthed(){
     for( int i = 0; i < pages.Length; i ++ ){
-      SafeInsert(pages[i]);
+      pages[i].frameMPB.SetFloat("_Cutoff" , 1);
+      pages[i].fade = 1;
+      pages[i].frame.borderLeft = frameBorder;
+      pages[i].frame.borderRight = frameBorder;
+      pages[i].frame.borderTop = frameBorder;
+      pages[i].frame.borderBottom = frameBorder;
     }
 
+    transitioning = false;
 
   }
 
-  public override void OnLive(){
+   public void CheckForStart(){
 
-  }
+    if( !started ){
+     
+      RaycastHit hit;
 
-  
-  // Update is called once per frame
-  public override void WhileLiving( float v) {
-
-    if( Application.isPlaying ){
-
-
-      Vector2 p =  Input.mousePosition;///Input.GetTouch(0).position;
-      ro = Camera.main.ScreenToWorldPoint( new Vector3( p.x , p.y , Camera.main.nearClipPlane ) );
-      rd = -(Camera.main.transform.position - ro).normalized;
-      
-      if( Input.GetMouseButtonDown(0) ){
-
-      print("helllooooooo");
-        RaycastHit hit;
-        if( Physics.Raycast(ro,rd, out hit, Mathf.Infinity)){
-
-
-      print("helllooooooo2");
-         
-          if( hit.collider.gameObject.tag == "Frame"){
-
-            //hit.collider.transform.parent.GetComponent<Page>().SetActivePage();
-          
-
-          }
-        }
-      }
-
-    }else{
-
-
-    
-
-
-
-    }
-
-    if( autoTurn ){
-      switchTime += 1;
-      if( switchTime > 400 ){
-
-        print("swartch");
-
-        switchTime -= 400;
-        SetActivePage( pages[Random.Range( 0, pages.Length )]);//.SetActivePage();
-
-
-  
+      if (pages[currentPage].frame.collider.Raycast(data.inputEvents.ray, out hit, 100.0f)){
+        StartStory();
+      }else{
         
       }
+
+    }
+
+  }
+
+  // populate all the events from this page forward
+  public void SetAllEvents(){
+    for( int i = 0; i < currentPage-1; i++ ){
+      pages[i].OnStartEnter.Invoke();
+      pages[i].OnEndExit.Invoke();
     }
   }
 
 
-  public void SetActivePage(Page page ){
-    data.textParticles.Set(page.text );
-    data.textParticles.PageStart();
-    if( lerpToPage ){ data.cameraControls.SetLerpTarget( page.transform ,page.lerpSpeed); }
+
+  public void NextPage(){
+
+    if( started && transitioning == false && !pages[currentPage].locked ){
+
+      forward = true;
+
+      
+      if( currentPage < pages.Length-1 ){
+
+        oldTransitionPage = pages[currentPage];
+        currentPage ++;
+
+        PageTurn();
+
+      }else{
+
+        oldTransitionPage = pages[currentPage];
+        currentPage = 0;
+        LeaveStoryEnd();
+        
+   
+      }
+      
+    }else{
+
+      if( started && transitioning == false && pages[currentPage].locked ){
+        data.helper.OnPageLocked();
+      }
+    }
+
+  }
 
 
-  } 
+  public void SetUpTransition(){
+     // Set up transition
+     transitioning = true;
+     transitionSpeed = pages[currentPage].lerpSpeed;
+     if( data.state.fast ){ transitionSpeed = 1; }
+     transitionStartTime = Time.time;
+  }
+
+  public void PageTurn(){
+     
+      
+    data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
+      SetUpTransition();
+      SetActivePage();
+      if( forward ){
+        oldTransitionPage.OnEndExit.Invoke();
+      }else{
+        oldTransitionPage.OnStartExit.Invoke();
+      }
+
+     data.framer.Set( pages[currentPage] );
+
+  }
+
+  public void LeaveStoryEnd(){
+
+      
+      
+    data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
+      SetUpTransition();
+      oldTransitionPage.OnEndExit.Invoke();
+      
+    setter.audio.Exit();
+      Release();
+      
+  }
+
+  public void PreviousPage(){
+    
+    if( started && transitioning == false && !pages[currentPage].mustContinue ){
+
+      forward = false;
+     
+      
+      if( currentPage > 0 ){
+        
+        oldTransitionPage = pages[currentPage];
+        currentPage --;
+        
+        PageTurn();
+
+      }else{
+        if( !cantUnstart ){
+          transitioning = true;
+          transitionSpeed = pages[0].lerpSpeed;
+          
+          if( data.state.fast ){ transitionSpeed = 1; }
+          transitionStartTime = Time.time;
+          oldTransitionPage = pages[currentPage+1];
+
+          pages[currentPage+1].OnStartExit.Invoke();
+          currentPage = 0;
+          Release();
+        }else{
+          currentPage ++;
+        }
+      }
+    }else{
+      if( started && transitioning == false && pages[currentPage].mustContinue ){
+        data.helper.OnPageCantGoBack();
+      }
+
+    }
+
+  }
+
+  public void SetActivePage(){
+
+    
+    data.textParticles.Release();
+    
+    data.cameraControls.SetLerpTarget( pages[currentPage].transform , transitionSpeed );
+    
+    if( pages[currentPage].audioInfo.Length == setter.audio.audioInfo.Length ){
+      for( int i = 0; i < setter.audio.audioInfo.Length; i++ ){
+        setter.audio.audioInfo[i] = pages[currentPage].audioInfo[i];
+      }
+    }else{
+      DebugThis("WHOA WE GOT AN AUDIO PROBLEM");
+    }
+
+    if( pages[currentPage].moveTarget ){ data.playerControls.SetMoveTarget( pages[currentPage].moveTarget ); }
+    if( pages[currentPage].lerpTarget ){ data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , transitionSpeed ); }
+    if( pages[currentPage].moveTarget &&  pages[currentPage].lerpTarget ){ Debug.LogError("this page has multiple targets"); }
+
+  }   
+
+
+  public void OnLockPage(){
+
+    data.audio.Play( setter.audio.startClips[Random.Range(0,setter.audio.startClips.Length)] , 1f , .11f);
+    transitionSpeed = pages[currentPage].lerpSpeed;
+    data.textParticles.Set( pages[currentPage].text );
+
+    if( forward ){
+      pages[currentPage].OnStartEnter.Invoke();
+    }else{
+      pages[currentPage].OnEndEnter.Invoke();
+    }
+
+    if( spawnFromCamera ){
+      data.textParticles.SpawnFromCamera();
+    }else{
+      data.textParticles.PageStart();
+    }
+  }
+
+  public void Release(){
+
+
+    started = false;
+
+    data.state.inPages = false;
+
+    data.cameraControls.SetFollowTarget();
+    data.textParticles.Release();
+    //data.cameraControls.lerping = false;
+    data.playerControls.lerping = false;
+
+    SetColliders( true );
+
+  }
+
+  public void SetColliders( bool val ){
+    for( int i = 0; i < pages.Length; i ++ ){
+      pages[i].frame.collider.enabled = false; 
+    }
+    pages[0].frame.collider.enabled = val;
+  }
+
+  
+  
+  public void StartStory(){
+
+    setter.audio.Enter();
+    data.state.inPages = true;
+
+    started = true;
+
+    oldTransitionPage = null;
+    transitioning = true;
+    transitionSpeed = pages[currentPage].lerpSpeed;
+    pages[currentPage].OnStartEnter.Invoke();
+
+    if( data.state.fast ){ transitionSpeed = 1; }
+    transitionStartTime = Time.time;
+    SetActivePage(); 
+    SetColliders( false );
+
+    
+        data.framer.Set( pages[currentPage] );
+
+
+//    print("STORY STARTED");
+
+  }
+
+  public override void WhileLiving( float v){
+    
+    if( transitioning ){
+      DoBetweenFade();
+    }
+
+  }
+
+
+
+  public void DoFade(float v ){
+  
+    pages[currentPage].frameMPB.SetFloat("_Cutoff" , 1-v);
+    pages[currentPage].fade = 1-v;
+
+  }
+
+  public void DoBetweenFade(){
+
+    float v = (Time.time - transitionStartTime) / transitionSpeed;
+
+    if( v > 1){ 
+
+      transitioning = false;
+      if( started ){ OnLockPage(); }
+    
+    }
+
+    float hue = pages[currentPage].baseHue;
+
+    if( oldTransitionPage ){
+      oldTransitionPage.frameMPB.SetFloat("_Cutoff" , v);
+      oldTransitionPage.fade = v;
+      oldTransitionPage.FadeOut.Invoke(v);
+      hue = Mathf.Lerp( oldTransitionPage.baseHue , pages[currentPage].baseHue , v);
+
+    }
+
+
+    data.textParticles.body.mpb.SetFloat("_BaseHue" , hue);
+
+
+    float m  = Mathf.Min((1-v) ,pages[currentPage].frameMPB.GetFloat("_Cutoff"));
+    // doing this to make sure the frame doesn't "flash" in 
+    pages[currentPage].frameMPB.SetFloat("_Cutoff" ,m);
+    pages[currentPage].fade = m;
+    pages[currentPage].FadeIn.Invoke(v);
+
+  }
+*/
+
+  
 
 }

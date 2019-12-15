@@ -49,6 +49,7 @@
                 if( _CanEdgeSwipe > 0 ){
                     col += 1;//length(v.dif);
                 }
+                
                 return col;
             }
 

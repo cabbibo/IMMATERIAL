@@ -24,7 +24,7 @@ public class TurnOnStoryClick : Cycle
         print(monolith);
         for( int i = 0; i< monolith.storyMarkers.Length; i++ ){
           if( data.inputEvents.hit.collider.gameObject == monolith.storyMarkers[i] ){
-            if( data.journey.monoStories[i].gameObject.name  == nameOfStory){
+            if( data.journey.monoSetters[i].gameObject.name  == nameOfStory){
               TurnPage();
             }
           }

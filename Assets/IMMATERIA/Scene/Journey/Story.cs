@@ -33,6 +33,7 @@ public class Story : Cycle
 
 
   public StorySetter setter;
+  public StateSetter state;
 
 
 

@@ -65,6 +65,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     r  *=  1/(1+(_Time - _DeathTime));
   }
 
+  
 
 
     v.pos      = p.pos + b.pos *  r;// = v;

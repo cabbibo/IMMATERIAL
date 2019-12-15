@@ -61,19 +61,19 @@ MaterialPropertyBlock mpb;
 //      print( monolith.rotation );
 
 
-      if( data.journey.monoStories.Length != storyMarkers.Length  || storyMarkers == null ){
+      if( data.journey.monoSetters.Length != storyMarkers.Length  || storyMarkers == null ){
 
 
       DestroyMe();
-      storyMarkers = new GameObject[data.journey.monoStories.Length];
-      for( int i = 0; i < data.journey.monoStories.Length; i++ ){
+      storyMarkers = new GameObject[data.journey.monoSetters.Length];
+      for( int i = 0; i < data.journey.monoSetters.Length; i++ ){
           storyMarkers[i] = Instantiate( storyMarkerPrefab);
           
           storyMarkers[i].transform.parent = transform;
           storyMarkers[i].transform.localPosition = Vector3.zero;
-          storyMarkers[i].transform.localPosition += monolith.localScale.x * (Vector3.right) * ( (-.5f + data.journey.monoStories[i].uv.x) * .7f ); 
+          storyMarkers[i].transform.localPosition += monolith.localScale.x * (Vector3.right) * ( (-.5f + data.journey.monoSetters[i].uv.x) * .7f ); 
           
-          storyMarkers[i].transform.localPosition += monolith.localScale.y * (Vector3.up)  * ( (data.journey.monoStories[i].uv.y) * .7f + .1f );
+          storyMarkers[i].transform.localPosition += monolith.localScale.y * (Vector3.up)  * ( (data.journey.monoSetters[i].uv.y) * .7f + .1f );
           storyMarkers[i].transform.localPosition -= monolith.localScale.z * (Vector3.forward)  * .5f;
 
       }
@@ -88,7 +88,7 @@ MaterialPropertyBlock mpb;
 
       mpb = new MaterialPropertyBlock();
 
-      Vector4[] positions = new Vector4[data.journey.monoStories.Length ];
+      Vector4[] positions = new Vector4[data.journey.monoSetters.Length ];
       for(int i = 0; i < positions.Length; i++ ){
         positions[i] = storyMarkers[i].transform.position;
       }
@@ -110,7 +110,7 @@ MaterialPropertyBlock mpb;
 //      print(data.inputEvents.hitTag);
         if( data.inputEvents.hitTag == "StartNode" && data.inputEvents.hit.collider == storyMarkers[i].GetComponent<Collider>() ){
           data.journey.ConnectMonolith( i );
-          print( data.journey.monoStories[i].gameObject.name );
+          print( data.journey.monoSetters[i].gameObject.name );
         }
       }
 

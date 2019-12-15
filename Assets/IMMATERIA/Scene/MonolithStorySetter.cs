@@ -17,8 +17,8 @@ public class MonolithStorySetter : StorySetter
     perimeter.OnExitOuter.AddListener(TurnOffMonolith);
     perimeter.OnEnterOuter.AddListener(TurnOnMonolith);
 
-    for( int i = 0; i < data.journey.monoStories.Length; i++ ){
-      if( data.journey.monoStories[i] == this ){
+    for( int i = 0; i < data.journey.monoSetters.Length; i++ ){
+      if( data.journey.monoSetters[i] == this ){
         monolith.whichStory = i;
       }
     }
