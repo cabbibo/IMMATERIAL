@@ -19,6 +19,8 @@ public class Framer : Cycle
     public int oClosest;
     public int closest;
 
+    public Collider frameCollider;
+
     public override void Create(){
       for( int i = 0; i < frames.Length; i++ ){
         SafeInsert( frames[i] );
@@ -28,10 +30,14 @@ public class Framer : Cycle
 
     public void Set(Page page){
       frames[currentFrame].Release();
+      //if( frameCollider != null ){ frameCollider.enabled = false; }
       if( frames[currentFrame].currentPage == page ){ frames[currentFrame].ImmediateDeath(); }
       currentFrame ++;
       currentFrame %= frames.Length;
       frames[currentFrame].Set(page);
+      //frameCollider = page.frame.collider;
+      //frameCollider.enabled = true;
+
     }
 
 

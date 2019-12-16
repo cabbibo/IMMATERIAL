@@ -85,6 +85,9 @@
 
       }
 
+
+      sampler2D _AudioMap;
+
       // SDF for capsule from  https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm
 float sdCapsule( float3 p, float3 a, float3 b, float r )
 {
@@ -105,10 +108,10 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
         float dif = 10000;
         int closestID = 1000;
 
-        float4 tCol = tex2D(_TexMap , v.ro.xy * .7 );
+        float4 tCol = tex2D(_TexMap , v.ro.xy * float2( 1,.7) );
         for( int i = 0; i < _NumStories; i++ ){
             float d = length( ro - _StoryPositions[i] );
-            if( d < dif - length(tCol) * .001){
+            if( d < dif - length(tCol) * .0001){
                 dif = d;
                 closestID = i;
             }
@@ -126,11 +129,14 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
 
 
         // Our color starts off at zero,   
-        float3 col = tex2D(_ColorMap, float2( _HueStart + (((dif * 6 - _Time.y * .3 + length( tCol) *5 ) % 1) * .4) + length( tCol) * .1 ,0 )).xyz / ( .4 + .2*thisDif *thisDif + dif);
+        //float3 col = tex2D(_ColorMap, float2( _HueStart + (((dif * 6 - _Time.y * .3 + length( tCol) *5 ) % 1) * .4) + length( tCol) * .01 ,0 )).xyz / ( .4 + .2*thisDif *thisDif + dif);
+        float3 col = tex2D(_ColorMap, float2(thisDif * .1 + dif * .3+ _HueStart,0)).xyz / ( .4 + .2*thisDif *thisDif + dif);
 
-        if( thisDif < .18 + .005 * sin(_Time.y*4)  ){ col = 1;}
-        if( connectedDif < .135 + .005 * sin(_Time.y*4)  ){ col = float3(1,0,0);}
-        //if( closestID == _WhichStory ){ col *= 4;}
+         //if( closestID == _WhichStory ){ col *= 4;}
+        col *= tex2D(_AudioMap , float2(dif * .1 + tCol.x * .01 + thisDif * .03,0)) / (10 *dif);
+        if( thisDif < .18 + .005 * sin(_Time.y*4) + tCol.x * .1  ){ col *= 2;}
+        if( connectedDif < .135 + .005 * sin(_Time.y*2)+ tCol.x * .1   && _ConnectedStory >= 0){ col *= .1;}
+       
         float4 color = fixed4( col , 1. );
         return color;
       }

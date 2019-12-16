@@ -45,7 +45,9 @@ public class StoryAudio : Cycle
     if( data.audio.loopSources.Length < loopClips.Length ){
       DebugThis("NOT ENOUGH SOURCES IN THE AUDIO LOOP SOURCES");
     }
-
+    for( int i = 0; i < data.audio.loopSources.Length; i++ ){
+      data.audio.loopSources[i].volume = 0;
+    }
     for( int i = 0; i < loopClips.Length; i++ ){
       data.audio.loopSources[i].clip = loopClips[i];
     }

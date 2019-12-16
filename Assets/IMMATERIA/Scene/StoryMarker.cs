@@ -27,7 +27,7 @@ public class StoryMarker : Cycle
       
 //      print(data.inputEvents.hitTag);
       if( data.inputEvents.hitTag == "StartNode" && data.inputEvents.hit.collider == this.GetComponent<Collider>() ){
-        data.journey.ConnectMonolith( id );
+        data.state.ConnectMonolith( id );
         print( storyName );
       }
     

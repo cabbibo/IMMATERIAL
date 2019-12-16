@@ -10,27 +10,15 @@ public class State : Cycle
 
   public bool hasFallen;
   public bool hasPickedUpBook;
+  
   public int whichStoryLoop;
+  
   public bool monolithParticlesEmitting;
   public int  whichMonolithEmitting;
 
+  public int[] storiesVisited;
 
-/*
-  public bool spacePuppyVisited;
-  public bool crystalsVisited;
-  public bool spacePuppyContent;
-  public bool dandelionsVisited;
-  public bool lighthouseVisited;
-  public bool lighthouseContent;
-  public bool pitOfGoldVisited;
-  public bool kelpTonguesVisited;
-*/
-
-
-
-  public bool[] storiesVisited;
-
-  public int currentStory;
+  public int currentSetter;
   private int oCurrentStory;
 
   public float lastTimeStoryVisited;
@@ -45,9 +33,9 @@ public class State : Cycle
 
   public int currentConnectedMonolith;
 
+  public int startSetter;
   public int startStory;
   public int startPage;
-  public int startSubStory;
 
   public bool startInStory;
   public bool startInPages;
@@ -56,6 +44,9 @@ public class State : Cycle
 
 
 
+
+public StorySetter setter;
+public Story story;
 
   public bool fast;
 
@@ -70,19 +61,26 @@ public class State : Cycle
   public string animationState;
   private string oAnimationState;
 
+  public Tutorial tutorial;
+
   public override void Create(){
     
-    data.journey.currentStory = startStory;
+    currentSetter = startSetter;
+
     if( storiesVisited.Length != data.journey.setters.Length ){
-      storiesVisited = new bool[ data.journey.setters.Length ];
+      storiesVisited = new int[ data.journey.setters.Length ];
     }
+
+     SafeInsert(tutorial);
+    
   }
 
   public void SetStartToCurrentStory(){
-     startStory = data.journey.currentStory;
-     StorySetter setter = data.journey.setters[startStory];
-     startSubStory = setter.currentStory;
-     startPage = setter.stories[startSubStory].currentPage;
+     startSetter = currentSetter;
+     setter = data.journey.setters[startSetter];
+     startStory = setter.currentStory;
+
+     startPage = setter.stories[startStory].currentPage;
   }
 
   
@@ -93,41 +91,65 @@ public class State : Cycle
       
   //public string 
     if( startInStory  || startInPages ){
+      
+      currentSetter = startSetter;
+      setter = data.journey.setters[startSetter];
 
-      data.player.position = data.journey.setters[data.journey.currentStory].transform.position;
+      data.player.position = data.journey.setters[currentSetter].transform.position;
 
-      if( startSubStory >= 0 ){
-        if( data.journey.setters[startStory].stories[startSubStory] != null ){
-          SetSubStoryState(data.journey.setters[startStory].stories[startSubStory]);
-          data.journey.setters[data.journey.currentStory].perimeter.EnterOuter();
-          data.journey.setters[data.journey.currentStory].perimeter.EnterInner();
+      data.terrainTap.SetTransform( data.journey.setters[currentSetter].transform );
+
+      if( startStory >= 0 ){
+        if(setter.stories[startStory] != null ){
+
+          story = setter.stories[startStory];
+          SetStoryState(story);
+
+          setter.perimeter.EnterOuter();
+          setter.perimeter.EnterInner();
+        
         }else{
           Debug.Log("NO SUB STORY!!!");
         }
       }
 
 
-      //data.journey.setters[data.journey.currentStory].
+      //data.journey.setters[data.journey.currentSetter].
     }
 
+    inStory = startInStory;
+    inPages = startInPages;
 
-    data.journey.inStory = startInStory;
+    //data.journey.inStory = startInStory;
     if( startInStory && !startInPages ){
       data.cameraControls.SetFollowTarget();
-
     }
 
     if( startInPages ){
-data.journey.setters[data.journey.currentStory].stories[data.journey.setters[data.journey.currentStory].currentStory].currentPage = startPage;
+      
+      setter.stories[startStory].currentPage = startPage;
 
-      data.journey.setters[data.journey.currentStory].stories[data.journey.setters[data.journey.currentStory].currentStory].SetAllEvents();
-      data.journey.setters[data.journey.currentStory].StartStory();
+      setter.stories[startStory].SetAllEvents();
+      setter.StartStory();
 
-      // Unless we start in the first story, we are going to want our character to
-      // have landeded insted of falling
-      if( data.journey.currentStory != 0){
-        data.playerControls.animator.Play("Grounded");
-      }
+    }
+
+
+
+    ConnectMonolith( whichMonolithEmitting );
+    if( !monolithParticlesEmitting ){
+      DisconnectMonolith( whichMonolithEmitting );
+    }
+
+    if( hasFallen ){
+      print("HAS FALLEN");
+
+    data.playerControls.animator.SetBool("FallAsleep", false);
+    data.playerControls.animator.SetBool("Falling", false);
+    data.playerControls.animator.SetBool("GetUp", true);
+      data.playerControls.animator.Play("Grounded");
+    }else{
+      //data.playerControls.Fall();
     }
 
 
@@ -146,7 +168,7 @@ data.journey.setters[data.journey.currentStory].stories[data.journey.setters[dat
 
 
    /*   if( startInBookPages ){
-      data.book.OpenStory(data.book.currentStory);
+      data.book.OpenStory(data.book.currentSetter);
     }*/
 
   }
@@ -177,23 +199,43 @@ data.journey.setters[data.journey.currentStory].stories[data.journey.setters[dat
   public void PutDownBook(){
     data.playerControls.epiphanyRing.circle.body.mpb.SetFloat("_StartTime" , Time.time );
     data.playerControls.epiphanyRing.circle.body.mpb.SetFloat("_Setting" , 0 );
-    data.playerControls.epiphanyRing.UnSet();
+    //data.playerControls.epiphanyRing.UnSet();
     data.playerControls.OnGroundBook.SetActive(true);
     data.playerControls.InHandBook.SetActive(false);
     data.state.hasPickedUpBook = false;
   }
 
   public void PickUpBook(){
-    data.playerControls.epiphanyRing.Set();
+    //data.playerControls.epiphanyRing.Set();
     data.playerControls.OnGroundBook.SetActive(false);
     data.playerControls.InHandBook.SetActive(true);
     data.state.hasPickedUpBook = true;
   }
 
 
-  public void SetSubStoryState( Story s ){
+  public void SetStoryState( Story s ){
+
+    hasPickedUpBook = s.hasPickedUpBook;
+    hasFallen = s.hasFallen;
+    monolithParticlesEmitting = s.monolithParticlesEmitting;
+    whichMonolithEmitting = s.whichMonolithEmitting;
     
   }
   
+
+
+  public void ConnectMonolith(int id){
+    whichMonolithEmitting = id;
+    Shader.SetGlobalInt("_ConnectedStory" , whichMonolithEmitting );
+    data.monolithParticles._Emit = 1;
+    data.monolithParticles._EmitterPosition = data.journey.monoSetters[id].monolith.transform.position;
+  }
+
+  public void DisconnectMonolith(int id){
+    whichMonolithEmitting = -1;
+    Shader.SetGlobalInt("_ConnectedStory" , -1 );
+    data.monolithParticles._Emit = 0;
+  }
+
 
 }

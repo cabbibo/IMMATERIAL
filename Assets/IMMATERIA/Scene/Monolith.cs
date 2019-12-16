@@ -7,6 +7,7 @@ public class Monolith : Cycle
 
     public GameObject storyMarkerPrefab;
     public Transform monolith;
+    public Transform cameraLerp;
     //public Story story;
 
     public bool isBook;
@@ -15,7 +16,7 @@ public class Monolith : Cycle
     public int whichStory;
 
     public float ratio;
-MaterialPropertyBlock mpb;
+    MaterialPropertyBlock mpb;
 
     public void DestroyMe(){
      // print( storyMarkers.Length );
@@ -38,6 +39,10 @@ MaterialPropertyBlock mpb;
 
     public override void Create(){
 
+      if( cameraLerp == null ){ 
+        GameObject go = new GameObject();
+        cameraLerp = go.transform;
+      }
 
       data.inputEvents.OnTap.RemoveListener( CheckHit );
       data.inputEvents.OnTap.AddListener( CheckHit );
@@ -55,10 +60,13 @@ MaterialPropertyBlock mpb;
       //transform.rotation = story.transform.rotation;
 
       float size = 2;
-      monolith.localScale = new Vector3( size, size * ratio , size / 7 );
-      monolith.localPosition = Vector3.up * size * ratio * .4f;
 
-//      print( monolith.rotation );
+
+
+      monolith.localScale = new Vector3( size, size * ratio , size / 7 );
+      
+      if( !isBook ){ monolith.localPosition = Vector3.up * size * ratio * .4f; }
+
 
 
       if( data.journey.monoSetters.Length != storyMarkers.Length  || storyMarkers == null ){
@@ -98,19 +106,38 @@ MaterialPropertyBlock mpb;
       mpb.SetInt("_WhichStory" , whichStory );
       monolith.GetComponent<MeshRenderer>().SetPropertyBlock( mpb );
       
-      if( isBook ){ transform.rotation = Quaternion.AngleAxis(90,Vector3.right);}
+     // if( isBook ){ transform.rotation = Quaternion.AngleAxis(90,Vector3.right);}
+      cameraLerp.transform.parent = monolith;
+
+      cameraLerp.localRotation = Quaternion.Euler(0, 0, 90);
+
+      cameraLerp.localPosition = Vector3.forward * -8;
+      //cameraLerp.rotation = monolith.rotation;
+      //cameraLerp.Rotate( monolith.forward * 90 );
 
 
     }
 
+    public void OnDone(){
+
+    data.inputEvents.OnEdgeSwipeLeft.RemoveListener(  OnDone );
+    data.inputEvents.OnEdgeSwipeRight.RemoveListener(  OnDone );
+
+    data.cameraControls.SetFollowTarget();
+    }
 
     public void CheckHit(){
+
+      if( data.inputEvents.hit.collider == monolith.GetComponent<Collider>() ){
+        data.cameraControls.SetLerpTarget( cameraLerp , 1 );
+        data.inputEvents.OnEdgeSwipeLeft.AddListener( OnDone );
+        data.inputEvents.OnEdgeSwipeRight.AddListener(  OnDone );
+      }
 
       for(int i = 0; i < storyMarkers.Length; i++ ){
 //      print(data.inputEvents.hitTag);
         if( data.inputEvents.hitTag == "StartNode" && data.inputEvents.hit.collider == storyMarkers[i].GetComponent<Collider>() ){
-          data.journey.ConnectMonolith( i );
-          print( data.journey.monoSetters[i].gameObject.name );
+          data.state.ConnectMonolith( i );
         }
       }
 

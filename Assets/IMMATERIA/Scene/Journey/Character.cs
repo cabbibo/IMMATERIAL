@@ -45,8 +45,6 @@ public class Character : Cycle {
   private Vector3 startLerpPos;
   private Quaternion startLerpRot;
 
-  public bool falling;
-
   public GameObject OnGroundBook;
   public GameObject InHandBook;
   public EpiphanyRing epiphanyRing;
@@ -65,12 +63,16 @@ public class Character : Cycle {
   }
 
   public override void WhileLiving (float v) {
+
+     if(animator.runtimeAnimatorController==null){
+      Debug.Log( "WHATTT");
+     }
     DoMovement();   
     animator.Update(Time.deltaTime); 
   }
 
   public void Fall(){
-    falling = true;
+    data.state.hasFallen = false;
     animator.SetBool("Falling", true);
     animator.SetBool("FallAsleep", false);
     animator.SetBool("GetUp", false);
@@ -87,7 +89,7 @@ public class Character : Cycle {
 
 
   public void FallAsleep(){
-    falling = false;
+    data.state.hasFallen = true;
     animator.SetBool("FallAsleep", true);
     animator.SetBool("Falling", false);
     animator.SetBool("GetUp", false);
@@ -231,6 +233,8 @@ float d = 1;
     }
 
 }
+
+
  if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0)){
   animator.Play("Grounded");
  }
@@ -268,20 +272,20 @@ if( canMove ){
     //    print( (1-d) * 10);
         animator.SetFloat("Steepness", (1-d) * 4 );
 
-        //bool falling = false;
+        //bool data.state.hasFallen = false;
         if( h2 > h ){
           animator.SetBool( "Uphill" , true);
         }else{
           animator.SetBool("Uphill", false);
         
           if( (1-d) * 10 > 1 ){
-           // falling = true;
+           // data.state.hasFallen = true;
             transform.position += velocity;//*(1+(1-d) * 10);
           }
         }
 
 
-        //if( falling ){ h -= .5f; }
+        //if( data.state.hasFallen ){ h -= .5f; }
 
           transform.position = new Vector3( transform.position.x , h , transform.position.z);
       }

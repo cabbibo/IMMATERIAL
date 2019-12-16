@@ -30,11 +30,11 @@ public class PerimeterChecker : Cycle
 
   public override void OnGestated(){
 
-//    print("this happened + " + gameObject.name );
     ExitInner();
     ExitOuter();
 
-      oDif = 100000;
+    oDif = 100000;
+  
   }
 
 

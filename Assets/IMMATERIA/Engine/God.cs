@@ -20,6 +20,7 @@ public List<Binder> binders;
 public List<GameObject> objects;
 
 public override void Create(){
+    Application.runInBackground = true;
    if( cycles == null ){ 
         cycles = new List<Cycle>(); 
     }

@@ -11,7 +11,7 @@ public class Test : MonoBehaviour
       //print(Input.mousePosition);
     }
 
-     static EditorWindow gameView = null;
+  /* static EditorWindow gameView = null;
  
     public static void GameView_Repaint()
     {
@@ -24,5 +24,5 @@ public class Test : MonoBehaviour
  
         if( gameView != null )
             gameView.Repaint();
-    }
+    }*/
 }

@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
-
 public class Story : Cycle
 {
+
+  public bool monolithParticlesEmitting;
+  public int  whichMonolithEmitting;
+  public bool hasFallen;
+  public bool hasPickedUpBook;
+
+  public int[] storiesVisited;
 
   public float frameBorder = .05f;
 
@@ -51,7 +54,14 @@ public class Story : Cycle
 
   public EventTypes.BaseEvent OnEnterInner;
   public EventTypes.BaseEvent OnExitInner;
+    
+  bool s_monolithParticlesOn;
+  int  s_whichActiveMonolith;
+  bool s_grounded;
+  bool s_bookPickedUp;
 
+  int[] s_storiesVisited;
+  
 
   // The words should be coming from the camera
   public void SpawnFromCamera(){
@@ -72,6 +82,7 @@ public class Story : Cycle
       SafeInsert(pages[i]);
     }
     started = false;
+    currentPage = 0;
   }
 
   public override void OnBirthed(){
@@ -82,6 +93,7 @@ public class Story : Cycle
       pages[i].frame.borderRight = frameBorder;
       pages[i].frame.borderTop = frameBorder;
       pages[i].frame.borderBottom = frameBorder;
+      pages[i].frame.collider.enabled = false;
     }
 
     transitioning = false;
@@ -95,6 +107,7 @@ public class Story : Cycle
       RaycastHit hit;
 
       if (pages[currentPage].frame.collider.Raycast(data.inputEvents.ray, out hit, 100.0f)){
+        print("HELLLOOOSOSOSOS)");
         StartStory();
       }else{
         
@@ -281,9 +294,11 @@ public class Story : Cycle
   }
 
   public void SetColliders( bool val ){
+    
     for( int i = 0; i < pages.Length; i ++ ){
       pages[i].frame.collider.enabled = false; 
     }
+
     pages[0].frame.collider.enabled = val;
   }
 

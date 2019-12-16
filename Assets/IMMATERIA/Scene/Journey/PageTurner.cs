@@ -54,8 +54,9 @@ public class PageTurner : Cycle
       }
 
     }
-
+  
   }
+
 
   // populate all the events from this page forward
   public void SetAllEvents(){
@@ -73,7 +74,6 @@ public class PageTurner : Cycle
 
       forward = true;
 
-      
       if( currentPage < pages.Length-1 ){
 
         oldTransitionPage = pages[currentPage];
@@ -85,8 +85,7 @@ public class PageTurner : Cycle
 
         oldTransitionPage = pages[currentPage];
         currentPage = 0;
-        LeaveStoryEnd();
-        
+        LeaveStoryEnd();  
    
       }
       
@@ -126,11 +125,10 @@ public class PageTurner : Cycle
 
   public void LeaveStoryEnd(){
 
-      
-      
     data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
-      SetUpTransition();
-      oldTransitionPage.OnEndExit.Invoke();
+    
+    SetUpTransition();
+    oldTransitionPage.OnEndExit.Invoke();
       
     setter.audio.Exit();
       Release();

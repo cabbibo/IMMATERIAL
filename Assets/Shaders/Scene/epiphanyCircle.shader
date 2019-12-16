@@ -59,21 +59,24 @@
                 v2f o;
                 Vert v = _VertBuffer[_TriBuffer[vid]];
 
-                float angle = atan2( v.pos.z , v.pos.x );
+                float3 sPos = v.pos -_SetPosition;
 
-                float distance = (_ID + 4 ) * .2 *  pow( ( _Time.y  - _StartTime) , 2);
-                float r =  (length( v.pos )* ( distance/3)) + distance;
+                float angle = atan2( sPos.z , sPos.x );
+
+                float distance = (_ID + 4 ) * .05 *  pow( ( _Time.y  - _StartTime) , 2);
+                //float distance = 10;//(_ID + 4 ) * .05 *  pow( ( _Time.y  - _StartTime) , 2);
+                float r =  (length( sPos )* ( distance/3)) + distance;
 
 
 
-                float3 p = sin(angle) * r * float3(1,0,0) + cos(angle) * r * float3(0,0,1);
+                float3 p = sin(angle) * r * float3(1,0,0) - cos(angle) * r * float3(0,0,1);
 
-                float3 fPos =_SetPosition + p;
+                float3 fPos = _SetPosition + p;
 
                 o.nor = terrainGetNormal( fPos );
                 //o.uv = v.texcoord.xy;
 
-                o.worldPos = terrainWorldPos( fPos ) + float3(0,distance * .01 + .3,0);// - float4(0,0,_Vertical,0);
+                o.worldPos = terrainWorldPos( fPos ) + float3(0,distance * 1 + .3,0);// - float4(0,0,_Vertical,0);
                // v.vertex = terrainNewPos( v.vertex )- float4(0,0,_Vertical,0);//mul( unity_WorldToObject, worldPos);
                
 
@@ -92,17 +95,18 @@
 
                 float3 col;
 
-                col = tex2D(_RibbonMap , (v.uv * 2 + 1 + _ID + float2(_Time.y  * .05 * (_ID+4),0) ) * float2( 10,1) );
+                col = tex2D(_RibbonMap , (v.uv * 2 + 1 + _ID + float2(_Time.y  * .01 * (_ID+4),0) ) * float2( 10,1) );
 
                 float cutoff = saturate(((_Time.y - _StartTime)) / 10);
                 if( col.x > abs(v.uv.y) - cutoff * .6 ){ 
-                    discard; 
+                   discard; 
                 }else{
                     col = tex2D(_RibbonMap2, float2(sin(col.x * 2 + _ID * .1) * .3 + .7,0));
                 }
 
                 col /= (1 + .01 * v.dist);// (.5+ .1*dif);
 
+               // col = 1;
 
 
 

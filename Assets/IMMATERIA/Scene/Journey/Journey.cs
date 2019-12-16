@@ -13,13 +13,9 @@ public class Journey : Cycle
   public MonolithStorySetter[] monoSetters;
   public StorySetter[] nonMonoSetters;
 
-  public int currentStory;
-  public int connectedStory;
-  public int activatedMonolith;
-  public bool inStory;
-
-
-  public Tutorial tutorial;
+// public int currentSetter;
+// public int connectedStory;
+// public int activatedMonolith;
 
 
 
@@ -30,10 +26,8 @@ public class Journey : Cycle
 
    public override void Create(){
 
-    SafeInsert(tutorial);
-    
+   
     if( !NOSTORIES ){
-
 
       int numMonoSetters = 0;
 
@@ -67,41 +61,20 @@ public class Journey : Cycle
     }else{
 
       Cycles.Clear();
-      SafeInsert( setters[currentStory] );
+      SafeInsert( setters[data.state.currentSetter] );
     }
 
 
    }
 
-
-   public override void OnLive(){
-    
-    DisconnectMonolith(0);
-
-   }
-
-  public void ConnectMonolith(int id){
-    connectedStory = id;
-    activatedMonolith = id;
-    Shader.SetGlobalInt("_ConnectedStory" , connectedStory );
-    data.monolithParticles._Emit = 1;
-    data.monolithParticles._EmitterPosition = monoSetters[id].monolith.transform.position;
-  }
-
-  public void DisconnectMonolith(int id){
-    connectedStory = -1;
-    Shader.SetGlobalInt("_ConnectedStory" , connectedStory );
-    data.monolithParticles._Emit = 0;
-  }
-
   public void OnStoryEnter( Story story ){
-    currentStory = story.id;
-    Shader.SetGlobalInt("_CurrentStory" , currentStory );
-    inStory = true;
+    data.state.currentSetter = story.id;
+    Shader.SetGlobalInt("_CurrentStory" , data.state.currentSetter );
+    data.state.inStory = true;
   }
 
   public void OnStoryExit( Story story ){
-    inStory = false;
+    data.state.inStory = false;
   }
 
 

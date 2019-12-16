@@ -111,6 +111,7 @@ public class StorySetter : Cycle
     data.inputEvents.OnEdgeSwipeRight.AddListener(  CS.PreviousPage );
 
     data.framer.Set( CS.pages[CS.currentPage] );
+    //CS.pages[CS.currentPage]
     data.textParticles.Release();//.Set( CS.pages[CS.currentPage] );
     CS.OnEnterInner.Invoke();
     CS.DoFade(1);

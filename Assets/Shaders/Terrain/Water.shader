@@ -153,7 +153,7 @@ SubShader
                 float3 refrG = refract( normalize(eye) , nor , .6 );
                 float3 refrB = refract( normalize(eye) , nor , .5 );
 
-                float3 refracted = pos + refr * .1;
+                float3 refracted = pos;// + refr * .1;
 
                 o.eye = eye;
 
@@ -269,7 +269,7 @@ float smin( float a, float b, float k )
 
                 float3 refr = refract( normalize(v.eye) , fNor   , .6);
 
-                float3 fP = v.world - refr * .1;
+                float3 fP = v.world;// - refr * .1;
 
                 float3 bg = getBGCol( fP , v.world );
 
@@ -283,8 +283,10 @@ float smin( float a, float b, float k )
                 col += saturate(1-floor( (dif - n * .2) * 5));//tex2D(_DepthRampTex,float2(bg.b * .2 + .7,0)  ) + aroundPerson ;//tCol;//refl * .5 + .5;
                 
 
-                col = length(bg) * float3(0,0.4,1) + shoreLine * saturate( length(bg) *4);//tCol;//refl * .5 + .5;
-               
+                col = length(bg) * float3(0,0.4,1) + (shoreLine+aroundPerson*4) * saturate( length(bg) *4);//tCol;//refl * .5 + .5;
+                
+            
+
 
                // col = tex2Dproj(_BackgroundTexture,ComputeGrabScreenPos( mul(UNITY_MATRIX_VP, float4(v.world + v.eye*.9,1)))).rgb;;// + saturate(aroundPerson * (lookup));
                 //col *= bg;// tex2Dproj(_BackgroundTexture, v.rR).rgb;;// + saturate(aroundPerson * (lookup));

@@ -207,19 +207,27 @@ public class BuildTree :Cycle
 
     public void HighlightGameObject(){
       GameObject go = activeCycleInfo.go;
+      #if UNITY_EDITOR
       EditorGUIUtility.PingObject( go );    
+
       Selection.activeTransform = activeCycleInfo.go.transform;
+    #endif
+      
     }
 
     public void DoGoTo(){
+      #if UNITY_EDITOR
       SceneView scene = (SceneView) SceneView.sceneViews[0];
       scene.pivot =  activeCycleInfo.go.transform.position;
       scene.rotation =  activeCycleInfo.go.transform.rotation;
+      #endif
     }
 
     public void DoScript(){
+      #if UNITY_EDITOR
       var script = MonoScript.FromMonoBehaviour(activeCycleInfo.cycle); // gets script as an asset
       AssetDatabase.OpenAsset(script); // opens script in your predefined script editor
+      #endif
     }
 
     public void DoSave(){
@@ -265,7 +273,7 @@ public class BuildTree :Cycle
 
 
   public void DoMoreInfo(){
-
+#if UNITY_EDITOR
      if( activeCycleInfo.type == -1 ){
         moreInfoGO.GetComponent<TextMesh>().text =  "THIS A STORY BRUV";
       }else if( activeCycleInfo.type == -2 ){
@@ -280,6 +288,7 @@ public class BuildTree :Cycle
       }else if( activeCycleInfo.type == 6 ){
         AssetDatabase.OpenAsset(((Body)activeCycleInfo.cycle).material.shader); // opens script in your predefined script editor
       }
+      #endif
 
   }    
 

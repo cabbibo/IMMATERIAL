@@ -230,6 +230,27 @@ public class Tutorial : Cycle
 
     }
 
+    public bool sLP = false;
+    public bool sRP = false;
+
+   /* public void Set( TutorialSetter setter ){
+      if( sLP != setter.swipeLeftPage ){
+        if( setter.swipeLeftPage ){
+          swipeLeftPageTurnIn();
+        }else{
+          swipeLeftPageTurnOut();
+        }
+      }
+
+      if( sRP != setter.swipeRightPage ){
+        if( setter.swipeRightPage ){
+          swipeRightPageTurnIn();
+        }else{
+          swipeRightPageTurnOut();
+        }
+      }
+    }*/
+
 
 
 }

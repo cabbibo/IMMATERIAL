@@ -25,8 +25,9 @@ public class GlobalEditWindow : EditorWindow
     private bool showState;
     public bool startInPages;
     public bool startInStory;
-    public int startPage;
+    public int startSetter;
     public int startStory;
+    public int startPage;
     public bool fast;
 
 
@@ -325,11 +326,15 @@ public class GlobalEditWindow : EditorWindow
 
         startInStory = EditorGUILayout.Toggle ("StartInStory", startInStory);
         startInPages = EditorGUILayout.Toggle ("StartInPages", startInPages);
+
+        startSetter = EditorGUILayout.IntField ("StartSetter", startSetter);
         startStory = EditorGUILayout.IntField ("StartStory", startStory);
         startPage = EditorGUILayout.IntField ("StartPage", startPage);
+        
         fast = EditorGUILayout.Toggle ("Fast", fast);
 
         state.startStory = startStory;
+        state.startSetter = startSetter;
         state.startPage = startPage;
         state.startInStory = startInStory;
         state.startInPages = startInPages;

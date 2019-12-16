@@ -10,9 +10,9 @@ public class TerrainTap : Cycle
    
    public void Tap(){
     //print("helloos");
-    //print(data.inputEvents.hitTag);
+    print(data.inputEvents.hitTag);
 
-      if( data.inputEvents.hitTag == "Untagged" && !data.state.inPages ){
+      if( ( data.inputEvents.hitTag == "Untagged" || data.inputEvents.hitTag == "Frame") && !data.state.inPages ){
        // print("double hello");
    
       transform.position = data.land.Trace( data.inputEvents.ray.origin , data.inputEvents.ray.direction );
@@ -22,6 +22,16 @@ public class TerrainTap : Cycle
       data.guideParticles.EmitOn();
       tapTime = Time.time;
     }
+   }
+
+   public void SetTransform( Transform t ){
+
+      transform.position = t.position;
+      data.playerControls.SetMoveTarget( transform );
+      data.guideParticles.SetEmitterPosition( transform.position );
+
+      data.guideParticles.EmitOn();
+      tapTime = Time.time;
    }
 
   

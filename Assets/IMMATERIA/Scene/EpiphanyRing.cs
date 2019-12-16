@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EpiphanyRing : Cycle
 {
+    public AudioClip epiphanyClip;
 
     public SceneCircleVerts verts;
     public SceneCircleTris tris;
@@ -36,13 +37,16 @@ public class EpiphanyRing : Cycle
     }
 
 
+
     public void Set(){
+
+
+      data.audio.Play(epiphanyClip);
       
 
       _Activate();
       setting = true;
 
-       
       startTime = Time.time;
       body.active = true;
       
@@ -52,6 +56,8 @@ public class EpiphanyRing : Cycle
       circle.body.mpb.SetFloat("_Setting" , 1 );
 
       for( int i = 0; i < rerenderers.Length; i++ ){
+
+        rerenderers[i].mpb.SetFloat("_ID",i+1);
         rerenderers[i].active = true;
 
         rerenderers[i].mpb.SetFloat("_StartTime", Time.time );
@@ -61,24 +67,25 @@ public class EpiphanyRing : Cycle
     }
 
     public override void Bind(){
+      print("SETIGNNSS");
       //life.BindFloat("_StartTime", () => this.startTime );
       //life.BindVector3("_SetLocation", () => transform.position );
 
       body.mpb.SetVector("_SetPosition", transform.position );
-      body.mpb.SetFloat("_StartTime", Time.time );
+      body.mpb.SetFloat("_StartTime", 10000*Time.time  );
       body.active = false;
 
       for( int i = 0; i < rerenderers.Length; i++ ){
         rerenderers[i].mpb.SetFloat("_ID",i+1);
 
         rerenderers[i].active = false;
-        rerenderers[i].mpb.SetFloat("_StartTime", Time.time );
+        rerenderers[i].mpb.SetFloat("_StartTime", 10000*Time.time );
         rerenderers[i].mpb.SetVector("_SetPosition", transform.position );
       }
     } 
 
     public override void WhileLiving( float v ){
-      if( Time.time -startTime > 10 && setting ){
+      if( Time.time -startTime > 20 && setting ){
         circle._Deactivate();
         _Deactivate();
       }
@@ -86,7 +93,12 @@ public class EpiphanyRing : Cycle
 
 
     public void UnSet(){
+      print("UNSET");
       circle._Activate();
+    }
+
+    public override void Activate(){
+      print("ACTIVATOD");
     }
 
 }
