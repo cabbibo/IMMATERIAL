@@ -57,7 +57,7 @@ public class CircleOnTerrain : Cycle
 
   public override void Deactivate(){
 
-    DebugThis("DEACTIVATEING");
+    //DebugThis("DEACTIVATEING");
 
     body.active = false;
   }

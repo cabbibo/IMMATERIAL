@@ -87,19 +87,30 @@ public class StorySetter : Cycle
   }
 
   public void EnterOuter(){
+
+    data.state.SetSetter( this );
+
     CheckWhichStory();
+    if( currentStory < 0 ){
+      data.helper.NoCurrentStory();
+    }else{
+      
+      data.sceneCircle.Set( this.perimeter );
+      data.state.lastTimeStoryVisited = Time.time;
+      data.state.inStory = true;
+      
+      CS.DoFade(0);
+      CS.OnEnterOuter.Invoke();
+      perimeter.OnDoFade.AddListener(CS.DoFade);
 
-    CS.DoFade(0);
-    CS.OnEnterOuter.Invoke();
-
-
-    perimeter.OnDoFade.AddListener(CS.DoFade);
+      /*for( int i = 0; i < localCycles.Length; i ++ ){
+        localCycles[i].SpinDown();
+        localCycles[i].SpinUp();
+      }*/
+    }
  
 
-    /*for( int i = 0; i < localCycles.Length; i ++ ){
-       localCycles[i].SpinDown();
-      localCycles[i].SpinUp();
-    }*/
+ 
 
   }
 
@@ -111,6 +122,7 @@ public class StorySetter : Cycle
     data.inputEvents.OnEdgeSwipeRight.AddListener(  CS.PreviousPage );
 
     data.framer.Set( CS.pages[CS.currentPage] );
+    CS.SetColliders(true);
     //CS.pages[CS.currentPage]
     data.textParticles.Release();//.Set( CS.pages[CS.currentPage] );
     CS.OnEnterInner.Invoke();
@@ -123,10 +135,12 @@ public class StorySetter : Cycle
 
   public void ExitOuter(){
 
-//    print("StorySetter exiting outer : " + gameObject.name );
+    data.state.UnsetSetter();
+    data.sceneCircle.Unset( this.perimeter );
+    
     CS.DoFade(0);
-
     CS.OnExitOuter.Invoke();
+    
     perimeter.OnDoFade.RemoveListener(CS.DoFade);
 
     /*for( int i = 0; i < localCycles.Length; i ++ ){
@@ -139,7 +153,10 @@ public class StorySetter : Cycle
     data.inputEvents.OnTap.RemoveListener(  CS.CheckForStart );
     data.inputEvents.OnEdgeSwipeLeft.RemoveListener(  CS.NextPage );
     data.inputEvents.OnEdgeSwipeRight.RemoveListener(  CS.PreviousPage );
-
+    
+    data.state.lastTimeStoryVisited = Time.time;
+    data.state.inStory = false;
+    
     CS.OnExitInner.Invoke();
     CS.DoFade(1);
 //    print("exitInner");

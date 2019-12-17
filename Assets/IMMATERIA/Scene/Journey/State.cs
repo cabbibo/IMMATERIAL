@@ -5,7 +5,7 @@ using UnityEngine;
 public class State : Cycle
 {
 
-
+  public AudioClip selectionClip;
 
 
   public bool hasFallen;
@@ -120,10 +120,30 @@ public Story story;
     inStory = startInStory;
     inPages = startInPages;
 
+
+
+    ConnectMonolith( whichMonolithEmitting );
+    if( !monolithParticlesEmitting ){
+      DisconnectMonolith( whichMonolithEmitting );
+    }
+
+    if( hasFallen ){
+      //print("HAS FALLEN");
+
+      data.playerControls.animator.SetBool("FallAsleep", false);
+      data.playerControls.animator.SetBool("Falling", false);
+      data.playerControls.animator.SetBool("GetUp", true);
+      data.playerControls.animator.Play("Grounded");
+    }else{
+      //data.playerControls.Fall();
+    }
+
+
     //data.journey.inStory = startInStory;
     if( startInStory && !startInPages ){
       data.cameraControls.SetFollowTarget();
     }
+
 
     if( startInPages ){
       
@@ -135,26 +155,8 @@ public Story story;
     }
 
 
-
-    ConnectMonolith( whichMonolithEmitting );
-    if( !monolithParticlesEmitting ){
-      DisconnectMonolith( whichMonolithEmitting );
-    }
-
-    if( hasFallen ){
-      print("HAS FALLEN");
-
-    data.playerControls.animator.SetBool("FallAsleep", false);
-    data.playerControls.animator.SetBool("Falling", false);
-    data.playerControls.animator.SetBool("GetUp", true);
-      data.playerControls.animator.Play("Grounded");
-    }else{
-      //data.playerControls.Fall();
-    }
-
-
     if( startInBook ){
-      print("open books");
+      //print("open books");
       data.book.OpenBook();
     }
 
@@ -226,6 +228,7 @@ public Story story;
 
   public void ConnectMonolith(int id){
     whichMonolithEmitting = id;
+    monolithParticlesEmitting = true;
     Shader.SetGlobalInt("_ConnectedStory" , whichMonolithEmitting );
     data.monolithParticles._Emit = 1;
     data.monolithParticles._EmitterPosition = data.journey.monoSetters[id].monolith.transform.position;
@@ -233,9 +236,34 @@ public Story story;
 
   public void DisconnectMonolith(int id){
     whichMonolithEmitting = -1;
+    monolithParticlesEmitting = false;
     Shader.SetGlobalInt("_ConnectedStory" , -1 );
     data.monolithParticles._Emit = 0;
   }
 
+
+  public void PlaySelection(){
+   // print("WASsds");
+    data.audio.Play( selectionClip ,1f , 1f );
+  }
+
+
+
+ public Story CS{
+    get{ return setter.stories[setter.currentStory]; }
+  }
+
+   public Page CP{
+    get{ return setter.CS.pages[setter.CS.currentPage]; }
+  }
+
+
+  public void SetSetter( StorySetter s ){
+    setter = s;
+  }
+
+  public void UnsetSetter(){
+    setter = null;
+  }
 
 }

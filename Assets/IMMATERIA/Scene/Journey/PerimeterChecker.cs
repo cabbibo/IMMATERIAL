@@ -44,8 +44,6 @@ public class PerimeterChecker : Cycle
    
     if( !hardCoded ){ 
 
-      
-
       dif = (transform.position - data.player.position).magnitude;
 
       if( dif < outerRadius && oDif >= outerRadius &&  !insideOuter ){
@@ -78,12 +76,7 @@ public class PerimeterChecker : Cycle
 
   public void EnterOuter(){
 
-    data.state.lastTimeStoryVisited = Time.time;
-    data.state.inStory = true;
-
     insideOuter=true;
-    data.sceneCircle.Set( this );
-
     OnEnterOuter.Invoke();
 
   }
@@ -98,16 +91,11 @@ public class PerimeterChecker : Cycle
 
   public void ExitOuter(){
     insideOuter=false;
-    data.sceneCircle.Unset( this );
     OnExitOuter.Invoke();
   }
 
 
   public void ExitInner(){
-
-    data.state.lastTimeStoryVisited = Time.time;
-    data.state.inStory = false;
-
     insideInner=false;
     OnExitInner.Invoke();
   }

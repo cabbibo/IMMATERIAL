@@ -243,6 +243,7 @@ public class AudioPlayer : Cycle{
         sources[playID].volume = volume;
         sources[playID].pitch = pitch;
         Play(clip);
+        
     }
 
     public void Play( AudioClip clip , int step , float volume ){

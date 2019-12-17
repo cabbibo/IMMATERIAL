@@ -18,6 +18,10 @@ public class Helper : Cycle
     print("GOOD JOB U ONLOCKTIOD!");  
   }
 
+  public void NoCurrentStory(){
+    print("NO CURRENT STORY");
+  }
+
   public GameObject nodePrefab;
   public GameObject[] nodes;
 

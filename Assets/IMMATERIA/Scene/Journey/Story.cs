@@ -107,7 +107,6 @@ public class Story : Cycle
       RaycastHit hit;
 
       if (pages[currentPage].frame.collider.Raycast(data.inputEvents.ray, out hit, 100.0f)){
-        print("HELLLOOOSOSOSOS)");
         StartStory();
       }else{
         
@@ -120,6 +119,7 @@ public class Story : Cycle
   // populate all the events from this page forward
   public void SetAllEvents(){
     for( int i = 0; i < currentPage-1; i++ ){
+      //print( "setting all events");
       pages[i].OnStartEnter.Invoke();
       pages[i].OnEndExit.Invoke();
     }
@@ -191,7 +191,7 @@ public class Story : Cycle
     data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
       SetUpTransition();
       oldTransitionPage.OnEndExit.Invoke();
-      
+      data.framer.Release();//( pages[currentPage] );
     setter.audio.Exit();
       Release();
       

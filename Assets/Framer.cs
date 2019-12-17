@@ -40,6 +40,14 @@ public class Framer : Cycle
 
     }
 
+    public void Release(){
+
+      frames[currentFrame].Release();
+      currentFrame ++;
+      currentFrame %= frames.Length;
+      
+    }
+
 
     public override void WhileLiving(float f){
 

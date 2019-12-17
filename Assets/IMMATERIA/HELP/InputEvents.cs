@@ -354,7 +354,7 @@ if( ratio > swipeSensitivity && difT > minSwipeTime && difT < maxSwipeTime ){
       }else{
         OnSwipeVertical.Invoke(difP.y);
         
-        if( difP.x < 0 ){
+        if( difP.y > 0 ){
           OnSwipeUp.Invoke();
         }else{
           OnSwipeDown.Invoke();

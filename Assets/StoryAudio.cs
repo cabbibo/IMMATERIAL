@@ -87,7 +87,7 @@ public class StoryAudio : Cycle
 
   public void Enter(){
 
-    print("ENNTNT");
+   // print("ENNTNT");
 
     data.audio.globalLooper.FadeOut();
 
@@ -98,7 +98,7 @@ public class StoryAudio : Cycle
 
   public void Exit(){
 
-    print("EXITS");
+    //print("EXITS");
     data.audio.globalLooper.FadeIn();
     for( int i = 0; i < audioInfo.Length; i++ ){
       data.audio.FadeLoop(i , 0 , data.audio.globalLooper.fadeInSpeed );

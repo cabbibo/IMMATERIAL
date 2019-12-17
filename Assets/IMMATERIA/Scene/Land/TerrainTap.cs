@@ -10,7 +10,7 @@ public class TerrainTap : Cycle
    
    public void Tap(){
     //print("helloos");
-    print(data.inputEvents.hitTag);
+    //print(data.inputEvents.hitTag);
 
       if( ( data.inputEvents.hitTag == "Untagged" || data.inputEvents.hitTag == "Frame") && !data.state.inPages ){
        // print("double hello");

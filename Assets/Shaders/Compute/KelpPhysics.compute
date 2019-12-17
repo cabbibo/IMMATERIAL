@@ -187,7 +187,8 @@ void Set (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id 
       float dist = length(vert.pos - _PlayerPosition);
       
        
-    vert.pos = base.pos + normalize(base.nor) * l * (vert.debug.x/(.5+.1*dist));
+   // vert.pos = base.pos + normalize(base.nor) * l * (vert.debug.x/(.5+.1*dist));
+    vert.pos = base.pos + float3(0,1,0) * l * (vert.debug.x/(.5+.1*dist));
     vert.oPos = vert.pos;
 
 

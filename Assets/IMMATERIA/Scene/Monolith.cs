@@ -128,7 +128,7 @@ public class Monolith : Cycle
 
     public void CheckHit(){
 
-      if( data.inputEvents.hit.collider == monolith.GetComponent<Collider>() ){
+      if( data.inputEvents.hit.collider == monolith.GetComponent<Collider>() && data.state.inPages == false ){
         data.cameraControls.SetLerpTarget( cameraLerp , 1 );
         data.inputEvents.OnEdgeSwipeLeft.AddListener( OnDone );
         data.inputEvents.OnEdgeSwipeRight.AddListener(  OnDone );
@@ -137,6 +137,8 @@ public class Monolith : Cycle
       for(int i = 0; i < storyMarkers.Length; i++ ){
 //      print(data.inputEvents.hitTag);
         if( data.inputEvents.hitTag == "StartNode" && data.inputEvents.hit.collider == storyMarkers[i].GetComponent<Collider>() ){
+         // print("HELLO1");
+          data.state.PlaySelection();
           data.state.ConnectMonolith( i );
         }
       }

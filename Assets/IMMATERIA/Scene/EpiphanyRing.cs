@@ -67,7 +67,7 @@ public class EpiphanyRing : Cycle
     }
 
     public override void Bind(){
-      print("SETIGNNSS");
+      
       //life.BindFloat("_StartTime", () => this.startTime );
       //life.BindVector3("_SetLocation", () => transform.position );
 
