@@ -58,10 +58,6 @@ struct Bone{
 };
 
 
-float3 _RO;
-float3 _RD;
-float _DOWN;
-
 #include "../Chunks/GetRayForce.cginc"
 
 struct Trans{

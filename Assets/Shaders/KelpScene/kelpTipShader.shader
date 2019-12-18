@@ -131,7 +131,7 @@ fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
                           return length( tCol);
          // if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .5 ){ return 0;}else{return 1;}
       }
-
+#include "../Chunks/Struct16.cginc"
       #include "../Chunks/ShadowDiscardFunction.cginc"
       ENDCG
     }

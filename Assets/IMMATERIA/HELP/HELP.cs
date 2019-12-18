@@ -37,6 +37,21 @@ public static class HELP{
 
   }
 
+
+    public static float SinNoiseTriangleArea( float size , Vector3 v1  , Vector3 v2 , Vector3 v3 ){
+
+    Vector3 ave = v1 + v2 + v3;
+    ave /= 3;
+    ave *= size;
+    float v = Mathf.Sin( ave.x ) + Mathf.Sin( ave.y  * 1.1f + 20) + Mathf.Sin( ave.z * 1.3f + 200 );
+    v = Mathf.Clamp( v , 0 , 1 );
+    float nV = v;///    ( Noise.Perlin3D(ave, size) + 1)/2;
+
+   // if( nV > .4f ){ Debug.Log(nV);}
+    return nV;
+
+  }
+
   public static float[] GetMatrixFloats(Matrix4x4 m){
 
     float[] matrixFloats = new float[]

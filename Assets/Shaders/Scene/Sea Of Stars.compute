@@ -27,10 +27,8 @@ int _SkeletonBuffer_COUNT;
 #include "../Chunks/hash.cginc"
 #include "../Chunks/curlNoise.cginc"
 
-float3 _RO;
-float3 _RD;
-float _DOWN;
-float _DOWNTWEEN2;
+
+
 
 #include "../Chunks/GetRayForce.cginc"
 

@@ -74,9 +74,6 @@ float _Time;
 float3 _RayOrigin;
 float3 _RayDirection;
 
-float3 _RO;
-float3 _RD;
-float _DOWN;
 
 
 #include "../Chunks/GetRayForce.cginc"

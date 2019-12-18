@@ -123,7 +123,7 @@ Blend One One
           float4 tCol = tex2D(_MainTex, uv *   float2( 6,(lookupVal)* 1 ));
           if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .5 ){ return 0;}else{return 1;}
       }
-
+#include "../Chunks/Struct16.cginc"
       #include "../Chunks/ShadowDiscardFunction.cginc"
       ENDCG
     }

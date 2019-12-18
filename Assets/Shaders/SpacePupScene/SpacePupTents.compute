@@ -91,6 +91,8 @@ uint _BaseBuffer_COUNT;
 
 #include "../Chunks/GetCamRayForce.cginc"
 
+#include "../Chunks/GetRayForce.cginc"
+
 /*RWStructuredBuffer<Bone> _SDFBoneBuffer;
 int _SDFBoneBuffer_COUNT;
 
@@ -186,7 +188,7 @@ void Set (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id 
       float dist = length(vert.pos - _PlayerPosition);
       
        
-    vert.pos = base.pos - base.nor * l * (vert.debug.x/(.5+.1*dist));
+    vert.pos = base.pos - base.nor * l * (vert.debug.x);
     vert.oPos = vert.pos;
 
 
@@ -217,7 +219,7 @@ void Collision (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
 
    // if( base.used == 1 ){
 
-    float3 bP = base.pos + base.nor * .4;//mul( transform,  float4(base.pos,1)).xyz;
+    float3 bP = base.pos - base.nor * .1;//mul( transform,  float4(base.pos,1)).xyz;
     float3 bN = -base.nor;//normalize(mul( transform,  float4(base.nor,0))).xyz;
     float3 s = float3(1,1,1);//mul( transform , float4(1,1,1,0)).xyz;
 
@@ -236,6 +238,7 @@ void Collision (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
       //force += normalize( dif ) * 30;
     }
 
+    force += GetRayForce( vert.pos , 5 ) * 40.1  * _DOWN;
     force += GetCamRayForce(vert.pos, 201.1 , 3 ) / ( 1 + length( _CameraPosition - vert.pos));
    // if( )
    // force += float3(0,_UpForce*vert.uv.x,0);
@@ -317,7 +320,7 @@ void Collision (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
 
     if( _Delta  < .1 && tb == false ){
 
-      float dampening =.9;//_Dampening;//.99999;// - vert.life * .01;
+      float dampening =.95;//_Dampening;//.99999;// - vert.life * .01;
       float3 next = vert.pos + vel  * dampening + force * .001;
 
       vert.oPos = vert.pos;

@@ -65,6 +65,10 @@ public class ParticlesOnDynamicMesh: Particles {
 
         float avePos = verts[tri0].y + verts[tri1].y + verts[tri2].y;
         area = HELP.AreaOfTriangle (verts[tri0], verts[tri1], verts[tri2])/(.01f + Mathf.Abs(100 * avePos));
+      }else if( noiseType == "sin"){
+
+        float avePos = verts[tri0].y + verts[tri1].y + verts[tri2].y;
+        area = HELP.SinNoiseTriangleArea(noiseSize,verts[tri0], verts[tri1], verts[tri2]);
       }
 
       triangleAreas[i] = area;

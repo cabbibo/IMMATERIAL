@@ -71,7 +71,7 @@ public class AudioListenerTexture : Form
         texture.SetPixels ( pixels );
         texture.Apply();
 
-        SetData( samples );
+        if( samples != null && _buffer != null ){ SetData( samples ); }
         Shader.SetGlobalTexture( "_AudioMap" , texture );
     }
 

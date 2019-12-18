@@ -1,0 +1,51 @@
+﻿
+
+
+#pragma kernel Placer
+
+struct Vert{
+  float3 pos;
+  float3 oPos;
+  float3 nor;
+  float3 tang;
+  float2 uv;
+  float2 debug;
+};
+
+RWStructuredBuffer<Vert> _VertBuffer;
+RWStructuredBuffer<Vert> _HairBuffer;
+
+uint _VertBuffer_COUNT;
+uint _HairBuffer_COUNT;
+
+int _NumVertsPerHair;
+
+#include "../Chunks/safeID.cginc"
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Placer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id : SV_DispatchThreadID) {
+  uint pID = threadID + u3GroupID.x * NR_THREADS;
+  uint bID = pID ;
+  bID = (bID+1) * _NumVertsPerHair - 1;
+
+  if( pID < _VertBuffer_COUNT && bID < _HairBuffer_COUNT ){
+
+    pID = safeID( pID , _VertBuffer_COUNT );
+    bID = safeID( bID , _HairBuffer_COUNT );
+
+    Vert vert = _VertBuffer[pID];
+    Vert base = _HairBuffer[bID];    //Vert base2 = _HairBuffer[bID-2];
+
+    float3 targetPos = base.pos - base.nor * .3;
+    vert.pos = lerp( vert.pos , targetPos , .9);
+    vert.oPos = base.pos - base.oPos;
+    vert.nor = base.nor;
+
+    _VertBuffer[pID] = vert;
+
+
+  }
+  
+}
+

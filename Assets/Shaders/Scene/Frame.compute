@@ -27,9 +27,6 @@ float3 _TopRight;
 
 float _CanEdgeSwipe;
 
-float3 _RO;
-float3 _RD;
-float _DOWN;
 
 #include "../Chunks/safeID.cginc"
 

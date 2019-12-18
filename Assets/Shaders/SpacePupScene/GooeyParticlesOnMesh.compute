@@ -40,9 +40,6 @@ float _Scale;
 int _VertsPerMesh;
 float _Time;
 
-float3 _RO;
-float3 _RD;
-float  _DOWN;
 
 float3 _Velocity;
 
@@ -77,8 +74,11 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     float3 force = 0;
 
-    float velMatch = (1-dot( p.nor , normalize(_Velocity) ));
+    bool nan;
 
+    float velMatch = (1-dot( p.nor , normalize(_Velocity) ));
+    nan = isnan(velMatch);
+    if( nan ){ velMatch = 0;} 
     p.og = v.pos;
 
     targetPos = mul(_Transform , float4( v.pos   , 1 ) ).xyz;
@@ -86,12 +86,16 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     float3 v2 = p.nor * -dot( p.nor , normalize(_Velocity) ) * length( _Velocity);
 
 
-    bool nan = isnan(v2);
+    nan = isnan(v2);
     if( nan ){ v2 = 0;}
-    //targetPos -= v2;
+    targetPos -= v2;
 
-    force -= (p.pos - targetPos) * .02 * velMatch;
+    force -= (p.pos - targetPos) * .02* velMatch;
     force += curlNoise( p.pos * .1 + _Time * .2 ) * .004;
+
+
+    float3 ray = GetRayForce(p.pos);
+   force += .01 * normalize(ray) / length( ray ) ;
 
    
     if( length(force) > 10 ){ force = normalize(force) * 10; }
@@ -202,7 +206,7 @@ void Resolve (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
 
       if( length( p.pos-p.resolver.xyz) != 0 ){
-        p.vel -= clamp( pow( length(p.pos - p.resolver.xyz) , 2 )* 100 , -.1 , .1) * normalize(p.pos-p.resolver.xyz);//
+        //p.vel -= clamp( pow( length(p.pos - p.resolver.xyz) , 2 )* 100 , -.1 , .1) * normalize(p.pos-p.resolver.xyz);//
       }
 
       float3 nor = float3(0,1,0);
