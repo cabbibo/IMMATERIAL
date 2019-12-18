@@ -29,11 +29,17 @@ Blend SrcAlpha OneMinusSrcAlpha
             #include "UnityCG.cginc"
 
 
-            #include "../Chunks/Struct12.cginc"
+            #include "../Chunks/Struct16.cginc"
             #include "../Chunks/hash.cginc"
 
 
-            struct v2f { float4 pos : SV_POSITION; float3 nor : NORMAL; float2 uv : TEXCOORD0; };
+            struct v2f { 
+                float4 pos      : SV_POSITION; 
+                float3 nor      : NORMAL; 
+                float2 uv       : TEXCOORD0; 
+                float2 debug    : TEXCOORD1; 
+
+            };
             float4 _Color;
 
             StructuredBuffer<Vert> _VertBuffer;
@@ -52,8 +58,12 @@ Blend SrcAlpha OneMinusSrcAlpha
                 o.pos = mul (UNITY_MATRIX_VP, float4(v.pos,1.0f));
                 o.nor = v.nor;
 
-
-                o.uv = v.uv * (1./6.) + float2((floor((hash( v.debug * 121 + float(_TotalFrames * 20)) * 6))/6),(floor((hash( v.debug *29 + float(_TotalFrames * 30)) * 6))/6));
+                float2 fUV = v.uv * ( 1./6);
+                fUV.x += floor((hash( v.debug.x* 121 + float(_TotalFrames * 20)) * 6))/6;
+                fUV.y += floor((hash( v.debug.x* 213 + float(_TotalFrames * 33)) * 6))/6;
+                o.uv = fUV;
+                o.debug = v.debug;
+                
                 return o;
             }
 
@@ -70,7 +80,8 @@ Blend SrcAlpha OneMinusSrcAlpha
                 }
 
                 col = tex2D( _MainTex , v.uv );
-                if( col.a < .5 ){ discard; }
+                if( col.a < .3 ){ discard; }
+                col *= v.debug.y;
                 
                 return col;
             }

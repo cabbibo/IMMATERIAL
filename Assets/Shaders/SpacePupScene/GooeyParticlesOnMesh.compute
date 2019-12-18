@@ -5,10 +5,11 @@
 
 struct Vert{
   float3 pos;
+  float3 vel;
   float3 nor;
   float3 tang;
   float2 uv;
-  float  debug;
+  float2  debug;
 };
 
 struct Particle{
@@ -21,6 +22,8 @@ struct Particle{
   float4 resolver;
   float3 connections[16];
 };
+
+
 
 
 
@@ -49,6 +52,7 @@ float4x4 _Transform;
 #include "../Chunks/snoise.cginc"
 #include "../Chunks/curlNoise.cginc"
 #include "../Chunks/GetRayForce.cginc"
+#include "../Chunks/nanCheckParticle.cginc"
 
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
@@ -78,15 +82,17 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     p.og = v.pos;
 
     targetPos = mul(_Transform , float4( v.pos   , 1 ) ).xyz;
-    targetPos -= 10*p.nor * -dot( p.nor , normalize(_Velocity) ) * length( _Velocity);
+
+    float3 v2 = p.nor * -dot( p.nor , normalize(_Velocity) ) * length( _Velocity);
+
+
+    bool nan = isnan(v2);
+    if( nan ){ v2 = 0;}
+    //targetPos -= v2;
 
     force -= (p.pos - targetPos) * .02 * velMatch;
     force += curlNoise( p.pos * .1 + _Time * .2 ) * .004;
 
-
-
-
-   // force += GetRayForce( p.pos , .2 , 3 );//_DOWN * normalize(inLine) * .3 / (.5  +  length( inLine));
    
     if( length(force) > 10 ){ force = normalize(force) * 10; }
     if( length(p.vel) > 10 ){ p.vel = normalize(p.vel) * 10; }
@@ -98,14 +104,10 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     p.debug = length( p.pos - targetPos);
 
 
-
+    //p.pos = targetPos;
     p.uv = v.uv;
 
-    //p.pos = mul(_Transform , float4( v.pos ,1 ) ).xyz;
-
-    //p.debug = length(inLine);
-    //p.pos = targetPos;
-
+    nanCheck(p);
     _ParticleBuffer[sID] = p;
 
 
@@ -235,6 +237,7 @@ void Resolve (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
       p.resolver = 0;
 
+    nanCheck(p);
       _ParticleBuffer[sID] = p;
 
     }

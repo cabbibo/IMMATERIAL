@@ -5,17 +5,17 @@ using UnityEngine;
 public class SpacePup : Cycle
 {
 
-  public Particles particles;
+  public TriConnectedParticles particles;
   public Life life;
 
   public Life triLocation;
   public Life resolve;
 
   public MeshVerts verts;
-  //public MeshTris tris;
+  public MeshTris tris;
 
   public Body body;
-  public Simulation anchors;
+  public PlaceDynamicMeshParticles anchors;
 
   public Transform target;
 
@@ -28,7 +28,11 @@ public class SpacePup : Cycle
 
     particles.count = verts.meshFilter.sharedMesh.vertices.Length;
 
-    
+    particles.verts = verts;
+    particles.tris = tris;
+    anchors.meshVerts = verts;
+    body.triangles = tris;
+
     SafeInsert( life );
     SafeInsert( particles );
 

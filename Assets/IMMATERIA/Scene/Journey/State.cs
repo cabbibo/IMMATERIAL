@@ -157,6 +157,10 @@ public Story story;
      
       setter.StartStory();
 
+      if( startPage != 0 ){
+        data.framer.Set( setter.CP );
+      }
+
 
     }
 

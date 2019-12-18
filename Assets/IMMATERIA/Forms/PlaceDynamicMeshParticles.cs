@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class PlaceDynamicMeshParticles : Simulation
 {
-  public Form meshVerts;
+  public Form baseVerts;
+  public MeshVerts meshVerts;
+
+  public override void Create(){
+    ((ParticlesOnDynamicMesh)form).mesh = meshVerts;
+  }
 
   public override void Bind(){
 
-    life.BindForm("_VertBuffer" , meshVerts );
+    life.BindForm("_VertBuffer" , baseVerts );
 
   }
 }

@@ -12,7 +12,12 @@
 
                         // inside SubShader
 
-        Tags { "RenderType"="Opaque" }
+                        // inside SubShader
+Tags { "Queue"="Transparent" "RenderType"="Transparent"  }
+        LOD 100
+// inside Pass
+ZWrite On
+Blend One One
         LOD 100
 
         Cull Off
@@ -71,7 +76,10 @@
                
                 col = 1;
 
-                col = tex2D(_MainTex, float2(1-v.uv.y * (1./5.), v.uv.x * .03 * v.debug.x/v.debug.y ).yx ).a ;
+                col = tex2D(_MainTex, float2(1-v.uv.y * (1./5.), v.uv.x * .03 * v.debug.y ).yx ).a ;
+                if( col.x < .1 ){
+                  discard;
+                }
 
 
                 col *= (.3 + 3*length( v.dif ));
@@ -79,7 +87,7 @@
                     col += length(v.dif);
                 }
                // col = v.uv.x;
-                return float4(col * (1-_Cutoff), length(col) * _Cutoff);
+                return float4(col  * v.debug.x, length(col) * v.debug.x);
             }
 
             ENDCG

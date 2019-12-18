@@ -13,7 +13,7 @@ public class TriConnectedParticles : Particles {
   int[][][] connections;
   int[] numConnections;
 
-  // max connections 32
+  // max connections 16
   public override void SetStructSize(){ structSize = 20 + 16 * 3; }
 
 

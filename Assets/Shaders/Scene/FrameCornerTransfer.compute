@@ -1,27 +1,21 @@
 ﻿#pragma kernel Transfer
 
 struct Vert{
-  float3 pos;
-  float3 nor;
-  float3 tangent;
-  float2 uv;
-  float debug;
-};
-
-struct Particle{
-  float3 pos;
+    float3 pos;
   float3 vel;
   float3 nor;
-  float3 tan;
+  float3 tang;
   float2 uv;
-  float2 used;
+  float2 debug;
 };
+
+
 
 
 
 RWStructuredBuffer<Vert> _VertBuffer;
 RWStructuredBuffer<Vert> _BaseBuffer;
-RWStructuredBuffer<Particle> _SkeletonBuffer;
+RWStructuredBuffer<Vert> _SkeletonBuffer;
 
 int _VertBuffer_COUNT;
 int _SkeletonBuffer_COUNT;
@@ -57,27 +51,31 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     int oM = mID;
     mID =  int(float(mID) / _CountMultiplier);//_VertsPerSide;
     Vert b = _BaseBuffer[safeID(pID %_VertsPerMesh, _BaseBuffer_COUNT )];
-    Particle p = _SkeletonBuffer[safeID( mID, _SkeletonBuffer_COUNT )];
+    Vert p = _SkeletonBuffer[safeID( mID, _SkeletonBuffer_COUNT )];
 
     Vert v = _VertBuffer[safeID(pID,_VertBuffer_COUNT)];
 
 
   float r = _Radius * _Distance;
 
-  if( _Locked == 1 ){
-    r *= (1-_Fade); 
-  }else{
-    r  *=  1/(1+(_Time - _DeathTime));
-  }
+   float fade = (1-_Fade);
+    if( _Locked == 1 ){
+      r *= fade; 
+    }else{
+      fade = 1/(1+pow( (_Time - _DeathTime),2));
+      r  *=  fade;
+      if( _Time - _DeathTime > 5 ){ r = 0; fade = 0; }
+    }
+
 
   
 
 
     v.pos      = p.pos + (b.pos.z * _CameraUp + b.pos.y * _CameraRight - _CameraForward * .01) * r * .5;// = v;
     v.nor      = b.nor;
-    v.tangent  = b.tangent;
+    v.tang     = b.tang;
     v.uv       = b.uv;
-    v.debug = float(oM);
+    v.debug = float2(float(oM),fade);
 
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)] = v;
 

@@ -27,7 +27,7 @@ public class SpacePupTarget : MonoBehaviour
         shake = false;
       }
 
-      transform.position = Vector3.Lerp( transform.position , target , .03f );
+      //transform.position = Vector3.Lerp( transform.position , target , .03f );
       
       if( shake == true ){
         float v = (Time.time - shakeTime)/ 4;

@@ -27,7 +27,7 @@
       float2 uv;
       float2 offset;
       float4 debug;
-      float2 connections[16];
+      float3 connections[16];
     };
       #include "../Chunks/debugVSChunk.cginc"
 

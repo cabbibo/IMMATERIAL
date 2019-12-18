@@ -265,11 +265,11 @@ void Collision (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
 
     float3 targetPos = bP + bN * vert.uv.x * vert.debug.x;
 
-    if( length( targetPos - vert.pos ) > 30 ){
+    /*if( length( targetPos - vert.pos ) > 30 ){
       vert.pos = targetPos;
       vert.oPos = vert.pos;
       tb = true;
-    }
+    }*/
 
     if( length(vert.pos) == 0 ){
       vert.pos  = targetPos;
@@ -381,7 +381,7 @@ void Constraint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uin
 
       float difference = 0;
 
-      float dist = length(v1.pos - _PlayerPosition);
+      float dist = 1;//length(v1.pos - _PlayerPosition);
       
       // We want to make sure that l isn't zero, 
       // or we will get some NaNs

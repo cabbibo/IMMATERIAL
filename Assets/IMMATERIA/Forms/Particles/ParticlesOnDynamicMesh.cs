@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ParticlesOnDynamicMesh: Particles {
   
-  public MeshFilter mesh;
+  //public MeshFilter mesh;
+  public MeshVerts mesh;
 
   public string noiseType;// { "even", "fractal" , "allOne"};
   public float noiseSize;
@@ -27,7 +28,8 @@ public class ParticlesOnDynamicMesh: Particles {
 
   public override void Embody(){
 
-    Mesh m = mesh.sharedMesh;
+    Mesh m = mesh.mesh;
+    print( m.vertices.Length);
 
     int[] triangles = m.triangles;
     Vector3[] verts = m.vertices;

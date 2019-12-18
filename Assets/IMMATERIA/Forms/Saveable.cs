@@ -191,6 +191,13 @@ public class Saveable {
         }
       }else{
         float[] data = bf.Deserialize(stream) as float[];
+        if( data == null ){
+                form.DebugThis("NULL DATA");
+          form.saveName = GetSafeName();
+          form.Embody();
+          form.loadedFromFile = false;
+          Saveable.Save(form);
+        }else{
 
         if( data.Length != form.count * form.structSize ){
           form.DebugThis("YOUR INPUT DATA IS OFF");
@@ -204,6 +211,7 @@ public class Saveable {
          // form.DebugThis("loadedFromFileee");
           form.SetDNA(data);
         }
+      }
       }
 
       stream.Close();

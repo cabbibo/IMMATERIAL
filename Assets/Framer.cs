@@ -35,6 +35,7 @@ public class Framer : Cycle
     public void Set(Page page){
 
       print("Setting");
+      print(page);
       frames[currentFrame].Release();
 
       frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeOut();
@@ -44,10 +45,11 @@ public class Framer : Cycle
       totalFrames ++;
       currentFrame %= frames.Length;
       frames[currentFrame].Set(page);
-      frames[currentFrame].transfer.body.mpb.SetInt("_TotalFrames", totalFrames );
       frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeIn();
       //frameCollider = page.frame.collider;
       //frameCollider.enabled = true;
+      
+      frames[currentFrame].corners.body.mpb.SetInt("_TotalFrames", totalFrames );
 
     }
 
@@ -76,6 +78,8 @@ public class Framer : Cycle
         //print( instrument.volume );
         instrument.PlayGrain();
       }
+
+
 
 
     }

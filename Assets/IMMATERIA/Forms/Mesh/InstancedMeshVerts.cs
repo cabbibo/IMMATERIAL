@@ -19,7 +19,7 @@ public class InstancedMeshVerts : Form {
     public float debug;
   };*/
 
-  public override void SetStructSize(){ structSize = 12; }
+  public override void SetStructSize(){ structSize = 16; }
 
   public override void SetCount(){ 
 
@@ -55,6 +55,12 @@ public class InstancedMeshVerts : Form {
         values[ index ++ ] = data[9+i *structSize];
         values[ index ++ ] = data[10+i *structSize];
         values[ index ++ ] = data[11+i *structSize];
+
+
+        values[ index ++ ] = data[12+i *structSize];
+        values[ index ++ ] = data[13+i *structSize];
+        values[ index ++ ] = data[14+i *structSize];
+        values[ index ++ ] = data[15+i *structSize];
 
       }
     }
