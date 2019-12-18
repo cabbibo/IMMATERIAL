@@ -102,6 +102,8 @@ public class CameraController : Cycle
     public void DoLerp(){
         
         float v = Mathf.Clamp( (Time.time - lerpStartTime) / lerpSpeed ,0,1);
+
+        if( lerpSpeed == 0 ){ v = 1; }
         
         // smoothing function;
         v = v * v * (3 - 2 * v);

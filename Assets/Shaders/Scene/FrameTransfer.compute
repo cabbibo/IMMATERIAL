@@ -142,7 +142,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     v.nor = -fNor;
     v.uv = fUV;
     //v.tangent = fTan;
-    v.debug = float2( rowVal,particleID);//cV.debug;
+    v.debug = float2( cV.debug.x , _Radius * _Distance);//cV.debug;
     //v.debug = float2(float(particleID),length(v.pos-fPos));
     v.pos = fPos;
     v.tangent = og;

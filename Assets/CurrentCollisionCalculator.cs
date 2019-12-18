@@ -18,8 +18,12 @@ public class CurrentCollisionCalculator : Cycle
 
   public void BindNewForm( Form f ){
     ToBind = f;
-    life.BindPrimaryForm("_VertBuffer",f);
-    life.active = true;
+    life.Set(f);
+  }
+
+  public void Unbind(){
+    ToBind = null;
+    life.Unset();
   }
 
   public override void WhileLiving( float v ){

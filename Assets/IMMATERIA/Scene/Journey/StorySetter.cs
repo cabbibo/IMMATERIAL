@@ -128,7 +128,8 @@ public class StorySetter : Cycle
     CS.OnEnterInner.Invoke();
     CS.DoFade(1);
     
-    _Activate();
+    _Activate(false);
+    CS._Activate(false);
 
 
   }

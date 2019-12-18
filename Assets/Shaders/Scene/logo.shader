@@ -22,6 +22,7 @@ Shader "Custom/DepthText2" {
     _BaseHue( "Base Hue", Float ) = .3
 
     _MainTex( "Main Tex" , 2D ) = "white" {}
+    _MainTex2( "Main Tex2" , 2D ) = "white" {}
     _ColorMap( "Color Map" , 2D ) = "white" {}
 
     _ScaleX("scale x" , Float) = 7.827432
@@ -34,7 +35,12 @@ Shader "Custom/DepthText2" {
 
   SubShader {
 
-
+        // inside SubShader
+Tags { "Queue"="Transparent" "RenderType"="Transparent" "IgnoreProjector"="True" }
+        LOD 100
+// inside Pass
+ZWrite Off
+Blend One One 
         Cull off
     Pass {
 
@@ -53,10 +59,13 @@ Shader "Custom/DepthText2" {
       uniform float _HueSize;
       uniform float _BaseHue;
       uniform float _Cutoff;
+      uniform float _Fade;
+
 
 
       uniform sampler2D _AudioMap;
       uniform sampler2D _MainTex;
+      uniform sampler2D _MainTex2;
       uniform sampler2D _ColorMap;
 
       uniform float _ScaleX;
@@ -208,7 +217,7 @@ float tri( float x ){
         float3 rd           = v.rd;       
 
         // Our color starts off at zero,   
-        float3 col = float3( 1.0 , 0.0 , 0.0 );
+        float3 col = float3( 0.0 , 0.0 , 0.0 );
 
 
 
@@ -242,11 +251,15 @@ float tri( float x ){
             // into the step will be defined by our number of steps and total depth
           p = ro + rd * stepVal * _TotalDepth * .5 ;
 
-          float2 xy =  float2( p.x / _ScaleX , p.y / _ScaleY )   + float2( .5 , .5);
-        float val = getFogVal( p ); 
+          float2 xy =  float2( p.x / _ScaleX , p.y / _ScaleY ) * 1.3    + float2( .5 , .5);
+        float val = getFogVal( p*100 ); 
           //xy += val * .02;
-          xy = clamp( xy , float2(0,0) , float2(1,1));
-          float4 tColStep = tex2D( _MainTex , xy ); 
+
+         //float n2 = triNoise3D( p , 1 , _Time.y  );
+         float n2 = tex2D( _MainTex2 , xy.yx + stepVal * .4 ).b;
+
+          xy = clamp( xy + n2 * .01 * _NoiseSize, float2(0,0) , float2(1,1));
+          float4 tColStep = tex2D( _MainTex , xy  ); 
     
     
          // float4 aVal = tex2D( _AudioMap , float2( val , 0));
@@ -259,7 +272,8 @@ float tri( float x ){
           if( opacity > 0.2  && xy.x > 0 && xy.x < 1 && xy.y > 0 && xy.y < 1){
             float v =.5 -  abs(opacity - .5);
             //col += aVal * hsv( v *  10 * _HueSize + stepVal * _HueSize + _BaseHue +  ( _CurrTexture  / 10) , .5 , val );
-            col +=tColStep;//hsv( stepVal * _HueSize, .5 ,.4 );
+            //col += tColStep * tex2D(_ColorMap, float2(n2,0));// hsv(n2 * 3,1.5,n2 * 3) ;//hsv( stepVal * _HueSize, .5 ,.4 );
+            col +=  n2;//tex2D(_ColorMap, float2(n2+ (tColStep.x+tColStep.y+tColStep.z) * 1,0));// hsv(n2 * 3,1.5,n2 * 3) ;//hsv( stepVal * _HueSize, .5 ,.4 );
            // col *= aVal.xyz;
             hit = true;
           }
@@ -276,7 +290,8 @@ float tri( float x ){
             col /=  float( _NumberSteps);
 
             if( hit == false ){
-                discard;
+              //col = float3(1,0,0);
+              discard;
             }
 
             //col = tex2D(_ColorMap , v.ro.xy + .5 );
@@ -292,7 +307,7 @@ float tri( float x ){
 
 
             fixed4 color;
-        color = fixed4( col , 1. );
+        color = fixed4( col* _Fade , _Fade );
         return color;
       }
 

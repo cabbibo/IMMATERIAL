@@ -118,7 +118,7 @@
         float smoothing = .1;
         float lum = smoothstep( 0.9 - smoothing , 0.9 + smoothing , d.x );
 
-
+        
 
         if( d < .5 ){discard;}
         float3 bg = tex2Dproj(_BackgroundTexture, v.screenPos );

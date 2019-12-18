@@ -9,6 +9,9 @@
     
     SubShader
     {
+
+                        // inside SubShader
+
         Tags { "RenderType"="Opaque" }
         LOD 100
 
@@ -65,15 +68,60 @@
 
                 float3 col = .3; float alpha = 1;
                 col += length(v.dif);
-                if( _CanEdgeSwipe > 0 ){
+               
+                col = 1;
+
+                col = tex2D(_MainTex, float2(1-v.uv.y * (1./5.), v.uv.x * .03 * v.debug.x/v.debug.y ).yx ).a ;
+
+
+                col *= (.3 + 3*length( v.dif ));
+                 if( _CanEdgeSwipe > 0 ){
                     col += length(v.dif);
                 }
-                col *= tex2D(_MainTex, float2(v.uv.x * 10 , v.uv.y * (1.0/6.0) ).yx );
                // col = v.uv.x;
-                return float4(col , alpha);
+                return float4(col * (1-_Cutoff), length(col) * _Cutoff);
             }
 
             ENDCG
         }
+
+
+
+                   // SHADOW PASS
+
+    Pass
+    {
+      Tags{ "LightMode" = "ShadowCaster" }
+
+
+      Fog{ Mode Off }
+      ZWrite On
+      ZTest LEqual
+      Cull Off
+      Offset 1, 1
+      CGPROGRAM
+
+      #pragma target 4.5
+      #pragma vertex vert
+      #pragma fragment frag
+      #pragma multi_compile_shadowcaster
+      #pragma fragmentoption ARB_precision_hint_fastest
+
+      #include "UnityCG.cginc"
+      sampler2D _MainTex;
+
+      float DoShadowDiscard( float3 pos , float2 uv ){
+         float lookupVal =  max(min( uv.y * 2,( 1- uv.y ) ) * 1.5,0);//2 * tex2D(_MainTex,uv * float2(4 * saturate(min( uv.y * 4,( 1- uv.y ) )) ,.8) + float2(0,.2));
+          float4 tCol = tex2D(_MainTex, uv *   float2( 6,(lookupVal)* 1 ));
+          if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .5 ){ return 0;}else{return 1;}
+      }
+
+      #include "../Chunks/ShadowDiscardFunction.cginc"
+      ENDCG
     }
+  
+    }
+
+
+
 }

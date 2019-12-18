@@ -9,6 +9,7 @@ public class Framer : Cycle
     public FrameBuffer[] frames;
 
     public int currentFrame;
+    public int totalFrames;
 
     public SampleSynth instrument;
 
@@ -24,17 +25,27 @@ public class Framer : Cycle
     public override void Create(){
       for( int i = 0; i < frames.Length; i++ ){
         SafeInsert( frames[i] );
+        frames[i].closeButton.GetComponent<ToggleFrame>().framer = this;
       }
+      totalFrames = 0;
+
     }
 
 
     public void Set(Page page){
+
+      print("Setting");
       frames[currentFrame].Release();
+
+      frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeOut();
       //if( frameCollider != null ){ frameCollider.enabled = false; }
       if( frames[currentFrame].currentPage == page ){ frames[currentFrame].ImmediateDeath(); }
       currentFrame ++;
+      totalFrames ++;
       currentFrame %= frames.Length;
       frames[currentFrame].Set(page);
+      frames[currentFrame].transfer.body.mpb.SetInt("_TotalFrames", totalFrames );
+      frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeIn();
       //frameCollider = page.frame.collider;
       //frameCollider.enabled = true;
 
@@ -68,4 +79,28 @@ public class Framer : Cycle
 
 
     }
+
+    public bool shown = true;
+    public void Toggle(){
+
+      shown = !shown;
+
+      if( !shown ){
+        for( int i = 0; i < frames.Length; i++ ){
+          frames[i].transfer.showBody = false;
+          frames[i].corners.showBody = false;
+          data.state.frameShown = false;
+          data.textParticles.body.active = false;
+        }
+      }else{
+        for( int i = 0; i < frames.Length; i++ ){
+          frames[i].transfer.showBody = true;
+          frames[i].corners.showBody = true;
+          data.state.frameShown = true;
+          data.textParticles.body.active = true;
+        }
+      }
+
+    }
+
 }

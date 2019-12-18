@@ -52,6 +52,7 @@ public class Tutorial : Cycle
       swipeLeftPageText.enabled = true;
       inOrOut = true;
       currentRenderer = swipeLeftPageText;
+       currentRenderer.sharedMaterial.SetColor("_Color" , new Color(0,0,0,0) );
       data.tween.AddTween( 1 , tweenMaterial  );
     }
 
@@ -70,6 +71,8 @@ public class Tutorial : Cycle
       swipeRightPageText.enabled = true;
       inOrOut = true;
       currentRenderer = swipeRightPageText;
+
+       currentRenderer.sharedMaterial.SetColor("_Color" , new Color(0,0,0,0) );
       data.tween.AddTween( 1 , tweenMaterial  );
     }
 
@@ -160,12 +163,21 @@ public class Tutorial : Cycle
     
     public void tweenMaterial(float v){
 
-      if( !inOrOut ){ v = 1-v; }
+
+      Material m = currentRenderer.sharedMaterial;
+      if( Application.isPlaying ){ m = currentRenderer.material; }
+      // Dont jump in if we already are in!
+      if( !inOrOut ){ 
+          v = 1-v; 
+          v = Mathf.Min( v , m.GetColor("_Color").a );
+        }else{
+          v = Mathf.Max( v , m.GetColor("_Color").a );
+        }
 
       if( Application.isPlaying ){
-        currentRenderer.material.SetColor("_Color" , new Color(v,v,v,v) );
+        m.SetColor("_Color" , new Color(v,v,v,v) );
       }else{
-        currentRenderer.sharedMaterial.SetColor("_Color" , new Color(v,v,v,v) );
+        m.SetColor("_Color" , new Color(v,v,v,v) );
       }
     }
 

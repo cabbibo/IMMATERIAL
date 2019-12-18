@@ -37,6 +37,10 @@ float _DeathTime;
 int _Locked;
 float _Time;
 
+float3 _CameraForward;
+float3 _CameraRight;
+float3 _CameraUp;
+
 
 #include "../Chunks/safeID.cginc"
 
@@ -50,6 +54,7 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     
 
     int mID = pID / _VertsPerMesh;
+    int oM = mID;
     mID =  int(float(mID) / _CountMultiplier);//_VertsPerSide;
     Vert b = _BaseBuffer[safeID(pID %_VertsPerMesh, _BaseBuffer_COUNT )];
     Particle p = _SkeletonBuffer[safeID( mID, _SkeletonBuffer_COUNT )];
@@ -68,10 +73,11 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
   
 
 
-    v.pos      = p.pos + b.pos *  r;// = v;
+    v.pos      = p.pos + (b.pos.z * _CameraUp + b.pos.y * _CameraRight - _CameraForward * .01) * r * .5;// = v;
     v.nor      = b.nor;
     v.tangent  = b.tangent;
     v.uv       = b.uv;
+    v.debug = float(oM);
 
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)] = v;
 

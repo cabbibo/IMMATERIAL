@@ -23,7 +23,7 @@ public class Story : Cycle
 
   // means we are entering and exiting via code, not by walking closer
   // ( most likely just first page )
-  public bool hardcoded;
+  ///public bool hardcoded;
 
   // Can't go back past the first page ( most likely just page one)
   public bool cantUnstart;
@@ -129,7 +129,7 @@ public class Story : Cycle
 
   public void NextPage(){
 
-    if( started && transitioning == false && !pages[currentPage].locked ){
+    if( started && transitioning == false && !pages[currentPage].locked  && data.state.frameShown ){
 
       forward = true;
 
@@ -140,6 +140,7 @@ public class Story : Cycle
         currentPage ++;
 
         PageTurn();
+
 
       }else{
 
@@ -199,7 +200,7 @@ public class Story : Cycle
 
   public void PreviousPage(){
     
-    if( started && transitioning == false && !pages[currentPage].mustContinue ){
+    if( started && transitioning == false && !pages[currentPage].mustContinue && data.state.frameShown ){
 
       forward = false;
      
@@ -255,11 +256,14 @@ public class Story : Cycle
     if( pages[currentPage].lerpTarget ){ data.playerControls.SetLerpTarget( pages[currentPage].lerpTarget , transitionSpeed ); }
     if( pages[currentPage].moveTarget &&  pages[currentPage].lerpTarget ){ Debug.LogError("this page has multiple targets"); }
 
+
+    pages[currentPage]._Activate();
   }   
 
 
   public void OnLockPage(){
 
+    if( oldTransitionPage ){ oldTransitionPage._Deactivate(); }
     data.audio.Play( setter.audio.startClips[Random.Range(0,setter.audio.startClips.Length)] , 1f , .11f);
     transitionSpeed = pages[currentPage].lerpSpeed;
     data.textParticles.Set( pages[currentPage].text );
@@ -317,12 +321,13 @@ public class Story : Cycle
     pages[currentPage].OnStartEnter.Invoke();
 
     if( data.state.fast ){ transitionSpeed = 1; }
+    if( data.state.firstStory ){ transitionSpeed = .000f; }
     transitionStartTime = Time.time;
     SetActivePage(); 
     SetColliders( false );
 
     
-        data.framer.Set( pages[currentPage] );
+    //data.framer.Set( pages[currentPage] );
 
 
 //    print("STORY STARTED");
@@ -349,6 +354,11 @@ public class Story : Cycle
   public void DoBetweenFade(){
 
     float v = (Time.time - transitionStartTime) / transitionSpeed;
+
+
+    if( transitionSpeed  == 0 ){
+      v = 1.01f;
+    }
 
     if( v > 1){ 
 

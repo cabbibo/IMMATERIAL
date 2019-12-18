@@ -34,7 +34,7 @@ public class ClosestLife : Life{
   public bool tmpActive;
 
 
-Queue<AsyncGPUReadbackRequest> _requests = new Queue<AsyncGPUReadbackRequest>();
+  Queue<AsyncGPUReadbackRequest> _requests = new Queue<AsyncGPUReadbackRequest>();
   
   public override void _Create(){
     
@@ -60,10 +60,31 @@ Queue<AsyncGPUReadbackRequest> _requests = new Queue<AsyncGPUReadbackRequest>();
     GetNumThreads();
   
     count = numThreads;
+    primaryForm = null;
     
+    active = false;
 
   }
 
+  public void Set(Form newForm ){
+    BindPrimaryForm("_VertBuffer", newForm );
+    oForm = primaryForm;
+    inspectorForm = primaryForm;
+    GetNumGroups();
+    if( _buffer != null ){ _buffer.Release(); }
+    _buffer = new ComputeBuffer((int)numGroups, 8 * sizeof(float));
+    values = new float[numGroups*8];
+    _buffer.SetData(values);
+    active = true;
+  }
+
+
+  public void Unset(){
+    if( _buffer  != null ) _buffer.Release();
+    oForm = null;
+    primaryForm = null;
+    inspectorForm = null;
+  }
 
   public override void _SetInternal(){
 
@@ -75,14 +96,6 @@ Queue<AsyncGPUReadbackRequest> _requests = new Queue<AsyncGPUReadbackRequest>();
       if( primaryForm == null  || (data.inputEvents.Down < .5f && !alwaysCheck)  ){ 
         active = false; 
       }else{
-        if( primaryForm != oForm ){
-          GetNumGroups();
-          _buffer = new ComputeBuffer((int)numGroups, 8 * sizeof(float));
-          values = new float[numGroups*8];
-          _buffer.SetData(values);
-        }
-
-
         shader.SetFloat("_Time", Time.time);
         shader.SetFloat("_Delta", Time.deltaTime);
         shader.SetBuffer(kernel, "_OutBuffer" , _buffer );///, Time.deltaTime);

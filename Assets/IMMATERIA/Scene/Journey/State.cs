@@ -42,6 +42,9 @@ public class State : Cycle
   public bool startInBook;
   public bool startInBookPages;
 
+  // makes it so we can jump in for the fist story instead of transition;
+  public bool firstStory;
+
 
 
 
@@ -62,6 +65,9 @@ public Story story;
   private string oAnimationState;
 
   public Tutorial tutorial;
+
+
+  public bool frameShown;
 
   public override void Create(){
     
@@ -122,10 +128,7 @@ public Story story;
 
 
 
-    ConnectMonolith( whichMonolithEmitting );
-    if( !monolithParticlesEmitting ){
-      DisconnectMonolith( whichMonolithEmitting );
-    }
+   
 
     if( hasFallen ){
       //print("HAS FALLEN");
@@ -150,9 +153,14 @@ public Story story;
       setter.stories[startStory].currentPage = startPage;
 
       setter.stories[startStory].SetAllEvents();
+      firstStory = true;
+     
       setter.StartStory();
 
+
     }
+
+    firstStory = false;
 
 
     if( startInBook ){
@@ -167,6 +175,11 @@ public Story story;
     }
 
 
+    if( !monolithParticlesEmitting ){
+      DisconnectMonolith( whichMonolithEmitting );
+    }else{
+      ConnectMonolith( whichMonolithEmitting );
+    }
 
 
    /*   if( startInBookPages ){
@@ -217,6 +230,9 @@ public Story story;
 
   public void SetStoryState( Story s ){
 
+
+    //print("SEtting");
+    //print( s.monolithParticlesEmitting );
     hasPickedUpBook = s.hasPickedUpBook;
     hasFallen = s.hasFallen;
     monolithParticlesEmitting = s.monolithParticlesEmitting;
@@ -227,6 +243,7 @@ public Story story;
 
 
   public void ConnectMonolith(int id){
+    //print("Connecting monolith");
     whichMonolithEmitting = id;
     monolithParticlesEmitting = true;
     Shader.SetGlobalInt("_ConnectedStory" , whichMonolithEmitting );
@@ -235,6 +252,7 @@ public Story story;
   }
 
   public void DisconnectMonolith(int id){
+    //print("discordingngn");
     whichMonolithEmitting = -1;
     monolithParticlesEmitting = false;
     Shader.SetGlobalInt("_ConnectedStory" , -1 );

@@ -8,6 +8,9 @@ public class FrameBuffer : Cycle
 
     public int smoothedSize;
 
+
+    public ToggleFrame closeButton;
+
     public FrameParticles particles;
     public FrameVerts verts;
     public FrameTris tris;
@@ -32,6 +35,7 @@ public class FrameBuffer : Cycle
     private Vector3 bottomRight;
 
     public SampleSynth instrument;
+    public int closestID;
     
     public override void Create(){
 
@@ -45,6 +49,7 @@ public class FrameBuffer : Cycle
       SafeInsert(simulate);
       SafeInsert(corners);
       SafeInsert(checkClosest);
+      SafeInsert(closeButton);
 
     }
 
@@ -65,6 +70,7 @@ public class FrameBuffer : Cycle
       simulate.BindFloat( "_DeathTime" , () => deathTime );
       simulate.BindFloat( "_Distance" , () => distance );
       simulate.BindFloat( "_CanEdgeSwipe" , () => data.inputEvents.canEdgeSwipe );
+      simulate.BindInt("_ClosestID" , () => (int)checkClosest.closestID );
       
 
       data.BindAllData(simulate);
@@ -90,8 +96,7 @@ public class FrameBuffer : Cycle
 
 
 
-
-      checkClosest.BindPrimaryForm( "_VertBuffer", particles);
+      checkClosest.Set( particles );
       data.BindAllData(checkClosest);
 
 
@@ -105,6 +110,12 @@ public class FrameBuffer : Cycle
       bottomLeft  = page.frame.bottomLeft;
       topRight    = page.frame.topRight;
       bottomRight = page.frame.bottomRight;
+
+      closeButton.transform.position = page.frame.bottomLeft;
+      closeButton.transform.position += page.frame.right * .5f * page.frame.width ;
+      closeButton.transform.position += -page.frame.up * .05f * page.frame.distance;
+      closeButton.transform.LookAt( closeButton.transform.position + page.transform.forward );
+      closeButton.transform.localScale = new Vector3(3,1,1) * .03f * page.frame.distance;
 
       distance = page.frame.distance;
 

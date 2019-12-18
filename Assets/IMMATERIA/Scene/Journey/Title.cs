@@ -10,6 +10,7 @@ public class Title : Cycle
     public float rotateSize;
 
     public bool inOut;
+    float fadeValue;
     public void fadeIn(){
       inOut = true;
       data.tween.AddTween( 4, fadeMaterials);

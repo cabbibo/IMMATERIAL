@@ -80,6 +80,7 @@ void Set(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
   v.og = down + ( up - down) * nDir;
   v.pos = v.og;
   v.uv = float2( nDir ,  float(dir));
+  v.debug = float2( length( up-down ) , 1  );
 
   _VertBuffer[pID] = v;
 
@@ -115,14 +116,16 @@ if( _Locked == 1 ){
   if(_CanEdgeSwipe != 0 ){
   if( _CanEdgeSwipe == 1 && v.uv.y == 3 ){
     force += ( v.pos - v.og) * 9 / _Distance;
-     force -= normalize(GetRayTangent( v.pos  )) ; 
+     //force -= normalize(GetRayTangent( v.pos  )) ; 
+     force += GetRayForce( v.pos , -.3 * _Distance , .5 * _Distance ); 
   }else if( _CanEdgeSwipe == 2 && v.uv.y == 1 ){
     force += ( v.pos - v.og) * 9 / _Distance;
-     force -= normalize(GetRayTangent( v.pos)); 
+    force += GetRayForce( v.pos , -.3 * _Distance , .5 * _Distance ); 
+     //force -= normalize(GetRayTangent( v.pos)); 
   }else{
 
-force -= (v.pos - vUp.pos)*100;
-force -= (v.pos - vDo.pos)*100;
+force -= (v.pos - vUp.pos)*1 * _Distance;
+force -= (v.pos - vDo.pos)*1 * _Distance;
   }
 
 }
@@ -130,7 +133,7 @@ force -= (v.pos - vDo.pos)*100;
 
 
 }else{
-  //force += curlNoise( v.pos )* .1;
+  force += curlNoise( v.pos * .1 * _Distance )* .04;
 }
 force -= v.pos - vUp.pos;
 force -= v.pos - vDo.pos;

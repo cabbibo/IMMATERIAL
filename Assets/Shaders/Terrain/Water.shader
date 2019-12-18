@@ -25,7 +25,7 @@ SubShader
     {
         Tags
         { 
-            "Queue" = "Transparent"
+            "Queue" = "Transparent+1"
         }
 
         // Grab the screen behind the object into _BackgroundTexture
@@ -283,7 +283,7 @@ float smin( float a, float b, float k )
                 col += saturate(1-floor( (dif - n * .2) * 5));//tex2D(_DepthRampTex,float2(bg.b * .2 + .7,0)  ) + aroundPerson ;//tCol;//refl * .5 + .5;
                 
 
-                col = length(bg) * float3(0,0.4,1) + (shoreLine+aroundPerson*4) * saturate( length(bg) *4);//tCol;//refl * .5 + .5;
+                col = length(bg) * float3(0.4,0.6 , 1) + (shoreLine+aroundPerson*4) * saturate( length(bg) *4);//tCol;//refl * .5 + .5;
                 
             
 

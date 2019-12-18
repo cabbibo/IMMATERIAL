@@ -148,8 +148,12 @@ public class Character : Cycle {
 
     if( lerping ){
 
-      float v = Mathf.Clamp((Time.time - lerpStartTime)/lerpSpeed, 0 , 1);
+       if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 11 && !animator.IsInTransition(0)){
+        animator.Play("Grounded");
+       }
 
+      float v = Mathf.Clamp((Time.time - lerpStartTime)/lerpSpeed, 0 , 1);
+      if( lerpSpeed == 0 ){ v = 1; }
 //      print( v );
 
       v = v * v * (3 - 2 * v);
