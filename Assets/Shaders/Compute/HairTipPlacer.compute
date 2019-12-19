@@ -2,6 +2,7 @@
 
 
 #pragma kernel Placer
+#pragma kernel PlacerLocked
 
 struct Vert{
   float3 pos;
@@ -48,4 +49,34 @@ void Placer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 
   }
   
 }
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void PlacerLocked (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id : SV_DispatchThreadID) {
+  uint pID = threadID + u3GroupID.x * NR_THREADS;
+  uint bID = pID ;
+  bID = (bID+1) * _NumVertsPerHair - 1;
+
+  if( pID < _VertBuffer_COUNT && bID < _HairBuffer_COUNT ){
+
+    pID = safeID( pID , _VertBuffer_COUNT );
+    bID = safeID( bID , _HairBuffer_COUNT );
+
+    Vert vert = _VertBuffer[pID];
+    Vert base = _HairBuffer[bID];    //Vert base2 = _HairBuffer[bID-2];
+
+    float3 targetPos = base.pos;
+    vert.pos = lerp( vert.pos , targetPos , .9);
+    vert.oPos = base.pos - base.oPos;
+    vert.nor = base.nor;
+
+    _VertBuffer[pID] = vert;
+
+
+  }
+  
+}
+
+
 

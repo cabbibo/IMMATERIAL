@@ -10,6 +10,9 @@
 
       _ColorSize("_ColorSize", float ) = 0.5
       _ColorBase("_ColorBase", float ) = 0
+      _PaintSize("_PaintSize", Vector ) = (1,1,1,1)
+      _NormalSize("_NormalSize", Vector ) = (1,1,1,1)
+      _NormalDepth("_NormalDepth", float ) = .4
     
     }
 
@@ -18,7 +21,7 @@
         Tags { "RenderType"="Opaque" }
         LOD 100
 
-        Cull Front
+        Cull Back//Front
         Pass
         {
             CGPROGRAM
@@ -45,7 +48,7 @@
 
                 fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.world) * .5 + .5;
 
-                float3 n = MapNormal( v , 100 , .2 );
+                float3 n = MapNormal( v , v.uv * _NormalSize , _NormalDepth );
                 float3 r = Reflection( v.pos , n );
 
                 float m = dot( n, _WorldSpaceLightPos0.xyz);
@@ -55,7 +58,7 @@
                 m *= shadow;
 
                 float4 col  = tex2D(_ColorMap , m * _ColorSize + v.uv.x * _ColorSize  + _ColorBase );
-                float3 p = Painterly( m, v.uv.xy * float2(10,1)) * .7 + .3;
+                float3 p = Painterly( m, v.uv.xy * _PaintSize ) * .7 + .3;
 
                 col.xyz *= p * .3+ p * r;
                 col *= baseM;

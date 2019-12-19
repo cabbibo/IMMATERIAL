@@ -1,4 +1,5 @@
 ﻿#pragma kernel Transfer
+#pragma kernel Goo
 
 
 struct Vert{
@@ -26,6 +27,7 @@ float _Time;
 float4x4 _Transform;
 
 #include "../Chunks/safeID.cginc"
+#include "../Chunks/nanCheckVert.cginc"
 
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
@@ -41,6 +43,48 @@ void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     Vert v = _SkeletonBuffer[sID];
 
     p.pos = mul(_Transform , float4( v.pos ,1 )).xyz;
+    p.nor = normalize(mul(_Transform , float4( v.nor ,0 )).xyz);
+    p.tang = mul(_Transform , float4( v.tang ,1 )).xyz;
+    p.uv  = v.uv;
+    //p.debug.xy  = v1.debug  * p.triWeights.x +  v2.debug  * p.triWeights.y + v3.debug  * p.triWeights.z;
+
+    _VertBuffer[sID] = p;
+
+
+  }
+
+}
+
+
+
+#include "../Chunks/snoise.cginc"
+#include "../Chunks/curlNoise.cginc"
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Goo(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = threadID + u3GroupID.x * NR_THREADS;
+
+  if( pID < _VertBuffer_COUNT ){
+    
+    int sID = safeID( pID, _VertBuffer_COUNT );
+    Vert p = _VertBuffer[sID];
+
+    Vert v = _SkeletonBuffer[sID];
+
+    float3 target = mul(_Transform , float4( v.pos ,1 )).xyz;
+
+    float3 force = 0;
+
+    force += -(p.pos - target);
+    force += curlNoise( p.pos * .6 + float3(0,_Time * .1,0)) * .03;
+    p.vel += force * .01;
+
+    p.pos += p.vel;
+    p.vel *= .8;
+
+    ///p.pos = mul(_Transform , float4( v.pos ,1 )).xyz;
     p.nor = normalize(mul(_Transform , float4( v.nor ,0 )).xyz);
     p.tang = mul(_Transform , float4( v.tang ,1 )).xyz;
     p.uv  = v.uv;

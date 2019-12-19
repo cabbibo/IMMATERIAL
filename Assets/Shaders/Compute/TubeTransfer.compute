@@ -316,7 +316,7 @@ void WonkyTransfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID)
 
     float r = _Radius * _SkeletonBuffer[safeID(particleID *_NumVertsPerHair , _SkeletonBuffer_COUNT)].debug.x;
 
-    float3 outVec = -(sin(angle) *x - cos(angle) * y);// * r;
+    float3 outVec = (sin(angle) *x + cos(angle) * y);// * r;
     float3 fPos = pos + outVec * r * saturate(min( rowVal * 3, (1-(rowVal*rowVal)*1.1)));// * (.1 + rowVal* rowVal);
 
     float2 fUV = float2( rowVal , colVal + col / _TubeWidth );
