@@ -1,0 +1,107 @@
+﻿
+#pragma kernel Sim
+
+#include "../Chunks/noise.cginc"
+#include "../Chunks/snoise.cginc"
+#include "../Chunks/curlNoise.cginc"
+
+
+float4x4 _Transform; 
+
+float _Delta;
+float _Time;
+
+struct Vert{
+  float3 pos;
+  float3 vel;
+  float3 nor;
+  float3 axis;
+  float2 uv;
+  float  life;
+};
+
+
+struct Base{
+  float3 pos;
+  float3 vel;
+  float3 nor;
+  float3 tan;
+  float2 uv;
+  float used;
+  float3 triIDs;
+  float3 triWeights;
+  float3 debug;
+};
+
+
+
+RWStructuredBuffer<Vert> _VertBuffer;
+RWStructuredBuffer<Base> _BaseBuffer;
+
+uint _VertBuffer_COUNT;
+uint _BaseBuffer_COUNT;
+
+int _CountMultiplier;
+
+
+#include "../Chunks/safeID.cginc"
+#include "../Chunks/GetRayForce.cginc"
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Sim (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id : SV_DispatchThreadID) {
+
+  //int pID = id.x + id.y * gridX + id.z * gridX * gridY;
+
+  uint pID = threadID + u3GroupID.x * NR_THREADS;
+  uint bID = pID / _CountMultiplier;
+  if( pID < _VertBuffer_COUNT && bID < _BaseBuffer_COUNT ){
+
+    pID = safeID( pID , _VertBuffer_COUNT );
+    bID = safeID( bID , _BaseBuffer_COUNT );
+    Vert v = _VertBuffer[pID];
+    Base base = _BaseBuffer[bID];
+
+
+    float3 bP = base.pos;//mul( transform,  float4(base.pos,1)).xyz;
+    float3 bN = -base.nor;//normalize(mul( transform,  float4(base.nor,0))).xyz;
+    float3 s = float3(1,1,1);//mul( transform , float4(1,1,1,0)).xyz;
+
+    float3 force = -bN;//float3( 0 , base.nor , 0.0 );
+
+    force -= float3(0,1,0);
+    //force += float3(xz.x , 0 , xz.y );
+    force += 0.3*curlNoise( v.pos + float3(0,_Time,0)  );// * _NoiseForce;
+
+    if( length( force ) > 100 ){
+      force = normalize(force) * 100;
+    }
+
+
+    v.life -= .01;
+
+    if( v.life < 0 ){
+      v.life = hash( float(pID));
+      v.vel = 0;
+      v.pos = bP;
+    }
+
+    v.vel += force * .0001;
+    v.vel *= .9;
+
+    v.pos += v.vel;
+
+
+    
+    _VertBuffer[pID] = v;
+   
+  }
+  
+}
+
+
+
+
+
+

@@ -218,10 +218,10 @@ float3 p;
  for( int i = 0; i < _NumberSteps; i++ ){
 
             //  if ( hit == false ){
-    float stepVal = float(i)/_NumberSteps;
+    float stepVal = float(i)/float(_NumberSteps);
 
     p = ro + rd * stepVal * _TotalDepth ;
-    n += tex2D(_MainTex, p.yx*300 + float2( sin(100*float(i)) , sin(float(i) * 20))).x;
+    n += pow(tex2D(_MainTex, p.yx*50 + float2( sin(100*float(i)) , sin(float(i) * 20))).a,2);
     //n += noise( p * 2000.01 * float3(1,1,1) );
 
 

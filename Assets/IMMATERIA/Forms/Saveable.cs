@@ -21,17 +21,17 @@ public class Saveable {
 
   public static List<string> names = new List<string>();
   
-  public static string GetSafeName(){
+  public static string GetSafeName( bool top = true ){
 
     string fString = "entity"+ UnityEngine.Random.Range(0,10000000);
 
     foreach( string s in names ){
       if( fString == s){
-        fString = GetSafeName();
+        fString = GetSafeName(false);
       }
     }
 
-    names.Add( fString );
+    if( top ) names.Add( fString );
     return fString;
 
   }
