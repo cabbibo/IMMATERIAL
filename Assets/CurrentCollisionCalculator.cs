@@ -22,6 +22,7 @@ public class CurrentCollisionCalculator : Cycle
   }
 
   public void Unbind(){
+    print( "unbinding");
     ToBind = null;
     life.Unset();
   }

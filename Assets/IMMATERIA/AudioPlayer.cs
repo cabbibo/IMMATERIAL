@@ -297,6 +297,8 @@ public class AudioPlayer : Cycle{
 
         public void Play(AudioClip clip , float pitch , float volume,float location,float length, AudioMixer mixer, string group){
         
+
+        sources[playID].clip = clip;
         sources[playID].volume = volume;
         sources[playID].pitch = pitch;
         sources[playID].time = location;

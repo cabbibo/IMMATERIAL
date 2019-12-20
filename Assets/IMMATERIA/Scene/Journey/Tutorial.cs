@@ -169,9 +169,9 @@ public class Tutorial : Cycle
       // Dont jump in if we already are in!
       if( !inOrOut ){ 
           v = 1-v; 
-          v = Mathf.Min( v , m.GetColor("_Color").a );
+          if( m.HasProperty("_Color") ) v = Mathf.Min( v , m.GetColor("_Color").a );
         }else{
-          v = Mathf.Max( v , m.GetColor("_Color").a );
+          if( m.HasProperty("_Color") )  v = Mathf.Max( v , m.GetColor("_Color").a );
         }
 
       if( Application.isPlaying ){
@@ -247,8 +247,7 @@ public class Tutorial : Cycle
 
    /* public void Set( TutorialSetter setter ){
       if( sLP != setter.swipeLeftPage ){
-        if( setter.swipeLeftPage ){
-          swipeLeftPageTurnIn();
+        if( setter.swipeLeftPage          swipeLeftPageTurnIn();
         }else{
           swipeLeftPageTurnOut();
         }

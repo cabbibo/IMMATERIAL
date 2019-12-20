@@ -79,13 +79,14 @@ void Goo(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     force += -(p.pos - target);
     force += curlNoise( p.pos * .6 + float3(0,_Time * .1,0)) * .03;
+    force += curlNoise( p.pos * 4.6 + float3(0,_Time * .1,0)) * .01;
 
 
     force += GetRayForce( p.pos , 1 ) * .1 * _DOWNTWEEN2;
     p.vel += force * .01;
 
     p.pos += p.vel;
-    p.vel *= .8;
+    p.vel *= .95;
 
     ///p.pos = mul(_Transform , float4( v.pos ,1 )).xyz;
     p.nor = normalize(mul(_Transform , float4( v.nor ,0 )).xyz);

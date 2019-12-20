@@ -149,7 +149,7 @@ public class Character : Cycle {
     if( lerping ){
 
        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 11 && !animator.IsInTransition(0)){
-        animator.Play("Grounded");
+        //animator.Play("Grounded");
        }
 
       float v = Mathf.Clamp((Time.time - lerpStartTime)/lerpSpeed, 0 , 1);

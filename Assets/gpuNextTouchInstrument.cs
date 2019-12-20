@@ -46,6 +46,8 @@ public class gpuNextTouchInstrument : Cycle
 
       v = v*v;
       v = volumeMultiplier * v;
+
+      v *= data.inputEvents.downTween2;
     
       AudioClip clip = clips[Random.Range(0,clips.Length)];
       int step = steps[Random.Range(0,steps.Length)];

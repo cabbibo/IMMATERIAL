@@ -33,7 +33,7 @@
             #pragma target 4.5
             #pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
 
-
+            float _Fade;
             #include "../Chunks/ShadowVertPassthrough.cginc"
 
 
@@ -71,8 +71,11 @@
                 col.xyz = length(v.vel) * 100 * r + .2 *shadow * r;// m * .3 ;//r* 2*p;//shadow * tex2D(_ColorMap , v.uv );
 
                 //float4 aCol = SampleAudio( length(v.world.xy) * .2  );
-                float4 aCol = SampleAudio( length(v.vel) * 100 - .5 );
+                float4 aCol = SampleAudio( saturate(length(v.vel) * 60 + .3 ) * .9);
                 col *= 10* aCol.x;
+
+                col *= _Fade;
+
                 return col;
             }
 

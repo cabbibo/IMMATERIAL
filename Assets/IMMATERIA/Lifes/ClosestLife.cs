@@ -86,6 +86,10 @@ public class ClosestLife : Life{
     oForm = null;
     primaryForm = null;
     inspectorForm = null;
+    closestID = -1;
+    closestDist = 10000000;
+    closestTime = 1000000;
+    closest = Vector3.one * 1000000;
   }
 
   public override void _SetInternal(){

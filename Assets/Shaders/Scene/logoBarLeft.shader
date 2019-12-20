@@ -140,7 +140,7 @@ float3 p;
     float stepVal = float(i)/float(_NumberSteps);
 
     p = ro + rd * stepVal * _TotalDepth ;
-    n += (abs(.5-abs(p.y))) *3 * (p.x + .5)  * pow(tex2D(_MainTex, p.yx*float2(1,20) * .1 -float2(0,_Time.y * .4 * (sin(100*float(i)) + 3)) + float2( sin(100*float(i)) , sin(float(i) * 20))).x,2);
+    n += (abs(.5-abs(p.y))) *3 * min( (p.x + .5), 2-4*p.x) * pow(tex2D(_MainTex, p.yx*float2(1,20) * .1 -float2(0,_Time.y * .4 * (sin(100*float(i)) + 3)) + float2( sin(100*float(i)) , sin(float(i) * 20))).x,2);
         
     //n += noise( p * 2000.01 * float3(1,1,1) );
 
@@ -182,6 +182,8 @@ return n;
           //col /= _NumberSteps;
          
             //col = float3(cR.r,cG.g,cB.b);
+
+            col *=  _Fade;
         
            
             fixed4 color;

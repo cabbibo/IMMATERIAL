@@ -85,6 +85,7 @@ Blend One One
                 col *= (.3 + 3*length( v.dif ));
                  if( _CanEdgeSwipe > 0 ){
                     col += length(v.dif);
+                    col += 1;
                 }
                // col = v.uv.x;
                 return float4(col  * v.debug.x, length(col) * v.debug.x);
