@@ -92,93 +92,12 @@
         };
 
 
-              float3 hsv(float h, float s, float v){
-          return lerp( float3( 1.0,1,1 ), clamp(( abs( frac(h + float3( 3.0, 2.0, 1.0 ) / 3.0 )
-                               * 6.0 - 3.0 ) - 1.0 ), 0.0, 1.0 ), s ) * v;
-        }
 
          //From IQ shaders
         float hash( float n )
         {
             return frac(sin(n)*43758.5453);
         }
-
-        float noise( float3 x )
-        {
-            // The noise function returns a value in the range -1.0f -> 1.0f
-            x.z += .2 * _Time.y;
-
-            float3 p = floor(x);
-            float3 f = frac(x);
-
-            f       = f*f*(3.0-2.0*f);
-            float n = p.x + p.y*57.0 + 113.0*p.z;
-
-            return lerp(lerp(lerp( hash(n+0.0), hash(n+1.0),f.x),
-                           lerp( hash(n+57.0), hash(n+58.0),f.x),f.y),
-                       lerp(lerp( hash(n+113.0), hash(n+114.0),f.x),
-                           lerp( hash(n+170.0), hash(n+171.0),f.x),f.y),f.z);
-        }
-
-
-  float tri( float x ){ 
-                return abs( frac(x) - .5 );
-              }
-
-              float3 tri3( float3 p ){
-               
-                return float3( 
-                    tri( p.z + tri( p.y * 1. ) ), 
-                    tri( p.z + tri( p.x * 1. ) ), 
-                    tri( p.y + tri( p.x * 1. ) )
-                );
-
-              }
-                                               
-              float triNoise3D( float3 p, float spd , float time){
-                
-                float z  = 1.4;
-                  float rz =  0.;
-                float3  bp =   p;
-
-                  for( float i = 0.; i <= 3.; i++ ){
-                 
-                  float3 dg = tri3( bp * 2. );
-                  p += ( dg + time * .1 * spd );
-
-                  bp *= 1.8;
-                      z  *= 1.5;
-                      p  *= 1.2; 
-                    
-                  float t = tri( p.z + tri( p.x + tri( p.y )));
-                  rz += t / z;
-                  bp += 0.14;
-
-                  }
-
-                  return rz;
-
-              }
-
-        float getFogVal( float3 pos ){
-
-          pos *= _NoiseSize * .3;
-
-          float patternVal = 1;//sin( length( pos )  * _PatternSize )+1;
-          float noiseVal = triNoise3D( pos * .1 , 1 , _Time.y * _NoiseSpeed )+1.6 + triNoise3D( pos * .5 , 1 , _Time.y* _NoiseSpeed ) * .5 + triNoise3D( pos * 2, 1 , _Time.y* _NoiseSpeed ) * .1;
-          return patternVal * noiseVal;
-        }
-        
-
-        /*float getFogVal( float3 pos ){
-          pos *= _NoiseSize;
-          float oct1 = noise( pos * 3 + _Time.y * .3 * _NoiseSpeed );
-          float oct2 =.5 * noise( pos * 8 + _Time.y * .2 * _NoiseSpeed ) ;
-          float oct3 =.25 * noise( pos * 20 + _Time.y * .1 *_NoiseSpeed);
-          float v =  oct1 + oct2 + oct3;
-          return  v * v * v * .4 ;
-        }*/
-        
 
         
         VertexOut vert(VertexIn v) {
@@ -221,7 +140,7 @@ float3 p;
     float stepVal = float(i)/float(_NumberSteps);
 
     p = ro + rd * stepVal * _TotalDepth ;
-    n += pow(tex2D(_MainTex, p.yx*50 + float2( sin(100*float(i)) , sin(float(i) * 20))).a,2);
+    n += pow(tex2D(_MainTex, p.yx*50 * float2(1,3) + float2(_Time.y * .1,0)+ float2( sin(100*float(i)) , sin(float(i) * 20))).z,2);
     //n += noise( p * 2000.01 * float3(1,1,1) );
 
 
@@ -251,8 +170,8 @@ return n;
 
 
           float3 refrR = refract( rd , v.normal , .9);
-          float3 refrG = refract( rd , v.normal , .8);
-          float3 refrB = refract( rd , v.normal , .7);
+          float3 refrG = refract( rd , v.normal , .85);
+          float3 refrB = refract( rd , v.normal , .8);
 
           float3 cR = texCUBE(_CubeMap,normalize(refrR));
           float3 cG = texCUBE(_CubeMap,normalize(refrG));

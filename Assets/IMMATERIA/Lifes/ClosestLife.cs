@@ -76,6 +76,8 @@ public class ClosestLife : Life{
     values = new float[numGroups*8];
     _buffer.SetData(values);
     active = true;
+
+    data.BindRayData(this);
   }
 
 

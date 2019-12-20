@@ -6,6 +6,7 @@
     _ColorMap ("Color Map", 2D) = "white" {}
     _CubeMap( "Cube Map" , Cube )  = "defaulttexture" {}
         _HueStart("Hue start", float ) = 1
+        _HueSize("Hue Size", float ) = 1
   }
 
     SubShader {
@@ -22,7 +23,14 @@
             #pragma fragment frag
             
             #include "UnityCG.cginc"
-            #include "AutoLight.cginc"    
+
+               #include "Lighting.cginc"
+
+            // compile shader into multiple variants, with and without shadows
+            // (we don't care about any lightmaps yet, so skip these variants)
+            #pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
+            // shadow helper functions and macros
+            #include "AutoLight.cginc" 
 
             struct Vert{
           float3 pos;
@@ -43,6 +51,8 @@
 
 
         float _HueStart;
+        float _HueSize;
+    
     
         float3 _Color;
     
@@ -53,7 +63,7 @@
 
         struct varyings {
             float4 pos      : SV_POSITION;
-            float3 nor      : TEXCOORD0;
+            float3 nor      : NORMAL;
             float2 uv       : TEXCOORD1;
             float3 eye      : TEXCOORD5;
             float3 worldPos : TEXCOORD6;
@@ -97,7 +107,7 @@
                 o.vel = v.vel;
                 o.player = o.worldPos - _PlayerPosition;
 
-                UNITY_TRANSFER_SHADOW(o,o.worldPos);
+                TRANSFER_SHADOW(o);
 
                 return o;
             }
@@ -125,13 +135,16 @@
 
         float3 tCol = texCUBE( _CubeMap , eyeRefl );
 
-        col = tCol*tCol* tex2D(_ColorMap, float2(max(length(v.player.xz) * .003 , -.2) + _HueStart + rM * .1 ,0)) / (.4 + ( .05 * length( v.player.xz)));//-rM;//v.nor * .5 + .5;// tCol;//*tCol * tex2D(_ColorMap,float2(rM*.1+.7 - v.debug.y * .1 ,.5 )).rgb;// *(1-rM);//hsv(rM*rM*rM * 2.1,.5,rM);// + normalize(refl) * .5+.5;
+        float cVal = max(length(v.player.xz) * .003 , -.2) * _HueSize+ _HueStart + rM * .1* _HueSize -.22;
+        cVal = saturate( cVal );
+        col = tCol*tCol* tex2D(_ColorMap, float2(cVal ,0)) / (.4 + ( .05 * length( v.player.xz)));//-rM;//v.nor * .5 + .5;// tCol;//*tCol * tex2D(_ColorMap,float2(rM*.1+.7 - v.debug.y * .1 ,.5 )).rgb;// *(1-rM);//hsv(rM*rM*rM * 2.1,.5,rM);// + normalize(refl) * .5+.5;
         //col = v.tan * .5 + .5;
 
         col *= (length(v.vel)-4) * (length(v.vel)-4) + .4;
-        if( abs(v.debug.x - _ClosestGPUCollisionID) < .1 ){ col += 1 * saturate( 10 / (_Time.y - _ClosestGPUCollisionTime)); }
+        //if( abs(v.debug.x - _ClosestGPUCollisionID) < .1 ){ col += 1 * saturate( 10 / (_Time.y - _ClosestGPUCollisionTime)); }
        // col = _Time.y -_ClosestGPUCollisionTime;
         //col += hsv(dot(v.eye,v.nor) * -.1,.6,1) * (1-length(col));
+        col *= shadow;
         return float4( col , 1.);
             }
 
@@ -192,7 +205,6 @@ sampler2D _MainTex;
         o.uv =  v.uv;
 
         float2 debug = v.debug;
-
         o.uv = o.uv * (1./6.)+ floor(float2(hash(debug.x*10), hash(debug.x*20)) * 6)/6;
         o.pos = mul(UNITY_MATRIX_VP, float4(v.pos, 1));
         return o;
@@ -202,7 +214,7 @@ sampler2D _MainTex;
       {
         float4 col = tex2D(_MainTex,i.uv);
         //if( col.a < .4){discard;}
-         if( length(col.xyz) > 1 ){discard;}
+         if( length(col.xyz) > 1.5 ){discard;}
         SHADOW_CASTER_FRAGMENT(i)
       }
       ENDCG
@@ -211,5 +223,7 @@ sampler2D _MainTex;
 
 
     }
+
+     FallBack "Diffuse"
 
 }

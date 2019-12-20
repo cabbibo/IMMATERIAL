@@ -93,7 +93,7 @@ void Forward(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)].pos = fPos;
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)].vel = p.vel;
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)].uv = fUV;
-    _VertBuffer[safeID(pID,_VertBuffer_COUNT)].nor = p.nor;
+    _VertBuffer[safeID(pID,_VertBuffer_COUNT)].nor = _CameraForward;//p.nor;
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)].debug = float2( particleID , p.debug.y );
 
 
@@ -187,6 +187,8 @@ void Collision(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     float3 l = normalize(cross(p.nor,float3(0,1,0)));
     float3 u = normalize(cross(p.nor,l));
 
+    float3 n = normalize(cross( l, u));
+
     l *= (float(col)-.5);
     u *= (float(row)-.5);
 
@@ -199,7 +201,7 @@ void Collision(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)].pos = fPos;
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)].vel = p.vel;
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)].uv = fUV;
-    _VertBuffer[safeID(pID,_VertBuffer_COUNT)].nor = p.nor;
+    _VertBuffer[safeID(pID,_VertBuffer_COUNT)].nor = n;
     _VertBuffer[safeID(pID,_VertBuffer_COUNT)].debug = float2( particleID , p.debug.y );
 
 }

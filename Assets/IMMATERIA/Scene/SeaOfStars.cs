@@ -20,6 +20,8 @@ public class SeaOfStars : Simulation
     data.BindRayData(life);
     life.BindFloat("_Emit", () => this._Emit );
     life.BindVector3("_EmitterPosition", () => this._EmitterPosition );
+    life.BindInt("_SystemID", () => executionID );
+    life.BindMatrix("_Transform", () => transform.localToWorldMatrix );
   }
 
   public override void Activate(){

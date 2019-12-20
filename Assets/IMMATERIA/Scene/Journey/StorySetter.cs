@@ -130,6 +130,9 @@ public class StorySetter : Cycle
     
     _Activate(false);
     CS._Activate(false);
+    CS.pages[CS.currentPage]._Activate(false);
+
+    audio._Activate(false);
 
 
   }

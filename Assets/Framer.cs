@@ -1,12 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class Framer : Cycle
 {
 
   public bool doAudio;
     public FrameBuffer[] frames;
+
+
+    public AudioMixer mixer;
+
 
     public int currentFrame;
     public int totalFrames;
@@ -19,6 +24,12 @@ public class Framer : Cycle
 
     public int oClosest;
     public int closest;
+
+    public float distance;
+
+    public float minFilterDist;
+    public float maxFilterDist;
+    public float minFilterVal;
 
     public Collider frameCollider;
 
@@ -34,8 +45,6 @@ public class Framer : Cycle
 
     public void Set(Page page){
 
-      print("Setting");
-      print(page);
       frames[currentFrame].Release();
 
       frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeOut();
@@ -45,6 +54,7 @@ public class Framer : Cycle
       totalFrames ++;
       currentFrame %= frames.Length;
       frames[currentFrame].Set(page);
+      distance = page.frame.distance;
       frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeIn();
       //frameCollider = page.frame.collider;
       //frameCollider.enabled = true;
@@ -62,14 +72,19 @@ public class Framer : Cycle
     }
 
 
+
+
     public override void WhileLiving(float f){
 
       oClosest = closest;
       closest = (int)(frames[currentFrame].checkClosest.closestID);
-      float m =  frames[currentFrame].checkClosest.closest.magnitude;
+      float m =  frames[currentFrame].checkClosest.closest.magnitude / distance;
+  
+
       if( closest != oClosest && Time.time - instrument.lastTime > minPlayTime + Random.Range(0,minPlayTime * .2f) && doAudio && m < maxDist ){
         //instrument.location = Random.Range(0 ,10.5f);
 
+  
         float v = (maxDist - m ) / maxDist;
 
         minPlayTime = (1-v) * .3f;
@@ -80,10 +95,26 @@ public class Framer : Cycle
       }
 
 
+      float v2 = Mathf.Clamp( ((m/distance) - minFilterDist) / ( maxFilterDist - minFilterDist) , 0 , 1);
+      v2 = 1-v2;
+      v2 *= 3000 - minFilterVal;
+      v2 *= data.inputEvents.downTween2;
 
+
+      //mixer.SetFloat("LowpassCutoff" , 22000 - v2);
+      //mixer.SetFloat("HighpassCutoff" ,  v2);
+      float f1;
+
+      mixer.GetFloat("HighpassCutoff", out f1);
+      //print(f1);
 
     }
 
+
+    public override void OnBirthed(){
+      shown = false;
+      Toggle();
+    }
     public bool shown = true;
     public void Toggle(){
 
@@ -93,8 +124,10 @@ public class Framer : Cycle
         for( int i = 0; i < frames.Length; i++ ){
           frames[i].transfer.showBody = false;
           frames[i].corners.showBody = false;
+          doAudio = false;
           data.state.frameShown = false;
           data.textParticles.body.active = false;
+          data.textParticles.doAudio =false;
         }
       }else{
         for( int i = 0; i < frames.Length; i++ ){
@@ -102,6 +135,8 @@ public class Framer : Cycle
           frames[i].corners.showBody = true;
           data.state.frameShown = true;
           data.textParticles.body.active = true;
+          doAudio = true;
+          data.textParticles.doAudio =true;
         }
       }
 

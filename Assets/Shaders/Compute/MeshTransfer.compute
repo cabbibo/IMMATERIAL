@@ -28,7 +28,7 @@ float4x4 _Transform;
 
 #include "../Chunks/safeID.cginc"
 #include "../Chunks/nanCheckVert.cginc"
-
+#include "../Chunks/GetRayForce.cginc"
 #define NR_THREADS 128
 [numthreads(NR_THREADS,1,1)]
 void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
@@ -79,6 +79,9 @@ void Goo(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
 
     force += -(p.pos - target);
     force += curlNoise( p.pos * .6 + float3(0,_Time * .1,0)) * .03;
+
+
+    force += GetRayForce( p.pos , 1 ) * .1 * _DOWNTWEEN2;
     p.vel += force * .01;
 
     p.pos += p.vel;

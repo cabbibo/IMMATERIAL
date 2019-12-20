@@ -98,7 +98,7 @@ public class EpiphanyRing : Cycle
     }
 
     public override void Activate(){
-      print("ACTIVATOD");
+      //print("ACTIVATOD");
     }
 
 }

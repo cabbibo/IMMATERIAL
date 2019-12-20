@@ -42,6 +42,8 @@ public class StoryAudio : Cycle
    public override void Activate(){
 
 
+    print("Activate");
+
     if( data.audio.loopSources.Length < loopClips.Length ){
       DebugThis("NOT ENOUGH SOURCES IN THE AUDIO LOOP SOURCES");
     }
@@ -91,6 +93,8 @@ public class StoryAudio : Cycle
 
     data.audio.globalLooper.FadeOut();
 
+    data.audio.NewLoop();
+
     for( int i = 0; i < audioInfo.Length; i++ ){
       data.audio.FadeLoop(i , audioInfo[i] , data.audio.globalLooper.fadeOutSpeed );
     }
@@ -98,7 +102,7 @@ public class StoryAudio : Cycle
 
   public void Exit(){
 
-    //print("EXITS");
+    print("EXITS");
     data.audio.globalLooper.FadeIn();
     for( int i = 0; i < audioInfo.Length; i++ ){
       data.audio.FadeLoop(i , 0 , data.audio.globalLooper.fadeInSpeed );

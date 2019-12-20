@@ -37,7 +37,7 @@ public class gpuNextTouchInstrument : Cycle
       float v = (c.closestDist - closestVolumeDist) / furthestVolumeDist;// , c.closestDist);
 
       //print( v );
-      v = Mathf.Clamp(v,0,1);      
+      v = Mathf.Clamp(v,0,1);     
       //v /= (furthestVolumeDist - closestVolumeDist);
       v = 1-v;
 
@@ -48,7 +48,8 @@ public class gpuNextTouchInstrument : Cycle
       v = volumeMultiplier * v;
     
       AudioClip clip = clips[Random.Range(0,clips.Length)];
-      data.audio.Play( clip ,  24 , v , 0  , data.audio.master , "TouchSounds" );
+      int step = steps[Random.Range(0,steps.Length)];
+      data.audio.Play( clip , step  , v , 0  , data.audio.master , "TouchSounds" );
       lastPlayTime = Time.time;
     }
 

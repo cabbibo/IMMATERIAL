@@ -17,6 +17,7 @@ public class TextParticles : LifeForm{
 
   public Life simulate;
   public Life transfer;
+  public ClosestLife closest;
   private float pageStart;
 
   public float radius;
@@ -25,6 +26,8 @@ public class TextParticles : LifeForm{
 
   public int currentMax;
   public int currentMin;
+
+  public SampleSynth synth;
 
   public void HideShowParticles(bool val){
     body.active = val;
@@ -38,6 +41,7 @@ public class TextParticles : LifeForm{
     SafeInsert(simulate);
     SafeInsert(transfer);
     SafeInsert(body);
+    SafeInsert(closest);
     DoCreate();
     currentMin = 0;
     currentMax = 0;
@@ -50,6 +54,8 @@ public class TextParticles : LifeForm{
 
     values = new float[ body.verts.count * body.verts.structSize  ];
     body.verts.SetData( values );
+
+    closest.Set( particles );
 
   }
 
@@ -170,6 +176,35 @@ public class TextParticles : LifeForm{
     setPage.YOLO();
 
   }
+
+
+
+  private int closestID;
+  private int oClosestID;
+
+  public float minPlayTime;
+  public float maxDist;
+  public bool doAudio;
+    public override void WhileLiving(float f){
+
+      oClosestID = closestID;
+      closestID = (int)closest.closestID;
+      float m =  closest.closest.magnitude / scale;
+
+      
+      if( closestID != oClosestID &&  doAudio && m < maxDist ){
+        //synth.location = Random.Range(0 ,10.5f);
+
+        float v = (maxDist - m ) / maxDist;
+
+        minPlayTime = (1-v) * .3f;
+        synth.pitch = Mathf.Clamp( v + data.inputEvents.vel.magnitude * .1f , .1f , 10.5f);
+        synth.volume = .2f * v;
+        synth.PlayGrain();
+      }
+
+    
+    }
 
 
 }

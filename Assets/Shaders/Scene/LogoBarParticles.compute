@@ -1,0 +1,156 @@
+﻿#pragma kernel Flow
+
+
+struct Vert{
+  float3 pos;
+  float3 vel;
+  float3 nor;
+  float3 ogPos;
+  float3 axis;
+  float life;
+};
+
+
+
+RWStructuredBuffer<Vert> _VertBuffer;
+
+float _Emit;
+float3 _EmitterPosition;
+float _Time;
+float3 _PlayerPosition;
+
+int _SystemID;
+
+int _VertBuffer_COUNT;
+int _SkeletonBuffer_COUNT;
+
+#include "../Chunks/safeID.cginc"
+#include "../Chunks/snoise.cginc"
+#include "../Chunks/hash.cginc"
+#include "../Chunks/curlNoise.cginc"
+
+
+
+
+#include "../Chunks/GetRayForce.cginc"
+
+
+
+Texture2D<float4> _HeightMap;
+SamplerState sampler_HeightMap;
+float _MapSize;
+float _MapHeight;
+
+float4 sample( float3 pos ){
+    float4 c = _HeightMap.SampleLevel(sampler_HeightMap, pos.xz * _MapSize , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+    c.x = c.x * _MapHeight;// + 1 + c.a*2);
+    return c;
+}
+
+
+float3 worldPos( float3 pos ){
+    float4 c = _HeightMap.SampleLevel(sampler_HeightMap, pos.xz * _MapSize , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+    pos.y = max(pos.y, c.x * _MapHeight + 1 + c.a*2);
+    return pos;
+}
+
+
+float3 directionVector( float3 pos ){
+    float4 c = _HeightMap.SampleLevel(sampler_HeightMap, pos.xz * _MapSize , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+    return 2*float3(c.g,.5,c.b)-1;
+}
+
+
+
+
+float3 ring( float id , float r ){
+
+  float3 x = float3(1,0,0);//normalize(_Frame1 - _Frame2);
+  float3 y = float3(0,1,0);//normalize(_Frame4 - _Frame2);
+
+
+  float a = hash(id*100) * 6.28;
+
+  float3 p = r*(-sin( a )*x +cos(a)*y);
+
+  return p; 
+}
+
+
+float3 ringXZ( float id , float r ){
+  float3 x = float3(1,0,0);//normalize(_Frame1 - _Frame2);
+  float3 y = float3(0,0,1);//normalize(_Frame4 - _Frame2);
+
+
+  float a = hash(id*100) * 6.28;
+
+  float3 p = r*(sin( a )*x -cos(a)*y);
+
+  return p; 
+
+}
+
+float4x4 rotation(float3 axis, float angle)
+{
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return float4x4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
+}
+
+
+
+
+float3 newAxis( float id ){
+  float3 a = float3(hash(id),hash(id*10),hash(id*20));
+  return a * 2 - 1;
+}
+
+float4x4 _Transform;
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Flow(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = threadID + u3GroupID.x * NR_THREADS;
+
+  pID = safeID(pID,_VertBuffer_COUNT);
+  Vert vert = _VertBuffer[pID];
+
+
+
+  float3 x = mul( _Transform , float4(1,0,0,0));
+  float3 y = mul( _Transform , float4(0,1,0,0));
+  float3 z = mul( _Transform , float4(0,0,1,0));
+  if( vert.life < 0 ){
+    float3 c = mul( _Transform , float4(0,0,0,1));
+    vert.pos = c + z * (hash(pID*20)-.5) * .1 - .3 * y * hash(pID*200);// + x *  hash( float(pID*37)) + y * hash( float(pID* 30)) + z * hash( float(pID * 203));
+    vert.axis = normalize( float3( hash(float(pID * 20)),hash(float(pID * 42)),hash(float(pID * 32))));
+    vert.life = 1;
+    vert.vel = 0;
+  }else{
+    float3 force = 0;
+
+    force -= x * 1.3;
+    force += curlNoise( vert.pos * .2 + x * _Time * .1  + hash(_SystemID * 20 ) * 0 ) * 2 * (1-vert.life);
+    force += curlNoise( vert.pos * 1.2 + x * _Time * .1 + hash(_SystemID * 120 ) * 0) * 2 * (1-vert.life);
+    force += GetRayForce( vert.pos ,1 ) *4.1 * _DOWNTWEEN2;
+
+
+    vert.vel += force * .04;
+    vert.pos += vert.vel * .01;
+    vert.vel *= .95;
+    vert.life -= .002*(hash(float(pID * 213))+ .5);
+
+  }
+  
+  vert.nor = mul(rotation(vert.axis,vert.life*(hash(float(pID*123)))+hash(float(pID * 23))),float4(0,0,1,0)).xyz;
+  
+  _VertBuffer[pID] = vert;
+
+}

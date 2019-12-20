@@ -18,7 +18,10 @@ struct v2f{
   float3 t2         : TEXCOORD6;
   float3 t3         : TEXCOORD7;
 
-  UNITY_SHADOW_COORDS(8)
+            float3 vel : TEXCOORD8;
+  
+            UNITY_SHADOW_COORDS(9)
+
 };
 
 
@@ -57,6 +60,7 @@ v2f vert ( uint vid : SV_VertexID )
     o.debug = v.debug;
     o.eye = v.pos - _WorldSpaceCameraPos;
     o.screenPos = ComputeScreenPos(o.pos);
+    o.vel = v.vel;
 
     float3 bi = cross(v.nor, v.tan);
     

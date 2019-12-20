@@ -9,9 +9,9 @@ public class ToggleFrame : Cycle
     public Collider collider;
 
     public void Toggle(){
-      print("hhsm");
-      print( data.inputEvents.hit.collider );
-      print( collider );
+      //print("hhsm");
+      //print( data.inputEvents.hit.collider );
+      //print( collider );
       if( collider == null ){ collider = GetComponent<Collider>(); }
       if( data.inputEvents.hit.collider == collider ) framer.Toggle();
     }

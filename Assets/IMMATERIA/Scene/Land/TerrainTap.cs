@@ -8,6 +8,10 @@ public class TerrainTap : Cycle
   public float emitTime;
   public float tapTime;
    
+
+   public override void Create(){
+    tapTime = Time.time;
+   }
    public void Tap(){
     //print("helloos");
     //print(data.inputEvents.hitTag);
@@ -23,6 +27,8 @@ public class TerrainTap : Cycle
       tapTime = Time.time;
     }
    }
+
+
 
    public void SetTransform( Transform t ){
 

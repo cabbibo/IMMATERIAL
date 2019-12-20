@@ -104,6 +104,7 @@ public class AudioPlayer : Cycle{
             globalLoopSources[i].volume = 0;
             globalLoopSources[i].dopplerLevel = 0;
             globalLoopSources[i].playOnAwake = false;
+            globalLoopSources[i].loop = true;
             globalLoopSources[i].outputAudioMixerGroup = master.FindMatchingGroups("GlobalLoops")[0];
 
         }
@@ -173,6 +174,7 @@ public class AudioPlayer : Cycle{
 
     public override void OnBirthed(){
         NewLoop();
+        NewGlobalLoop();
     }
 
     public void NewLoop(){
@@ -184,13 +186,14 @@ public class AudioPlayer : Cycle{
         
         }
 
+    }
 
+    public void NewGlobalLoop(){
         for( int i = 0; i < globalLoopSources.Length; i++ ){
             if( globalLoopSources[i].clip != null ){
                 globalLoopSources[i].Play();
             }
         }
-
     }
 
     public void Play( AudioClip clip ){

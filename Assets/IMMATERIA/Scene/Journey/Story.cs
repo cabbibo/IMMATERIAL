@@ -118,7 +118,8 @@ public class Story : Cycle
 
   // populate all the events from this page forward
   public void SetAllEvents(){
-    for( int i = 0; i < currentPage-1; i++ ){
+    
+    for( int i = 0; i < currentPage; i++ ){
       //print( "setting all events");
       pages[i].OnStartEnter.Invoke();
       pages[i].OnEndExit.Invoke();
@@ -224,6 +225,7 @@ public class Story : Cycle
           pages[currentPage+1].OnStartExit.Invoke();
           currentPage = 0;
           Release();
+          setter.audio.Exit();
         }else{
           currentPage ++;
         }
@@ -298,7 +300,9 @@ public class Story : Cycle
   }
 
   public void SetColliders( bool val ){
-    
+      
+
+    print("SETGTING COLLIDERS : " + val );
     for( int i = 0; i < pages.Length; i ++ ){
       pages[i].frame.collider.enabled = false; 
     }

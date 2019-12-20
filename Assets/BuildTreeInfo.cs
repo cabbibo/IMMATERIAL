@@ -97,6 +97,9 @@ public class BuildTreeInfo : Form
         ci.siblingID = me;
         ci.siblingCount = cycle.parent.Cycles.Count;
 
+        print( ci.parent );
+        print( allCyclesInfo.Count );
+
         ci.position = allCyclesInfo[ci.parent].position + new Vector3((float)me , 1 , 0 );
 
 
