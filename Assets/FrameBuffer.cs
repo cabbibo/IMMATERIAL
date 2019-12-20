@@ -115,7 +115,7 @@ public class FrameBuffer : Cycle
       closeButton.transform.position += page.frame.right * .5f * page.frame.width ;
       closeButton.transform.position += -page.frame.up * .05f * page.frame.distance;
       closeButton.transform.LookAt( closeButton.transform.position + page.transform.forward );
-      closeButton.transform.localScale = new Vector3(3,1,1) * .03f * page.frame.distance;
+      closeButton.transform.localScale = new Vector3(3,1,1) * .02f * page.frame.distance;
 
       distance = page.frame.distance;
 

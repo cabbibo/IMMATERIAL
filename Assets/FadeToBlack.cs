@@ -39,9 +39,9 @@ public class FadeToBlack : MonoBehaviour
         
  
         _time += Time.deltaTime * .1f;
-        _alpha = FadeCurve.Evaluate(_time);
+        _alpha = FadeCurve.Evaluate(Mathf.Clamp(_time-.5f , 0 , 1));
 
-        print(_alpha);
+        //print(_alpha);
 
         _material.SetColor("_Color",new Color(0, 0, 0, 1-_alpha));
         //_material.SetColor("_Color",new Color(1, 0, 0, 1));

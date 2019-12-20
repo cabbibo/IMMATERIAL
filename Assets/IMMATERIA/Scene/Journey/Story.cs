@@ -173,6 +173,8 @@ public class Story : Cycle
   public void PageTurn(){
      
       
+    data.framer.frames[data.framer.currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeOut();
+
     data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
       SetUpTransition();
       SetActivePage();
@@ -266,6 +268,9 @@ public class Story : Cycle
   public void OnLockPage(){
 
     if( oldTransitionPage ){ oldTransitionPage._Deactivate(); }
+
+
+    data.framer.frames[data.framer.currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeIn();
     data.audio.Play( setter.audio.startClips[Random.Range(0,setter.audio.startClips.Length)] , 1f , .11f);
     transitionSpeed = pages[currentPage].lerpSpeed;
     data.textParticles.Set( pages[currentPage].text );

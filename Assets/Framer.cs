@@ -47,7 +47,7 @@ public class Framer : Cycle
 
       frames[currentFrame].Release();
 
-      frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeOut();
+      //frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeOut();
       //if( frameCollider != null ){ frameCollider.enabled = false; }
       if( frames[currentFrame].currentPage == page ){ frames[currentFrame].ImmediateDeath(); }
       currentFrame ++;
@@ -55,7 +55,7 @@ public class Framer : Cycle
       currentFrame %= frames.Length;
       frames[currentFrame].Set(page);
       distance = page.frame.distance;
-      frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeIn();
+      //frames[currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeIn();
       //frameCollider = page.frame.collider;
       //frameCollider.enabled = true;
       

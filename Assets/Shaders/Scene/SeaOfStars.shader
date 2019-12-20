@@ -47,6 +47,7 @@
 
         uniform sampler2D _MainTex;
         uniform sampler2D _ColorMap;
+        uniform sampler2D _AudioMap;
         uniform samplerCUBE _CubeMap;
 
 
@@ -72,6 +73,7 @@
             float3 tan    : TEXCOORD9;
             float3 vel    : TEXCOORD10;
             float3 player    : TEXCOORD11;
+            float2 uv2    : TEXCOORD12;
             UNITY_SHADOW_COORDS(2)
         };
 
@@ -103,7 +105,9 @@
                 float a =  atan2(center.x, center.y);
                 o.tan = normalize(normalize(fTan) *  -cos(a) +   normalize(cross(fNor,fTan))  * sin(a)) * r;
                 o.uv =  fUV * (1./6.)+ floor(float2(hash(debug.x*10), hash(debug*20)) * 6)/6;
-                o.debug = float3(debug.x,debug.y,a);
+
+                o.uv2 = fUV;
+                o.debug = float3(debug.x,debug.y,r);
                 o.vel = v.vel;
                 o.player = o.worldPos - _PlayerPosition;
 
@@ -140,11 +144,13 @@
         col = tCol*tCol* tex2D(_ColorMap, float2(cVal ,0)) / (.4 + ( .05 * length( v.player.xz)));//-rM;//v.nor * .5 + .5;// tCol;//*tCol * tex2D(_ColorMap,float2(rM*.1+.7 - v.debug.y * .1 ,.5 )).rgb;// *(1-rM);//hsv(rM*rM*rM * 2.1,.5,rM);// + normalize(refl) * .5+.5;
         //col = v.tan * .5 + .5;
 
+        float3 aCol = tex2D(_AudioMap,float2(length(v.uv2-.5) * .2 + sin(v.debug.x) * .2 + .2,0)).xyz;
         col *= (length(v.vel)-4) * (length(v.vel)-4) + .4;
         //if( abs(v.debug.x - _ClosestGPUCollisionID) < .1 ){ col += 1 * saturate( 10 / (_Time.y - _ClosestGPUCollisionTime)); }
        // col = _Time.y -_ClosestGPUCollisionTime;
         //col += hsv(dot(v.eye,v.nor) * -.1,.6,1) * (1-length(col));
         col *= shadow;
+        col *= 2*aCol;
         return float4( col , 1.);
             }
 
