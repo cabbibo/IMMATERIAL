@@ -28,7 +28,6 @@ public class Form : Cycle {
 
   public bool loadedFromFile;
   public override void _Create(){
-
     if( mpb == null ){ mpb = new MaterialPropertyBlock(); }
     DoCreate();
     SetStructSize();

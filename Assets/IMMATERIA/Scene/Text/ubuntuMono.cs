@@ -10,7 +10,7 @@ public class ubuntuMono {
   public static float glyphBelow =   29f;
 
   public static Dictionary<int,float[]> info = new Dictionary<int,float[]>(){
-      //ca, new float ]{   x      y    w     h     xoffset   yoffset}}
+      //ca, new float[]{   x      y    w     h     xoffset   yoffset   }}
     { 0   , new float[]{ 1016 , 972 , 4   , 4   , -1.500f  ,   1.500f  }}, 
     { 8   , new float[]{ 1016 , 968 , 4   , 4   , -1.500f  ,   1.500f  }}, 
     { 9   , new float[]{ 1016 , 964 , 4   , 4   , -1.500f  ,   1.500f  }}, 

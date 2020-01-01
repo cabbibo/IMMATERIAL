@@ -20,7 +20,7 @@ Shader "Debug/TerrainWindDebug" {
       #pragma fragment frag
 
       #include "UnityCG.cginc"
-      #include "../Chunks/Struct12.cginc"
+     // #include "../Chunks/Struct12.cginc"
 
 
 

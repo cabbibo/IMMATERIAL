@@ -105,7 +105,7 @@ public class Cycle : MonoBehaviour{
 
 
         if( c.data == null ){ c.data = data; }
-        if( data == null ){ print("fuhhh"); }
+        //if( data == null ){ print("fuhhh"); }
         c._Create();
 
       }

@@ -29,6 +29,7 @@ float _CanEdgeSwipe;
 
 
 #include "../Chunks/safeID.cginc"
+#include "../Chunks/nanCheckVert.cginc"
 
 #include "../Chunks/GetRayForce.cginc"
 
@@ -143,6 +144,7 @@ force -= v.pos - vDo.pos;
   v.pos += v.vel;
 
 
+  nanCheck( v );
 
   _VertBuffer[safeID(pID,_VertBuffer_COUNT)] = v;
 

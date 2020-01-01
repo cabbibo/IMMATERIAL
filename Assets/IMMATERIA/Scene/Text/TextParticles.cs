@@ -101,6 +101,18 @@ public class TextParticles : LifeForm{
     simulate.BindInt(  "_TipID" , () => this.currentMax );
     transfer.BindInt(  "_TipID" , () => this.currentMax );
 
+setGlyph.BindFloat(  "_FontWidth" , () => Arial.width );
+setGlyph.BindFloat(  "_FontHeight" , () => Arial.height );
+setAnchor.BindFloat(  "_FontSize" , () => Arial.size );
+
+setAnchor.BindFloat(  "_FontWidth" , () => Arial.width );
+setAnchor.BindFloat(  "_FontHeight" , () => Arial.height );
+setAnchor.BindFloat(  "_FontSize" , () => Arial.size );
+   setAnchor.BindFloat("_Radius" , () => this.radius );//"radius",this);//.BindForm("_VertBuffer",particles);
+    setAnchor.BindFloat("_Scale"  , () => this.scale  );//.BindForm("_VertBuffer",particles);
+
+
+
 
    /* simulate.BindAttribute("_Active","pageActive",story);
     
@@ -124,18 +136,10 @@ public class TextParticles : LifeForm{
   public void Set(TextAnchor t){
 
     currentMin = currentMax;
-
     currentMax = currentMin + t.count; 
-//    print( currentMax );
-//    print( t.count );
     
     anchor = t;
     scale = t.scale;
-//    radius = t.radius;
-
-  //  print("ANCHOR");
- //   print( t );
-//    print( t.count );
 
     setGlyph.RebindPrimaryForm("_AnchorBuffer",anchor);
     setAnchor.RebindPrimaryForm("_AnchorBuffer",anchor);

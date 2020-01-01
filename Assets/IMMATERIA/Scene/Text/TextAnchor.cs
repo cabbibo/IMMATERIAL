@@ -2,11 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
-
 public class TextAnchor: Form {
+
 
 public class glyph{
 
@@ -15,16 +12,40 @@ public class glyph{
   public int id;
   public char character;
 
+  public float x;
+  public float y;
+  public float w;
+  public float h;
+  public float offsetX;
+  public float offsetY;
+  public float advance;
+
+  public float left;
+  public float top;
+
   public float textureVal;
   public float scaleOffset;
   public float hueOffset;
   public float special;
 
-  public glyph( int c, int r , int i , char ch , float tv , float so , float ho , float s ){
-    column = c;
-    row = r;
+  public glyph( float l, float t , int i , float[] vals , float tv , float so , float ho , float s ){
+   
+    left = l;
+    top = t;
+
+    x = vals[0];
+    y = vals[1];
+
+    w = vals[2];
+    h = vals[3];
+
+    offsetX = vals[4];
+    offsetY = vals[5];
+
+    advance = vals[6];
+    //column = c;
+    //row = r;
     id = i;
-    character = ch;
     textureVal = tv;
     scaleOffset = so;
     hueOffset = ho;
@@ -57,7 +78,8 @@ public string text;
 
   public int row;
   public int column;
-  public float location;
+  public float locationX;
+  public float locationY;
 
   public override void Create(){
     if( frame == null ){ frame = GetComponent<Frame>(); }
@@ -71,7 +93,8 @@ public string text;
    // scale = frame.distance / 3;
     row = 0;
     column = 0;
-    location = 0;
+    locationX = scaledPadding;
+    locationY = scaledPadding;
 
     currentSpecial       = 0;
     currentHueOffset     = 0;
@@ -109,14 +132,6 @@ public string text;
         if(val[0] == "so" ){ currentScaleOffset = float.Parse(val[1]); }
         if(val[0] == "s"  ){ currentSpecial     = float.Parse(val[1]); }
         
-
-        //print( gameObject );
-        //print( val[0]);
-        //print( val[1] );
-//
-        //print("setting : " + test2[0] );
-        //print("on val1 : " + sections[i] );
-        //
         MakeGlyphs(sections[i]);
 
 
@@ -144,7 +159,7 @@ public string text;
       // makes sure we skip the first space of the section
       if( first != 0 ){
         column ++;
-        location += scaledCharacterSize;
+        locationX += scaledCharacterSize;
       }else{
         first=1;
       }
@@ -152,32 +167,57 @@ public string text;
 
       char[] letters = word.ToCharArray();
 
-      if( location + letters.Length * scaledCharacterSize >= frame.width - scaledPadding){
+ 
+
+
+ 
+      float newLine = 0;
+      float wordWidth = 0;
+      foreach( char c in letters ){ 
+
+        if( c == '\n'){
+          newLine = 1;
+
+        }else{
+
+          float v =  .5f*scaledCharacterSize * (float)NovaMono.info[c][6] / (float)NovaMono.size;
+          wordWidth += v * scale;
+        }
+      }
+
+      if( locationX + wordWidth >= frame.width - scaledPadding || newLine == 1){
           row ++;
-          location = scaledPadding;
+          locationY += scaledLineHeight;
+          locationX  = scaledPadding;
           column = 0;
       }
+
 
       foreach( char c in letters ){ 
 
         if( c == '\n'){
-          
-          row ++;
-          location = scaledPadding;
-          column = 0;
 
         }else{
+
+          float[] v1 = NovaMono.info[c];
+
+
+         locationX += .5f*scaledCharacterSize * (float)NovaMono.info[c][6] / (float)NovaMono.size;
          // print( c );
-          glyph g = new glyph(column,row,count,c,currentTextureVal,currentScaleOffset,currentHueOffset,currentSpecial);
+          glyph g = new glyph(locationX,locationY,count,v1,currentTextureVal,currentScaleOffset,currentHueOffset,currentSpecial);
           glyphs.Add(g);
 
-          location += scaledCharacterSize;
+
+
+          locationX +=  .5f*scaledCharacterSize * (float)NovaMono.info[c][6] / (float)NovaMono.size;
           column ++;
           count ++;
         }
-        //print((int)c);
-        //print(column);
       }
+
+
+
+
     }
     
   }
@@ -200,37 +240,39 @@ public string text;
       //print(glyphs[i]);
 //      print(glyphs[i]);
 
-      p = frame.topLeft + dir * ( scaledPadding + glyphs[i].column * scaledCharacterSize ) + down * (scaledPadding + glyphs[i].row * scaledLineHeight );
+      p = frame.topLeft + dir * glyphs[i].left + down * glyphs[i].top;
 
       // position
       values[ index ++ ] = p.x;
       values[ index ++ ] = p.y;
       values[ index ++ ] = p.z;
 
-//      print(frame.normal.x);
       // normal
       values[ index ++ ] = frame.normal.x;
       values[ index ++ ] = frame.normal.y;
       values[ index ++ ] = frame.normal.z;
 
-      float[] gInfo = getTextCoordinates(glyphs[i].character);
+      //float[] gInfo = getTextCoordinates(glyphs[i].character);
 
       //Character Info
-      values[ index ++ ] = gInfo[0];
-      values[ index ++ ] = gInfo[1];        
-      values[ index ++ ] = gInfo[2];
-      values[ index ++ ] = gInfo[3];
+      values[ index ++ ] = glyphs[i].x;
+      values[ index ++ ] = glyphs[i].y;
+
+      values[ index ++ ] = glyphs[i].w;
+      values[ index ++ ] = glyphs[i].h;
    
       // debug
-      values[ index ++ ] = gInfo[4];
-      values[ index ++ ] = gInfo[5];
+      values[ index ++ ] = glyphs[i].offsetX;
+      values[ index ++ ] = glyphs[i].offsetY;
 
       //
 
-      values[ index ++ ] = scaledPadding + glyphs[i].column * scaledCharacterSize;
-      values[ index ++ ] = scaledPadding + glyphs[i].row * scaledLineHeight;
-      values[ index ++ ] = (scaledPadding + glyphs[i].column * scaledCharacterSize) / frame.width;
-      values[ index ++ ] = (scaledPadding + glyphs[i].row * scaledLineHeight)/frame.height;
+      values[ index ++ ] = scaledPadding + glyphs[i].left;
+      values[ index ++ ] = scaledPadding + glyphs[i].top;
+
+
+      values[ index ++ ] = glyphs[i].w;
+      values[ index ++ ] = glyphs[i].h;//(scaledPadding + glyphs[i].row * scaledLineHeight)/frame.height;
 
 
       values[index++] = glyphs[i].textureVal;// Mathf.Floor(Random.Range(0,1.999f));

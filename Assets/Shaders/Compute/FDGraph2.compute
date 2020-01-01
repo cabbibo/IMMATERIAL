@@ -1,0 +1,171 @@
+﻿#pragma kernel Simulation
+#pragma kernel Resolve
+
+
+struct Vert{
+  float3 pos;
+  float3 vel;
+  float3 force;
+  float lookupStart;
+  float lookupLength;
+  float parent;
+  float  id;
+  float  idNorm;
+  float2  debug;
+};
+
+
+
+
+
+RWStructuredBuffer<Vert> _VertBuffer;
+RWStructuredBuffer<int> _ConnectionBuffer;
+
+int _VertBuffer_COUNT;
+int _ConnectionBuffer_COUNT;
+
+float3 _RO;
+float3 _RD;
+int _SelectedVert;
+int _ActiveVert;
+
+float _Time;
+
+int _Frame;
+
+float3 VecToRay( float3 pos ){
+  
+  float3 p2 = _RO - _RD * 200;
+  float3 pa = pos - _RO;
+  float3 ba = _RO - p2;
+  float h =  dot(pa,ba)/dot(ba,ba);
+  float3 pOnLine = h * _RD* 200 +_RO;
+
+  float3 inLine = pos - pOnLine;
+
+  return  inLine;//normalize(inLine) * force *  (1 - clamp( length(inLine) / radius , 0 , 1));
+}
+
+
+float4x4 _Transform;
+
+#include "../Chunks/safeID.cginc"
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Simulation(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = threadID + u3GroupID.x * NR_THREADS;
+
+  if( pID < _VertBuffer_COUNT ){
+    
+    int sID = safeID( pID, _VertBuffer_COUNT );
+
+    Vert v = _VertBuffer[sID];
+    
+
+    float3 force = 0;
+
+    float3 center = mul(_Transform,float4(0,0,0,1));
+    //force = -(v.pos-center);//(normalize(v.pos -center)/(length(v.pos-center))) * 1.5;
+    force += (normalize(v.pos -center)/(length(v.pos-center))) * .01;
+
+    Vert parent = _VertBuffer[int(v.parent)];
+    
+    float3 vec = VecToRay( v.pos );
+
+   /* vec = normalize( vec ) / (1 + length(vec) * length( vec));
+    if( pID == _SelectedVert ){
+      force -= vec;
+      v.vel = 0;
+    }else{
+      force += vec;
+    }*/
+
+    if( int(v.parent) != pID ){
+        float3 dif =  (v.pos-parent.pos);
+        if( length(dif) != 0 ){
+          force -= normalize(dif) * (length(dif)-(.3)) * 10.07;
+        } 
+    }
+
+
+
+  
+    for( int i=0; i < v.lookupLength; i++){
+      int id = _ConnectionBuffer[v.lookupStart * 2 + i * 2 + 1];
+      if( id != pID ){
+        Vert oV = _VertBuffer[id];
+        float3 dif =  -(v.pos - oV.pos);
+        if( length(dif) != 0 ){
+          force += normalize(dif) * (length(dif)-(.3)) * 8.07;
+        } 
+      }
+    }
+
+    for( int i=0; i < parent.lookupLength; i++){
+      int id = _ConnectionBuffer[parent.lookupStart * 2 + i * 2 + 1 ];
+      if( id != pID ){
+        Vert oV = _VertBuffer[id];
+        float3 dif =  -(v.pos - oV.pos);
+        if( length(dif) != 0 ){
+          force -= normalize(dif) * .05;
+        } 
+      }
+    }
+
+    for( int i = 0; i < _VertBuffer_COUNT; i++ ){
+      int newFrameValue =i;//(_Frame*10000 + i + pID)%_VertBuffer_COUNT;
+      if( newFrameValue != pID ){
+        Vert oV = _VertBuffer[newFrameValue];
+        float3 dif = v.pos - oV.pos;
+        if( length(dif) > 0 ){ 
+          force += 300*normalize(dif)/(.1+length(dif)*length(dif)) * .1;
+        }
+      }
+    }
+   
+    if( length(force) > 100 ){ force = normalize(force) * 100; }
+
+    v.force = force;
+
+    if( sID == 0 ){
+      v.force = 0;
+      v.pos = center;
+    }
+
+    //v.force = float3(0,-1,0);
+
+    _VertBuffer[sID] = v;
+
+
+  }
+
+}
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Resolve(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+  int pID = threadID + u3GroupID.x * NR_THREADS;
+
+  if( pID < _VertBuffer_COUNT ){
+    
+    int sID = safeID( pID, _VertBuffer_COUNT );
+    Vert v = _VertBuffer[sID];
+
+    if( length(v.vel) > 100 ){ v.vel = normalize(v.vel) * 100; }
+    v.vel += v.force * .01;
+    v.pos += v.vel;
+    v.vel *= .8;
+
+    if(  sID != 0  ){
+      _VertBuffer[sID] = v;
+    }
+
+
+
+  }
+
+}
