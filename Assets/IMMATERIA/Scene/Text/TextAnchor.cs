@@ -59,9 +59,10 @@ public string text;
   
   public Frame frame;
 
-  public float characterSize;
-  public float lineHeight;
+  public float characterSize=1;
+  public float lineHeight =1;
   public float padding;
+  public float advance = 1;
 
   public List<glyph> glyphs;
 
@@ -69,6 +70,7 @@ public string text;
   public float scaledPadding;
   public float scaledCharacterSize;
   public float scaledLineHeight;
+  public float scaledAdvance;
 
 
   public float currentTextureVal;
@@ -104,6 +106,7 @@ public string text;
     scaledPadding = scale * padding;
     scaledCharacterSize = scale  * characterSize;
     scaledLineHeight = scale * lineHeight;
+    scaledAdvance = scale * advance;
 
    // print("SETTING COUNT + this : " + this.transform.parent);
     //scount = text.length
@@ -159,7 +162,7 @@ public string text;
       // makes sure we skip the first space of the section
       if( first != 0 ){
         column ++;
-        locationX += scaledCharacterSize;
+        locationX += scaledAdvance;
       }else{
         first=1;
       }
@@ -175,13 +178,16 @@ public string text;
       float wordWidth = 0;
       foreach( char c in letters ){ 
 
+
         if( c == '\n'){
+          print( "NWEW LIENS");
           newLine = 1;
 
         }else{
 
-          float v =  .5f*scaledCharacterSize * (float)NovaMono.info[c][6] / (float)NovaMono.size;
-          wordWidth += v * scale;
+          //float v =  scaledCharacterSize;
+          wordWidth += scaledAdvance;// * scale;
+   
         }
       }
 
@@ -196,20 +202,22 @@ public string text;
       foreach( char c in letters ){ 
 
         if( c == '\n'){
-
+          row ++;
+          locationY += scaledLineHeight;
+          locationX  = scaledPadding;
+          column = 0;
         }else{
 
           float[] v1 = NovaMono.info[c];
 
 
-         locationX += .5f*scaledCharacterSize * (float)NovaMono.info[c][6] / (float)NovaMono.size;
          // print( c );
           glyph g = new glyph(locationX,locationY,count,v1,currentTextureVal,currentScaleOffset,currentHueOffset,currentSpecial);
           glyphs.Add(g);
 
 
 
-          locationX +=  .5f*scaledCharacterSize * (float)NovaMono.info[c][6] / (float)NovaMono.size;
+          locationX += scaledAdvance;
           column ++;
           count ++;
         }

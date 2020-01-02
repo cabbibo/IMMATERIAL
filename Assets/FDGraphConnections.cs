@@ -10,7 +10,7 @@ public class FDGraphConnections : IndexForm
   public FDGraph graph;
 
   public override void Embody(){
-    SetData(graph.connectionData);
+    SetData(graph.GetConnectionData());
   }
 
   public override void WhileDebug(){

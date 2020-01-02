@@ -1393,98 +1393,6 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
---- !u!1 &1516580846
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1516580850}
-  - component: {fileID: 1516580849}
-  - component: {fileID: 1516580848}
-  - component: {fileID: 1516580847}
-  m_Layer: 0
-  m_Name: CubeCollider(Clone)
-  m_TagString: Frame
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &1516580847
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1516580846}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &1516580848
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1516580846}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!33 &1516580849
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1516580846}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1516580850
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1516580846}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1793750326}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1723363592
 GameObject:
   m_ObjectHideFlags: 0
@@ -1632,6 +1540,98 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &1772114516
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1772114520}
+  - component: {fileID: 1772114519}
+  - component: {fileID: 1772114518}
+  - component: {fileID: 1772114517}
+  m_Layer: 0
+  m_Name: CubeCollider(Clone)
+  m_TagString: Frame
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1772114517
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772114516}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1772114518
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772114516}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &1772114519
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772114516}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1772114520
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772114516}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1793750326}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1793750325
 GameObject:
   m_ObjectHideFlags: 0
@@ -1662,7 +1662,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1516580850}
+  - {fileID: 1772114520}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1698,7 +1698,7 @@ MonoBehaviour:
   parent: {fileID: 1793750330}
   data: {fileID: 7939600036924056133}
   Cycles: []
-  count: 62
+  count: 165
   saveName: entity2032107
   alwaysRemake: 1
   intBuffer: 0
@@ -1708,7 +1708,17 @@ MonoBehaviour:
   totalMemory: 0
   debugMaterial: {fileID: 2100000, guid: e53b1de52078b4c138939019530d32fa, type: 2}
   loadedFromFile: 0
-  text: abcdefg hijklmnop qrstuvwxyz The Quick Brown Fox jumped over the lazy dog
+  text: 'abcdefg hijklmnop qrstuvwxyz The Quick Brown Fox jumped over the lazy dog
+
+
+    "" and also '''' and alason ? and also 1`23456t7800 !@#$%&*() .,?/\||}{}{adsasadsasd
+
+    asdagasdgagg
+
+
+
+
+    s````~''''''"''\][+=-_-_'
   frame: {fileID: 1793750329}
   characterSize: 0.15
   lineHeight: 0.3
@@ -1721,10 +1731,10 @@ MonoBehaviour:
   currentScaleOffset: 1
   currentHueOffset: 0
   currentSpecial: 0
-  row: 1
-  column: 34
-  locationX: 3.4297485
-  locationY: 0.408
+  row: 4
+  column: 54
+  locationX: 4.7493725
+  locationY: 1.326
 --- !u!114 &1793750329
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1764,17 +1774,17 @@ MonoBehaviour:
   borderTop: 0.05
   borderBottom: 0.05
   constant: 0
-  bottomLeft: {x: -1.8475208, y: -0.9494205, z: 2}
-  bottomRight: {x: 1.8475208, y: -0.9494205, z: 2}
-  topLeft: {x: -1.8475208, y: 0.9494205, z: 2}
-  topRight: {x: 1.8475208, y: 0.9494205, z: 2}
-  center: {x: 0, y: 0, z: 2}
-  width: 3.6950417
-  height: 1.898841
+  bottomLeft: {x: -1.8469363, y: -0.9498313, z: 2}
+  bottomRight: {x: 1.8469363, y: -0.9498313, z: 2}
+  topLeft: {x: -1.8469363, y: 0.9478842, z: 2}
+  topRight: {x: 1.8469363, y: 0.9478842, z: 2}
+  center: {x: 0, y: -0.0009736057, z: 2}
+  width: 3.6938727
+  height: 1.8977156
   normal: {x: 0, y: 0, z: 1}
   up: {x: -0, y: 1, z: -0}
   right: {x: 1, y: -0, z: -0}
-  collider: {fileID: 1516580847}
+  collider: {fileID: 1772114517}
 --- !u!114 &1793750330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2389,8 +2399,8 @@ MonoBehaviour:
   closest: {fileID: 2936488300128492079}
   radius: 0.1
   scale: 1.02
-  currentMax: 124
-  currentMin: 62
+  currentMax: 330
+  currentMin: 165
   synth: {fileID: 2936488300128492078}
   minPlayTime: 0.12830037
   maxDist: 1
@@ -2808,8 +2818,8 @@ MonoBehaviour:
   dying: 0
   died: 0
   destroyed: 0
-  debug: 1
-  active: 0
+  debug: 0
+  active: 1
   executionID: 256
   parent: {fileID: 2936488300128492070}
   data: {fileID: 7939600036924056133}

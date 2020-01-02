@@ -8,10 +8,13 @@ public class FDGraphVerts : Particles
   public FDGraph graph;
 
 
+
   public override void Embody(){
 
     float[] values = new float[count * structSize];
     int index = 0;
+
+    FDGraph.nodeInfo[] nodes = graph.GetNodes();
 
     for( int i = 0; i < count; i++ ){
       
@@ -27,15 +30,15 @@ public class FDGraphVerts : Particles
       values[index++] = 0;
       values[index++] = 0;
 
-      values[index++] = graph.allData.nodes[i].startConnectionID;
-      values[index++] = graph.allData.nodes[i].totalConnections;
-      values[index++] = graph.allData.nodes[i].parentID;
+      values[index++] = nodes[i].startConnectionID;
+      values[index++] = nodes[i].totalConnections;
+      values[index++] = nodes[i].parentID;
 
       values[index++] = i;
       values[index++] = (float)i / (float)count;
 
 
-      values[index++] = 0;
+      values[index++] = nodes[i].EXTINCT;
       values[index++] = 0;
 
 

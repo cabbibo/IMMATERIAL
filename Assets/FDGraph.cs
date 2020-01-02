@@ -4,6 +4,8 @@ using UnityEngine;
 using System.IO;    
  using System;
 
+using UnityEngine.Networking;
+
 public class FDGraph : Cycle
 {
 
@@ -11,6 +13,11 @@ public class FDGraph : Cycle
     public FDGraphConnections connections;
     public Life simulate;
     public Life resolve;
+    public ClosestLife closest;
+
+
+    public TextMesh text;
+    public Renderer showImg;
 
     public int frame;
 
@@ -52,12 +59,46 @@ public class LifeJSON
     public nodeInfo[] nodes;
     public connectionInfo[] links;
 }
+/*
+{
+  "batchcomplete":"","
+  query":{
+    "pages":{
+      "175040":{
+        "pageid":175040,
+        "ns":0,"title":
+        "Al-Farabi",
+        "thumbnail":{
+              "source":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Al-Farabi.jpg/80px-Al-Farabi.jpg",
+              "width":80,
+              "height":100
+            },
+          "pageimage":"Al-Farabi.jpg"
+          }
+          }
+          }
+        }
+*/
+[Serializable]
+public class imageData
+{
+    public int level;
+    public float timeElapsed;
+    public string playerName;
+}
+
+    [HideInInspector]private int[] connectionData;
+
+    [HideInInspector]private LifeJSON allData;
 
 
-    [HideInInspector]public int[] connectionData;
+    public int[] GetConnectionData(){
+      return connectionData;
+    }
 
-    [HideInInspector]public LifeJSON allData;
-
+    public nodeInfo[] GetNodes(){
+      return allData.nodes;
+    }
     public override void Create(){
       print("hello");
       verts.graph = this;
@@ -67,6 +108,7 @@ public class LifeJSON
       SafeInsert(connections);
       SafeInsert(simulate);
       SafeInsert(resolve);
+      SafeInsert(closest);
     }
 
 
@@ -80,10 +122,126 @@ public class LifeJSON
       resolve.BindForm( "_ConnectionBuffer" , connections );
 
 
+      closest.Set(verts);
+    }
+
+    public void OnTapCheck(){
+        nodeInfo ni = allData.nodes[(int)closest.closestID];
+        text.text = ni.name;
+        //string s1 = "http://en.wikipedia.org/w/api.php?action=query&titles=Acanthosoma_labiduroides&prop=pageimages&format=json";
+        string s1 = "http://en.wikipedia.org/w/api.php?action=query&titles=Acanthosoma_labiduroides&prop=pageimages&format=json";
+       
+        s1 = "https://en.wikipedia.org/w/api.php?action=opensearch&search="+ni.name+"&limit=1&namespace=0&format=json";
+        string word = s1;//"https://upload.wikimedia.org/wikipedia/commons/5/51/Acanthosoma_labiduroides_%28male%29.jpg";
+        //UnityWebRequest www = UnityWebRequest.Post(s1);
+
+        if( ni.name != "None" ){
+          StartCoroutine(GetText(s1));
+        }else{
+          print("THIS HAS NO NAME");
+        }
+        
+        //StartCoroutine(GetTexture(word));
+    }
+
+    IEnumerator GetText( string request ) {
+        UnityWebRequest www = UnityWebRequest.Get(request);
+        yield return www.SendWebRequest();
+ 
+        if(www.isNetworkError || www.isHttpError) {
+            Debug.Log(www.error);
+        } else {
+            // Show results as text
+            Debug.Log(www.downloadHandler.text);
+            string n_s = www.downloadHandler.text;
+
+
+string[] result = n_s.Split(new string[] {"["}, System.StringSplitOptions.None);
+
+
+if( result.Length > 4 && result[4].Length > 2 ){
+string[] s2;
+string s1 = result[4];
+s2 = s1.Split(new string[] {"\""}, System.StringSplitOptions.None);
+//if( s2)
+print( s2[0]);
+print( s2[1]);
+
+string[] justTitle = s2[1].Split(new string[] {"https://en.wikipedia.org/wiki/"}, System.StringSplitOptions.None);
+
+print( justTitle[1] );
+Application.OpenURL(s2[1]);
+StartCoroutine(GetImageURL(s2[1]));
+}else{
+
+  print("NO WIKI PAGE");
+}
+
+
+
+
+            //string[] splitArray =  n_s.Split(n_s,"source"); //Here we assing the splitted string to array by that char
+            // name = splitArray[0];
+ 
+            // Or retrieve results as binary data
+            //byte[] results = www.downloadHandler.data;
+        }
+    }
+
+
+
+
+  IEnumerator GetImageURL( string request ) {
+        UnityWebRequest www = UnityWebRequest.Get(request);
+        yield return www.SendWebRequest();
+ 
+        if(www.isNetworkError || www.isHttpError) {
+            Debug.Log(www.error);
+        } else {
+            // Show results as text
+            Debug.Log(www.downloadHandler.text);
+            string n_s = www.downloadHandler.text;
+
+
+          string[] result = n_s.Split(new string[] {"<img"}, System.StringSplitOptions.None);
+
+          print(result[1]);
+
+          if( result.Length > 4 && result[4].Length > 2 ){
+
+              //StartCoroutine(GetTextureL(s2[1]));
+          }else{
+
+            print("NO WIKI PAGE");
+          }
+
+        }
+    }
+
+    IEnumerator GetTexture( string request ) {
+        UnityWebRequest www = UnityWebRequestTexture.GetTexture(request);
+        yield return www.SendWebRequest();
+
+        if(www.isNetworkError || www.isHttpError) {
+            Debug.Log(www.error);
+        }
+        else {
+          print("NO ERROR");
+            Texture myTexture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            print( myTexture );
+            print( myTexture.width );
+            print( myTexture.height );
+            float r = (float)myTexture.width / (float)myTexture.height;
+
+            showImg.transform.localScale = new Vector3( r , 1  , 1) * .2f;
+            showImg.material.SetTexture("_MainTex", myTexture);
+
+        }
     }
 
     public override void WhileLiving( float v ){
       frame ++;
+      Shader.SetGlobalInt("_ClosestID", (int)closest.closestID);
     }
 
     public void ParseData(){
@@ -133,6 +291,7 @@ public class LifeJSON
 
             for( int i = 0; i < allData.nodes.Length; i++ ){
 
+              if( i == 10000 ){print(allData.nodes[i].name); }
               if( allData.nodes[i].parentID == null ){
                 print("Img no");
               }else{
