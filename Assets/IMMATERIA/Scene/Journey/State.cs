@@ -89,6 +89,8 @@ public Story story;
      startPage = setter.stories[startStory].currentPage;
   }
 
+
+
   
   public override void OnLive(){
     
@@ -105,11 +107,15 @@ public Story story;
 
       data.terrainTap.SetTransform( data.journey.setters[currentSetter].transform );
 
+
+
       if( startStory >= 0 ){
         if(setter.stories[startStory] != null ){
 
           story = setter.stories[startStory];
           SetStoryState(story);
+
+          print("ENTERING");
 
           setter.perimeter.EnterOuter();
           setter.perimeter.EnterInner();
@@ -150,18 +156,27 @@ public Story story;
 
     if( startInPages ){
       
-      setter.stories[startStory].currentPage = startPage;
 
-      setter.stories[startStory].SetAllEvents();
+        print( data.journey.controller.currentPage );
+
+
+     // data.journey.controller 
+      data.journey.controller.currentPageID = startPage;
+      data.journey.controller.currentPage = data.journey.controller.CP;
+      data.journey.controller.SetAllEvents();
       firstStory = true;
      
-      setter.StartStory();
+      data.journey.controller.StartStory();
 
       if( startPage != 0 ){
-        data.framer.Set( setter.CP );
+
+
+        data.framer.Set( data.journey.controller.currentPage );
       }
 
 
+    }else{
+      data.journey.controller.started = false;
     }
 
     firstStory = false;
@@ -247,19 +262,29 @@ public Story story;
 
 
   public void ConnectMonolith(int id){
-    //print("Connecting monolith");
+
+
     whichMonolithEmitting = id;
     monolithParticlesEmitting = true;
+    //print("Connecting monolith");
+
     Shader.SetGlobalInt("_ConnectedStory" , whichMonolithEmitting );
     data.monolithParticles._Emit = 1;
-    data.monolithParticles._EmitterPosition = data.journey.monoSetters[id].monolith.transform.position;
+
+    // If we pass in negative ID its going to be the ground connected book!
+    if( id >= 0 ){
+      data.monolithParticles._EmitterPosition = data.journey.monoSetters[id].monolith.transform.position;
+    }else{
+      data.monolithParticles._EmitterPosition = data.playerControls.OnGroundBook.transform.position;
+    }
+    
   }
 
   public void DisconnectMonolith(int id){
     //print("discordingngn");
-    whichMonolithEmitting = -1;
+    whichMonolithEmitting = -10;
     monolithParticlesEmitting = false;
-    Shader.SetGlobalInt("_ConnectedStory" , -1 );
+    Shader.SetGlobalInt("_ConnectedStory" , -10 );
     data.monolithParticles._Emit = 0;
   }
 
@@ -280,9 +305,33 @@ public Story story;
   }
 
 
+
+  public void SetterEnterOuter(StorySetter s){
+    setter = s;
+    lastTimeStoryVisited = Time.time;
+    inStory = true;
+  }
+
+  public void SetterEnterInner(StorySetter s){
+
+  }
+
+  public void SetterExitOuter(StorySetter s){
+    setter = null;
+  }
+
+  public void SetterExitInner(StorySetter s){
+    data.state.lastTimeStoryVisited = Time.time;
+    data.state.inStory = false;
+    
+
+  }
+
+
   public void SetSetter( StorySetter s ){
     setter = s;
   }
+
 
   public void UnsetSetter(){
     setter = null;

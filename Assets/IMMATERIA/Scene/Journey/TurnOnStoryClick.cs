@@ -6,7 +6,6 @@ public class TurnOnStoryClick : Cycle
 {
 
   public string nameOfStory;
-  public Story story;
   public Page  page;
   public Monolith monolith;
 
@@ -16,7 +15,7 @@ public class TurnOnStoryClick : Cycle
 
   public void TurnPage(){
     page.locked = false;
-    story.NextPage();
+    data.journey.controller.NextPage();
     data.helper.OnSuccessUnlock();
     //data.state.firstMonolithSelectionHappened;
   }
@@ -25,7 +24,8 @@ public class TurnOnStoryClick : Cycle
   public override void WhileLiving(float v){
 
     if( active && data.state.inPages ){
-      if( data.state.CP == page ){
+      print( data.journey.controller.CP);
+      if( data.journey.controller.CP == page ){
       if( data.inputEvents.hitTag == "StartNode" && data.inputEvents.oDown == 1 && data.inputEvents.Down == 0 ){
         for( int i = 0; i< monolith.storyMarkers.Length; i++ ){
           if( data.inputEvents.hit.collider.gameObject == monolith.storyMarkers[i] ){

@@ -60,10 +60,7 @@ public class Frame : Cycle {
    
     if( constant ){ SetFrame(); }
    
-    collider.transform.rotation = this.transform.rotation;
-    collider.transform.position = center;
-    collider.transform.localScale = new Vector3( (bottomLeft - bottomRight).magnitude , (bottomLeft - topLeft).magnitude , .001f);
-  
+    
   }
 
   public void SetFrame(){
@@ -98,6 +95,11 @@ public class Frame : Cycle {
     
     cam.transform.position = tmpP;
     cam.transform.rotation = tmpR;
+  
+    //print("setting collider");
+    collider.transform.rotation = this.transform.rotation;
+    collider.transform.position = center;
+    collider.transform.localScale = new Vector3( (bottomLeft - bottomRight).magnitude , (bottomLeft - topLeft).magnitude , .001f);
 
   }
 

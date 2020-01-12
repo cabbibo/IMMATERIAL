@@ -5,6 +5,7 @@ using UnityEngine;
 public class Journey : Cycle
 {
 
+  public StoryController controller;
   public bool NOSTORIES;
 
 
@@ -26,6 +27,7 @@ public class Journey : Cycle
 
    public override void Create(){
 
+    SafeInsert( controller );
    
     if( !NOSTORIES ){
 

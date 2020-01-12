@@ -20,11 +20,11 @@
 
        
     Pass {
-      Tags {"Queue"="Transparent" "RenderType"="Transparent" }
+      Tags {"Queue"="Transparent+10" "RenderType"="Transparent" }
       Cull Off
-       ZWrite Off
+       //ZWrite Off
         Blend One One
-
+        ZTest Always
       CGPROGRAM
       #pragma target 4.5
       #pragma vertex vert
@@ -110,7 +110,7 @@
 
         d = clamp( (d - _Thickness) * _Falloff , -1, 1) + 1;
         d /= 2;
-        //if( d + d2 < 1 ){ discard; }
+        if( d < .4 ){ discard; }
 
         float3 col = d;
         return float4( col , 1);

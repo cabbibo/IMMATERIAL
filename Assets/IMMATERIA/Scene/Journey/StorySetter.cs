@@ -33,31 +33,42 @@ public class StorySetter : Cycle
   public virtual void StoryCreate(){
 
 
+    // Turns on and off our story
     SafeInsert( perimeter );
+
+    // Getting Location
     uv =new Vector2( transform.position.x * data.land.size , transform.position.z * data.land.size);
 
+    // Setting up stories
     for( int i = 0; i < stories.Length; i ++ ){
       stories[i].setter = this;
       SafeInsert(stories[i]);
     }
 
-
+    // Adding any cycles that are just for this set of stories
     for( int i = 0; i < localCycles.Length; i ++ ){
       SafeInsert(localCycles[i]);
     }
 
+    // Setting up audio
     if( audio == null ){ 
       StoryAudio a = GetComponent<StoryAudio>();
+
+      // if we haven't set it up create it
       if( a == null ){ 
         a = gameObject.AddComponent<StoryAudio>();
         a._Create();
       }
+
       audio = a;
     }
 
-      audio.setter = this;
+    audio.setter = this;
     SafeInsert( audio );
 
+    //print("Adding listeninters");
+
+    // Setting up our listeners
     perimeter.OnEnterOuter.AddListener(EnterOuter);
     perimeter.OnEnterInner.AddListener(EnterInner);
     perimeter.OnExitOuter.AddListener(ExitOuter);
@@ -66,6 +77,7 @@ public class StorySetter : Cycle
 
   }
 
+  // Unsetting up our listeners!
   public override void Destroy(){
     perimeter.OnEnterOuter.RemoveListener(EnterOuter);
     perimeter.OnEnterInner.RemoveListener(EnterInner);
@@ -74,35 +86,34 @@ public class StorySetter : Cycle
   }
 
 
+  // This is the function we will override depending 
+  // on which set of stories we are looking at
   public virtual void CheckWhichStory(){
     currentStory = 0;
   }
 
-
-
-  
-
-  public override void WhileLiving( float v){
-
-  }
-
+  // This is now the set of stories we are looking at!
   public void EnterOuter(){
 
-    data.state.SetSetter( this );
 
     CheckWhichStory();
+
     if( currentStory < 0 ){
+
+      //This will happen if there is no story to be had!
       data.helper.NoCurrentStory();
+
     }else{
       
-      data.sceneCircle.Set( this.perimeter );
-      data.state.lastTimeStoryVisited = Time.time;
-      data.state.inStory = true;
-      
-      CS.DoFade(0);
-      CS.OnEnterOuter.Invoke();
-      perimeter.OnDoFade.AddListener(CS.DoFade);
 
+      data.state.SetterEnterOuter( this );
+
+      // Making sure that our story controller has the right story!
+      data.journey.controller.EnterOuter(this);
+
+
+      // TODO: Make it so this is when the individual stories
+      // are created and destroyed
       /*for( int i = 0; i < localCycles.Length; i ++ ){
         localCycles[i].SpinDown();
         localCycles[i].SpinUp();
@@ -116,59 +127,49 @@ public class StorySetter : Cycle
 
   public void EnterInner(){
 
+     if( currentStory < 0 ){
+      //This will happen if there is no story to be had!
+      //data.helper.NoCurrentStory();
+    }else{
+      //using the page turn controller to set all the data!
+      data.journey.controller.EnterInner(this);
 
-    data.inputEvents.OnTap.AddListener( CS.CheckForStart );
-    data.inputEvents.OnEdgeSwipeLeft.AddListener(  CS.NextPage );
-    data.inputEvents.OnEdgeSwipeRight.AddListener(  CS.PreviousPage );
+      // Activating the settter, story and first page BUT NON RECURSIVELY!!!
+      _Activate(false);
 
-    data.framer.Set( CS.pages[CS.currentPage] );
-    CS.SetColliders(true);
-    //CS.pages[CS.currentPage]
-    data.textParticles.Release();//.Set( CS.pages[CS.currentPage] );
-    CS.OnEnterInner.Invoke();
-    CS.DoFade(1);
-    
-    _Activate(false);
-    CS._Activate(false);
-    CS.pages[CS.currentPage]._Activate(false);
-
-    audio._Activate(false);
+      // Audio activated non recursively
+      audio._Activate(false);
+    }
 
 
   }
 
   public void ExitOuter(){
-
-    data.state.UnsetSetter();
-    data.sceneCircle.Unset( this.perimeter );
-    
-    CS.DoFade(0);
-    CS.OnExitOuter.Invoke();
-    
-    perimeter.OnDoFade.RemoveListener(CS.DoFade);
-
-    /*for( int i = 0; i < localCycles.Length; i ++ ){
-      localCycles[i].SpinDown();
-    }*/
+    if( currentStory < 0 ){
+      //This will happen if there is no story to be had!
+      ///data.helper.NoCurrentStory();
+    }else{
+      data.journey.controller.ExitOuter(this);
+      data.state.SetterExitOuter(this);
+    }
   }
 
 
   public void ExitInner(){
-    data.inputEvents.OnTap.RemoveListener(  CS.CheckForStart );
-    data.inputEvents.OnEdgeSwipeLeft.RemoveListener(  CS.NextPage );
-    data.inputEvents.OnEdgeSwipeRight.RemoveListener(  CS.PreviousPage );
-    
-    data.state.lastTimeStoryVisited = Time.time;
-    data.state.inStory = false;
-    
-    CS.OnExitInner.Invoke();
-    CS.DoFade(1);
-//    print("exitInner");
+
+    if( currentStory < 0 ){
+      //This will happen if there is no story to be had!
+      //data.helper.NoCurrentStory();
+    }else{
+      data.state.SetterExitInner(this);
+      data.journey.controller.ExitInner(this);
+    }
   }
 
 
   public void StartStory(){
-    CS.StartStory();
+    print("StartStory Called here");
+    data.journey.controller.StartStory();
   }
 
   public Story CS{

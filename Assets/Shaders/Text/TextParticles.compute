@@ -206,6 +206,7 @@ void SetGlyph(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
       fOffset.x =  -0*p.offset.x + float(row) * p.dimensions.x;//(float(row) )* p.dimensions.x/_FontSize //p.offset.x/_FontSize * .5;
       fOffset.y = -p.offset.y +  float(col) * p.dimensions.y;//(float(row) )* p.dimensions.x/_FontSize //p.offset.x/_FontSize * .5;
       
+      fOffset -= float2( p.dimensions.x/2 , -p.dimensions.x/2 );//p.offset.x;
       fOffset /= _FontSize;
       //fOffset.y += (float(col) )* p.dimensions.y/_FontSize //+p.offset.y/_FontSize * .5;
 

@@ -91,13 +91,7 @@ public string text;
   
   public override void SetCount(){
 
-    //print( "setting count");
-   // scale = frame.distance / 3;
-    row = 0;
-    column = 0;
-    locationX = scaledPadding;
-    locationY = scaledPadding;
-
+  
     currentSpecial       = 0;
     currentHueOffset     = 0;
     currentScaleOffset   = 1;
@@ -107,6 +101,14 @@ public string text;
     scaledCharacterSize = scale  * characterSize;
     scaledLineHeight = scale * lineHeight;
     scaledAdvance = scale * advance;
+
+      //print( "setting count");
+   // scale = frame.distance / 3;
+    row = 0;
+    column = 0;
+    locationX = scaledPadding;
+    locationY = scaledPadding;
+
 
    // print("SETTING COUNT + this : " + this.transform.parent);
     //scount = text.length
@@ -177,21 +179,13 @@ public string text;
       float newLine = 0;
       float wordWidth = 0;
       foreach( char c in letters ){ 
-
-
         if( c == '\n'){
-          print( "NWEW LIENS");
-          newLine = 1;
-
         }else{
-
-          //float v =  scaledCharacterSize;
-          wordWidth += scaledAdvance;// * scale;
-   
+          wordWidth += scaledAdvance;// * scale
         }
       }
 
-      if( locationX + wordWidth >= frame.width - scaledPadding || newLine == 1){
+      if( locationX + wordWidth >= frame.width - scaledPadding*2 ){
           row ++;
           locationY += scaledLineHeight;
           locationX  = scaledPadding;
@@ -241,7 +235,6 @@ public string text;
     Vector3 down = (frame.bottomRight - frame.topRight).normalized;
     
 
-//    print(scaledPadding);
     Vector3 p;
     for( int i = 0; i < count; i ++ ){
 

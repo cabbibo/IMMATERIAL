@@ -135,7 +135,7 @@ sampler2D _AudioMap;
         col *= float3(1,.7,.3);
         //if( connectedDif < .135 + .005 * sin(_Time.y*4)  ){ col = float3(1,0,0);}
         //if( closestID == _WhichStory ){ col *= 4;}
-        float4 color = fixed4( col , 1. );
+        float4 color = fixed4( col , 1. )* clamp( 1- .01*length( v.player),0,1);
         return color;
       }
 

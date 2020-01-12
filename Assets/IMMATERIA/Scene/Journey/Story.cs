@@ -9,8 +9,10 @@ public class Story : Cycle
   public int  whichMonolithEmitting;
   public bool hasFallen;
   public bool hasPickedUpBook;
-
   public int[] storiesVisited;
+
+  public bool canRestart;
+
 
   public float frameBorder = .05f;
 
@@ -51,9 +53,13 @@ public class Story : Cycle
   public EventTypes.BaseEvent OnEnterOuter;
   public EventTypes.BaseEvent OnExitOuter;
 
-
   public EventTypes.BaseEvent OnEnterInner;
   public EventTypes.BaseEvent OnExitInner;
+
+
+  public EventTypes.BaseEvent OnStoryStart;
+  public EventTypes.BaseEvent OnStoryEnd;
+
     
   bool s_monolithParticlesOn;
   int  s_whichActiveMonolith;
@@ -87,7 +93,7 @@ public class Story : Cycle
 
   public override void OnBirthed(){
     for( int i = 0; i < pages.Length; i ++ ){
-      pages[i].frameMPB.SetFloat("_Cutoff" , 1);
+      //pages[i].frameMPB.SetFloat("_Cutoff" , 1);
       pages[i].fade = 1;
       pages[i].frame.borderLeft = frameBorder;
       pages[i].frame.borderRight = frameBorder;
@@ -99,7 +105,7 @@ public class Story : Cycle
     transitioning = false;
 
   }
-
+/*
    public void CheckForStart(){
 
     if( !started ){
@@ -396,7 +402,7 @@ public class Story : Cycle
     pages[currentPage].fade = m;
     pages[currentPage].FadeIn.Invoke(v);
 
-  }
+  }*/
 
 
 
