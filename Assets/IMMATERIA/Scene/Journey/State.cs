@@ -5,6 +5,9 @@ using UnityEngine;
 public class State : Cycle
 {
 
+  public bool DOFULL;
+
+
   public AudioClip selectionClip;
 
 
@@ -69,6 +72,8 @@ public Story story;
 
   public bool frameShown;
 
+
+
   public override void Create(){
     
     currentSetter = startSetter;
@@ -101,6 +106,8 @@ public Story story;
     if( startInStory  || startInPages ){
       
       currentSetter = startSetter;
+
+      if( startSetter > data.journey.setters.Length ){ print("starting setter greater than total Setters");}
       setter = data.journey.setters[startSetter];
 
       data.player.position = data.journey.setters[currentSetter].transform.position;
@@ -115,7 +122,7 @@ public Story story;
           story = setter.stories[startStory];
           SetStoryState(story);
 
-          print("ENTERING");
+//          print("ENTERING");
 
           setter.perimeter.EnterOuter();
           setter.perimeter.EnterInner();
@@ -157,7 +164,7 @@ public Story story;
     if( startInPages ){
       
 
-        print( data.journey.controller.currentPage );
+//        print( data.journey.controller.currentPage );
 
 
      // data.journey.controller 
@@ -182,22 +189,24 @@ public Story story;
     firstStory = false;
 
 
-    if( startInBook ){
-      //print("open books");
-      data.book.OpenBook();
-    }
+    if( DOFULL ){
+      if( startInBook ){
+        //print("open books");
+        data.book.OpenBook();
+      }
 
-    if( hasPickedUpBook ){
-      PickUpBook();
-    }else{
-      PutDownBook();
-    }
+      if( hasPickedUpBook ){
+        PickUpBook();
+      }else{
+        PutDownBook();
+      }
 
 
-    if( !monolithParticlesEmitting ){
-      DisconnectMonolith( whichMonolithEmitting );
-    }else{
-      ConnectMonolith( whichMonolithEmitting );
+      if( !monolithParticlesEmitting ){
+        DisconnectMonolith( whichMonolithEmitting );
+      }else{
+        ConnectMonolith( whichMonolithEmitting );
+      }
     }
 
 
@@ -231,6 +240,10 @@ public Story story;
 
 
   public void PutDownBook(){
+    if( data.playerControls.epiphanyRing.circle.body.mpb == null ){ 
+      data.playerControls.epiphanyRing.circle.body.mpb  = new MaterialPropertyBlock();
+       print("Body material getting recreated"); 
+     }
     data.playerControls.epiphanyRing.circle.body.mpb.SetFloat("_StartTime" , Time.time );
     data.playerControls.epiphanyRing.circle.body.mpb.SetFloat("_Setting" , 0 );
     //data.playerControls.epiphanyRing.UnSet();

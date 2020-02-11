@@ -14,8 +14,8 @@ public class StoryAudio : Cycle
     //public AudioClip baseLoop;
    public AudioClip[] loopClips;
 
-   public int[] audioInfo;
-   public int[] oAudioInfo;
+   public float[] audioInfo;
+   public float[] oAudioInfo;
 
    public override void Create(){
 
@@ -25,15 +25,15 @@ public class StoryAudio : Cycle
     }
 
     if( audioInfo == null || oAudioInfo == null ){
-      audioInfo = new int[ loopClips.Length ];
-      oAudioInfo = new int[ loopClips.Length ];
+      audioInfo = new float[ loopClips.Length ];
+      oAudioInfo = new float[ loopClips.Length ];
     }
     
     if( loopClips.Length != audioInfo.Length || 
         loopClips.Length != oAudioInfo.Length ){
 
-      audioInfo = new int[ loopClips.Length ];
-      oAudioInfo = new int[ loopClips.Length ];
+      audioInfo = new float[ loopClips.Length ];
+      oAudioInfo = new float[ loopClips.Length ];
     }
 
 
@@ -42,7 +42,7 @@ public class StoryAudio : Cycle
    public override void Activate(){
 
 
-    print("Activate");
+//    print("Activate");
 
     if( data.audio.loopSources.Length < loopClips.Length ){
       DebugThis("NOT ENOUGH SOURCES IN THE AUDIO LOOP SOURCES");

@@ -70,7 +70,7 @@ public class Data : Cycle
 
   public override void Create(){
     god = (God)parent;
-    print( Cycles );
+//    print( Cycles );
     Cycles.Clear();
     if( framer != null ){ SafePrepend(framer); }
     if( journey != null ){ SafePrepend(journey); }

@@ -26,15 +26,18 @@ public class Tutorial : Cycle
 
     public override void Create(){
 
-      clickBackground.enabled = false;
-      clickText.enabled = false;
+      if( data.state.DOFULL ){
 
-      swipeLeftPageText.enabled = false;
-      swipeRightPageText.enabled = false;
-      swipeLeftTurnText.enabled = false;
-      swipeRightTurnText.enabled = false;
-      swipeForwardMoveText.enabled = false;
-      tapMoveText.enabled = false;
+        clickBackground.enabled = false;
+        clickText.enabled = false;
+
+        swipeLeftPageText.enabled = false;
+        swipeRightPageText.enabled = false;
+        swipeLeftTurnText.enabled = false;
+        swipeRightTurnText.enabled = false;
+        swipeForwardMoveText.enabled = false;
+        tapMoveText.enabled = false;
+      }
 
     }
 

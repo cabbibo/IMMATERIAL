@@ -153,8 +153,12 @@ public class StoryController : Cycle
   public void PageTurn(){
 
     data.framer.frames[data.framer.currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeOut();
-    data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
-    
+
+    if( setter.audio.startClips.Length == 0 ){ 
+      DebugThis("This story doesn't have audio yet");
+    }else{
+     data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
+    }    
     SetUpTransition();
     SetActivePage();
     
@@ -173,8 +177,11 @@ public class StoryController : Cycle
 
   // Leaving the Story!
   public void LeaveStory(){
-
-      data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
+ if( setter.audio.startClips.Length == 0 ){ 
+      DebugThis("This story doesn't have audio yet");
+    }else{
+    data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
+      }   
       SetUpTransition();
       oldTransitionPage.OnEndExit.Invoke();
       data.framer.Release();//( pages[currentPageID] );
@@ -221,7 +228,12 @@ public class StoryController : Cycle
     // fade in our little 'close button'
     data.framer.frames[data.framer.currentFrame].closeButton.gameObject.GetComponent<FadeMaterial>().FadeIn();
     
-    data.audio.Play( setter.audio.startClips[Random.Range(0,setter.audio.startClips.Length)] , 1f , .11f);
+    if( setter.audio.startClips.Length == 0 ){ 
+      DebugThis("This story doesn't have audio yet");
+    }else{
+      data.audio.Play( setter.audio.startClips[Random.Range(0,setter.audio.startClips.Length)] , 1f , .11f);
+    }
+
     transitionSpeed = pages[currentPageID].lerpSpeed;
     
 
@@ -268,7 +280,7 @@ public class StoryController : Cycle
   public void SetColliders( bool val ){
       
 
-    print("SETGTING COLLIDERS : " + val );
+//    print("SETGTING COLLIDERS : " + val );
     for( int i = 0; i < pages.Length; i ++ ){
       pages[i].frame.collider.enabled = false; 
     }
@@ -401,7 +413,7 @@ _______  __    _  _______  _______  ______      _______  __   __  _______  __   
   public void EnterInner(StorySetter s){
 
 
-    print("entering inner of controller");
+//    print("entering inner of controller");
 
     data.framer.Set( currentPage );
 
@@ -433,7 +445,7 @@ _______  __    _  _______  _______  ______      _______  __   __  _______  __   
 
 
   public void ExitInner(StorySetter s){
-    print("exiting the inner");
+    //print("exiting the inner");
 
     data.sceneCircle.Unset( s.perimeter );
     data.inputEvents.OnTap.RemoveListener(CheckForStart);

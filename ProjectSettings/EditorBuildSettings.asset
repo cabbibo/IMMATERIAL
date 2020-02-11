@@ -27,6 +27,6 @@ EditorBuildSettings:
     path: Assets/Scenes/TESTER.unity
     guid: 173d34e9258224f0fa027dcad479296c
   - enabled: 1
-    path: Assets/treeOfLife.unity
+    path: Assets/Scenes/treeOfLife.unity
     guid: 45fec4164d5a641ba9435bfb17663801
   m_configObjects: {}

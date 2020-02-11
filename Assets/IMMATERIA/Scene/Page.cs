@@ -31,7 +31,7 @@ public class Page : Cycle
     public StorySetter setter;
     public Story        story;
 
-    public int[] audioInfo;
+    public float[] audioInfo;
 
     public override void Create(){
       frame = GetComponent<Frame>();
@@ -50,10 +50,10 @@ public class Page : Cycle
         // currently no setter on the book projection pages!
         if( setter != null ){
             
-            if( audioInfo == null ){ audioInfo = new int[setter.audio.audioInfo.Length]; }
+            if( audioInfo == null ){ audioInfo = new float[setter.audio.audioInfo.Length]; }
 
             if( audioInfo.Length != setter.audio.audioInfo.Length){
-              audioInfo = new int[setter.audio.audioInfo.Length];
+              audioInfo = new float[setter.audio.audioInfo.Length];
             }
 
         }
