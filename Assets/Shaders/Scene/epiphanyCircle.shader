@@ -63,7 +63,7 @@
 
                 float angle = atan2( sPos.z , sPos.x );
 
-                float distance = (_ID + 4 ) * .05 *  pow( ( _Time.y  - _StartTime) , 2);
+                float distance = (_ID + 4 ) * .05 *  pow( ( _Time.y  - _StartTime)* 6 , 2);
                 //float distance = 10;//(_ID + 4 ) * .05 *  pow( ( _Time.y  - _StartTime) , 2);
                 float r =  (length( sPos )* ( distance/3)) + distance;
 

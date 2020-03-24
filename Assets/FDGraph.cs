@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;    
@@ -292,6 +292,8 @@ StartCoroutine(GetImageURL(s2[1]));
             for( int i = 0; i < allData.nodes.Length; i++ ){
 
               if( i == 10000 ){print(allData.nodes[i].name); }
+
+              // ?????
               if( allData.nodes[i].parentID == null ){
                 print("Img no");
               }else{

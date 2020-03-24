@@ -86,16 +86,13 @@ public class BuildCycleTreeCPU : Cycle
 
     }
 
-    public void Create(){
-
-    }
 
 
     public override void WhileLiving(float v){
 
 
-      GameObject go;
-      GameObject parent;
+      //GameObject go;
+      //GameObject parent;
       CycleInfoCPU ci;
       Vector3 force;
       Vector3 t1;

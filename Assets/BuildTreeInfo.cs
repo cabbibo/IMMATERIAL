@@ -79,7 +79,7 @@ public class BuildTreeInfo : Form
       ci.name = "" + cycle.GetType();
       ci.goName = "" + cycle.gameObject.name;
       ci.go = cycle.gameObject;
-      bool alreadyOne = false;
+//      bool alreadyOne = false;
       if( cycle.parent ){
         
        

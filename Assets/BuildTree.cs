@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class BuildTree :Cycle
 {
 
-    public Camera camera;
+    public Camera cam;
     public AudioClip[] hoverClips;
     public AudioClip[] selectClips;
 
@@ -90,7 +90,7 @@ public class BuildTree :Cycle
       oSelectedDist = selectedDist;
 
       vectorRep.position = _RO + _RD * 10;
-      vectorRep.LookAt(camera.transform);
+      vectorRep.LookAt(cam.transform);
       int id  = (int)closest.value.w;
       selectedDist = (new Vector3(closest.value.x , closest.value.y , closest.value.z )).magnitude;
       info.selectedVert = selectedVert;
@@ -249,7 +249,7 @@ public class BuildTree :Cycle
 
     public void StepUp(Cycle c){
       if( c is StorySetter ){
-        int story = 0;
+//        int story = 0;
 
         for( int i = 0; i < data.journey.setters.Length; i++ ){
           print( i );

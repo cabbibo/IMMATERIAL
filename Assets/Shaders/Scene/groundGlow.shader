@@ -5,6 +5,9 @@
     _Color ("Color", Color) = (1,1,1,1)
     _MainTex ("Texture", 2D) = "white" {}
     _ColorMap ("Color Map", 2D) = "white" {}
+    _HueSize("Hue Size", float) = .5
+    _HueOffset("Hue Size", float) = .5
+    
 
   }
     SubShader
@@ -32,12 +35,16 @@ Tags { "RenderType"="Opaque" }
 
 
             #include "../Chunks/Struct16.cginc"
+            #include "../Chunks/noise.cginc"
 
             sampler2D _MainTex;
             sampler2D _ColorMap;
+            sampler2D _AudioMap;
 
             float _StartTime;
             float _Setting;
+            float _HueOffset;
+            float _HueSize;
 
             struct v2f { 
               float4 pos : SV_POSITION; 
@@ -81,15 +88,22 @@ Tags { "RenderType"="Opaque" }
 fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
                 float val = -dot(normalize(_WorldSpaceLightPos0.xyz),normalize(v.nor));// -DoShadowDiscard( i.worldPos , i.uv , i.nor );
 
-                float lookupVal =  max(min( v.uv.y * 2,( 1- v.uv.y ) ) * 1.5,0);//2 * tex2D(_MainTex,v.uv * float2(4 * saturate(min( v.uv.y * 4,( 1- v.uv.y ) )) ,.8) + float2(0,.2));
+                float lookupVal =  max(min( v.uv.y  * .01,( 1- v.uv.y ) ),0);//2 * tex2D(_MainTex,v.uv * float2(4 * saturate(min( v.uv.y * 4,( 1- v.uv.y ) )) ,.8) + float2(0,.2));
                
 
                 float4 tCol = tex2D(_MainTex, v.uv *   float2( 10, 1 ) + .1 - float2(0 , .05)*_Time.y);
 
+
+                float tVal = tCol.x * tCol.x * tCol.x *30 + .3*abs(noise( float3(v.uv.x * 1000,v.uv.y * 20, 0)));
                 float cutoff = saturate(((_Time.y - _StartTime - 8 ) / 2) * _Setting);
-                if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .8 + cutoff * .3  ){ discard;}
-                fixed4 col =   tex2D(_ColorMap , float2( length(tCol) * 1 + (1-shadow  * .05)+ .0 + lookupVal* lookupVal * .1  + v.uv.y * 3 - _Time.y * .2, 0) );//* 20-10;//*tCol* lookupVal*4;//* 10 - 1;
-                    col *= .7;
+                if( ( lookupVal + 1.3) - 20*tVal  <  cutoff * .3   ){ discard;}
+
+               // if( v.uv.y + tCol.x * .1> .9){ discard;}
+
+                fixed4 col =   tex2D(_ColorMap , float2( tVal * 1 + (1-shadow  * .05)+ .0 + lookupVal* lookupVal * .1  + v.uv.y * _HueSize + _HueOffset , 0) );//* 20-10;//*tCol* lookupVal*4;//* 10 - 1;
+                    col *= tex2D(_AudioMap , tVal );
+                    
+                   // col = 1;
                 return col;
             }
 

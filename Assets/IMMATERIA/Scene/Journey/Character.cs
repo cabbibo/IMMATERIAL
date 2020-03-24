@@ -58,7 +58,6 @@ public class Character : Cycle {
     deltaRot = Quaternion.identity;
     oPos = Vector3.zero;
     velocity = Vector3.zero;
-
     animator.Play("Grounded");
   }
 
@@ -264,7 +263,9 @@ if( canMove ){
   animator.SetFloat("Forward", forward*runMultiplier * d * d * d, 0.1f, Time.deltaTime);
 }
 
+ transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
 
+animator.runtimeAnimatorController = animator.runtimeAnimatorController;
       if( doTerrain ){
         float h = data.land.SampleHeight( transform.position );
        
@@ -272,6 +273,7 @@ if( canMove ){
         //float d = Vector3.Dot( normal , Vector3.up );
 
         float h2 = data.land.SampleHeight( transform.position + transform.forward * .5f );
+
 
     //    print( (1-d) * 10);
         animator.SetFloat("Steepness", (1-d) * 4 );

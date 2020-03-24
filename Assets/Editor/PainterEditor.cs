@@ -5,8 +5,8 @@
  
  [CustomEditor(typeof(Painter))]
  public class myEditor : Editor {
-     private static bool m_editMode = false;
-     private static bool m_editMode2 = false;
+     //private static bool m_editMode = false;
+     //private static bool m_editMode2 = false;
      
      void OnSceneGUI()
      {

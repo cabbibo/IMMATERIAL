@@ -149,7 +149,7 @@ public class LandTiler : Cycle
   public override void WhileLiving (float l) {
 
 
-    Vector3 oPos;
+    //Vector3 oPos;
 
 //    print(data.playerPosition);
     oIDX = idX;

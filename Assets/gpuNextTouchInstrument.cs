@@ -51,7 +51,7 @@ public class gpuNextTouchInstrument : Cycle
     
       AudioClip clip = clips[Random.Range(0,clips.Length)];
       int step = steps[Random.Range(0,steps.Length)];
-      data.audio.Play( clip , step  , v , 0  , data.audio.master , "TouchSounds" );
+      data.sound.Play( clip , step  , v , 0  , data.sound.master , "TouchSounds" );
       lastPlayTime = Time.time;
     }
 

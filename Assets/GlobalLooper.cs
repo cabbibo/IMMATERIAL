@@ -32,11 +32,11 @@ public class GlobalLooper : Cycle
   public override void WhileLiving( float v ){
     for( int i = 0; i< clips.Length; i++){
 
-      data.audio.globalLoopSources[i].clip = clips[i];
+      data.sound.globalLoopSources[i].clip = clips[i];
       if( on ){
-        data.audio.globalLoopSources[i].volume = Mathf.Lerp(data.audio.globalLoopSources[i].volume,clipVolumes[i], .001f);
+        data.sound.globalLoopSources[i].volume = Mathf.Lerp(data.sound.globalLoopSources[i].volume,clipVolumes[i], .001f);
       }else{
-        data.audio.globalLoopSources[i].volume = Mathf.Lerp(data.audio.globalLoopSources[i].volume,0, .1f);
+        data.sound.globalLoopSources[i].volume = Mathf.Lerp(data.sound.globalLoopSources[i].volume,0, .1f);
       }
 
     }

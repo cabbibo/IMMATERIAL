@@ -44,14 +44,14 @@ public class StoryAudio : Cycle
 
 //    print("Activate");
 
-    if( data.audio.loopSources.Length < loopClips.Length ){
+    if( data.sound.loopSources.Length < loopClips.Length ){
       DebugThis("NOT ENOUGH SOURCES IN THE AUDIO LOOP SOURCES");
     }
-    for( int i = 0; i < data.audio.loopSources.Length; i++ ){
-      data.audio.loopSources[i].volume = 0;
+    for( int i = 0; i < data.sound.loopSources.Length; i++ ){
+      data.sound.loopSources[i].volume = 0;
     }
     for( int i = 0; i < loopClips.Length; i++ ){
-      data.audio.loopSources[i].clip = loopClips[i];
+      data.sound.loopSources[i].clip = loopClips[i];
     }
 
 
@@ -84,28 +84,27 @@ public class StoryAudio : Cycle
 
 
   public void FadeLoop(int i){
-    data.audio.FadeLoop(i , audioInfo[i] , setter.CS.transitionSpeed );
+    data.sound.FadeLoop(i , audioInfo[i] , setter.CS.transitionSpeed );
   }
 
   public void Enter(){
 
    // print("ENNTNT");
 
-    data.audio.globalLooper.FadeOut();
+    data.sound.globalLooper.FadeOut();
 
-    data.audio.NewLoop();
+    data.sound.NewLoop();
 
     for( int i = 0; i < audioInfo.Length; i++ ){
-      data.audio.FadeLoop(i , audioInfo[i] , data.audio.globalLooper.fadeOutSpeed );
+      data.sound.FadeLoop(i , audioInfo[i] , data.sound.globalLooper.fadeOutSpeed );
     }
   }
 
   public void Exit(){
 
-    print("EXITS");
-    data.audio.globalLooper.FadeIn();
+    data.sound.globalLooper.FadeIn();
     for( int i = 0; i < audioInfo.Length; i++ ){
-      data.audio.FadeLoop(i , 0 , data.audio.globalLooper.fadeInSpeed );
+      data.sound.FadeLoop(i , 0 , data.sound.globalLooper.fadeInSpeed );
     }
   }
 

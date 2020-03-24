@@ -293,7 +293,7 @@ public class Book : Cycle
     public void CheckForStart(){
 
       if( !started ){
-        RaycastHit hit;
+//        RaycastHit hit;
         if( data.inputEvents.hitTag == "Player" && data.state.inPages == false ){
           print("Ya Boi");
           OpenBook();

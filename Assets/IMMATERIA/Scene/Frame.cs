@@ -45,7 +45,7 @@ public class Frame : Cycle {
     }
 
     GameObject cubeInfo = (GameObject)Resources.Load("Prefabs/CubeCollider", typeof(GameObject));
-      
+    
     GameObject cube = Instantiate(cubeInfo);
     cube.tag = "Frame";
     collider = cube.GetComponent<Collider>();
@@ -53,6 +53,7 @@ public class Frame : Cycle {
 
     SetFrame();
 
+   
   }
   
   // Update is called once per frame

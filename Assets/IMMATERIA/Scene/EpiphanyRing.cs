@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,6 +16,10 @@ public class EpiphanyRing : Cycle
     public ReRender[] rerenderers;
 
     public CircleOnTerrain circle;
+
+
+    public Renderer scanRenderer;
+
 
 
 
@@ -40,8 +44,9 @@ public class EpiphanyRing : Cycle
 
     public void Set(){
 
+      print("SETTING");
 
-      data.audio.Play(epiphanyClip);
+      data.sound.Play(epiphanyClip,1.0f,.3f);
       
 
       _Activate();
@@ -64,6 +69,11 @@ public class EpiphanyRing : Cycle
         rerenderers[i].mpb.SetVector("_SetPosition", transform.position );
       }
 
+
+      scanRenderer.enabled = true;
+      data.sourceParticles.EmitOn();
+      print("ON");
+
     }
 
     public override void Bind(){
@@ -85,9 +95,18 @@ public class EpiphanyRing : Cycle
     } 
 
     public override void WhileLiving( float v ){
-      if( Time.time -startTime > 20 && setting ){
+
+      float scanTime = Time.time - startTime;
+
+      scanTime /= 4;
+      scanRenderer.sharedMaterial.SetFloat("_ScanTime", scanTime);
+      if( scanTime > 1 && setting ){
+
+        print("HERE IT IS");
         circle._Deactivate();
         _Deactivate();
+        scanRenderer.enabled = false;
+        data.sourceParticles.EmitOff();
       }
     }
 
@@ -95,6 +114,10 @@ public class EpiphanyRing : Cycle
     public void UnSet(){
       print("UNSET");
       circle._Activate();
+      _Deactivate();
+
+        scanRenderer.enabled = false;
+        data.sourceParticles.EmitOff();
     }
 
     public override void Activate(){

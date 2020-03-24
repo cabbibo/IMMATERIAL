@@ -17,7 +17,6 @@ public class LandTileTris : IndexForm {
 
   public override void Embody(){
 
-    print("embodio");
 
     int[] values = new int[count];
     int index = 0;

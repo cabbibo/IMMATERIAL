@@ -22,7 +22,6 @@ public class InstancedMeshVerts : Form {
   public override void SetStructSize(){ structSize = 16; }
 
   public override void SetCount(){ 
-    DebugThis("huh");
 
     vertsPerMesh = verts.count;
     if( baseForm != null ){ numMesh = (int)((float)baseForm.count * countMultiplier); }

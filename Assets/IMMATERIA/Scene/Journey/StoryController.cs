@@ -71,8 +71,6 @@ public class StoryController : Cycle
 
   public void NextPage(){
 
-    print("HELLLOOSS");
-
     // Only Turn page IF:
     // the story is started
     // we are not currently transitioning
@@ -157,13 +155,12 @@ public class StoryController : Cycle
     if( setter.audio.startClips.Length == 0 ){ 
       DebugThis("This story doesn't have audio yet");
     }else{
-     data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
+     data.sound.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
     }    
     SetUpTransition();
     SetActivePage();
     
 
-    print("PAGE TURN");
     if( forward ){
       oldTransitionPage.OnEndExit.Invoke();
     }else{
@@ -180,7 +177,7 @@ public class StoryController : Cycle
  if( setter.audio.startClips.Length == 0 ){ 
       DebugThis("This story doesn't have audio yet");
     }else{
-    data.audio.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
+    data.sound.Play( setter.audio.endClips[Random.Range(0,setter.audio.endClips.Length)] , 1f , .1f);
       }   
       SetUpTransition();
       oldTransitionPage.OnEndExit.Invoke();
@@ -231,7 +228,7 @@ public class StoryController : Cycle
     if( setter.audio.startClips.Length == 0 ){ 
       DebugThis("This story doesn't have audio yet");
     }else{
-      data.audio.Play( setter.audio.startClips[Random.Range(0,setter.audio.startClips.Length)] , 1f , .11f);
+      data.sound.Play( setter.audio.startClips[Random.Range(0,setter.audio.startClips.Length)] , 1f , .11f);
     }
 
     transitionSpeed = pages[currentPageID].lerpSpeed;

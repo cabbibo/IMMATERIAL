@@ -64,7 +64,7 @@ public class ReduceLife : Life{
   public override void AfterDispatch(){
     numberGroups = numGroups;
     _buffer.GetData(values);
-    float x = 0; float y = 0; float z = 0; float w = 0;
+//    float x = 0; float y = 0; float z = 0; float w = 0;
 
     closest = Vector3.one * 100000;
     closestID = -1;

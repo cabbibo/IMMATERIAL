@@ -5,7 +5,9 @@ using UnityEngine;
 public class State : Cycle
 {
 
-  public bool DOFULL;
+
+
+  public bool DOFULL; // Sets up our full state on rebuild
 
 
   public AudioClip selectionClip;
@@ -240,20 +242,25 @@ public Story story;
 
 
   public void PutDownBook(){
+
+    print("Putting down book");
     if( data.playerControls.epiphanyRing.circle.body.mpb == null ){ 
       data.playerControls.epiphanyRing.circle.body.mpb  = new MaterialPropertyBlock();
        print("Body material getting recreated"); 
      }
     data.playerControls.epiphanyRing.circle.body.mpb.SetFloat("_StartTime" , Time.time );
     data.playerControls.epiphanyRing.circle.body.mpb.SetFloat("_Setting" , 0 );
-    //data.playerControls.epiphanyRing.UnSet();
+    data.playerControls.epiphanyRing.UnSet();
     data.playerControls.OnGroundBook.SetActive(true);
     data.playerControls.InHandBook.SetActive(false);
     data.state.hasPickedUpBook = false;
   }
 
   public void PickUpBook(){
-    //data.playerControls.epiphanyRing.Set();
+
+
+    print("Pick Up Book");
+    data.playerControls.epiphanyRing.Set();
     data.playerControls.OnGroundBook.SetActive(false);
     data.playerControls.InHandBook.SetActive(true);
     data.state.hasPickedUpBook = true;
@@ -304,7 +311,7 @@ public Story story;
 
   public void PlaySelection(){
    // print("WASsds");
-    data.audio.Play( selectionClip ,1f , 1f );
+    data.sound.Play( selectionClip ,1f , 1f );
   }
 
 

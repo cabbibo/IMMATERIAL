@@ -26,7 +26,7 @@ public class Data : Cycle
   public State state;
   public Tween tween;
 
-  public AudioPlayer audio;
+  public AudioPlayer sound;
 
   public CameraController cameraControls;
   public Character playerControls;
@@ -41,6 +41,7 @@ public class Data : Cycle
   public TextParticles textParticles;
   public GuideParticles guideParticles;
   public GuideParticles monolithParticles;
+  public GuideParticles sourceParticles;
   public TerrainTap  terrainTap;
 
   public Painter painter;
@@ -84,13 +85,14 @@ public class Data : Cycle
     if( gpuCollisions != null ){ SafePrepend(gpuCollisions); }
     if( guideParticles != null ){ SafePrepend(guideParticles); }
     if( monolithParticles != null ){ SafePrepend(monolithParticles); }
+    if( sourceParticles != null ){ SafePrepend(sourceParticles); }
     if( tiler != null ){ SafePrepend(tiler); }
     if( terrainTap != null ){ SafePrepend(terrainTap); }
     if( state != null ){ SafePrepend(state); }
     if( painter != null ){ SafePrepend(painter); }
     if( helper != null ){ SafePrepend(helper); }
     if( sharedMeshes != null ){ SafePrepend(sharedMeshes); }
-    if( audio != null ){ SafePrepend(audio); }
+    if( sound != null ){ SafePrepend(sound); }
     if( land != null ){ SafePrepend(land); }
 
   }

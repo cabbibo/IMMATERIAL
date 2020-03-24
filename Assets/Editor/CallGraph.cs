@@ -101,7 +101,7 @@ public void Update()
       get { 
         if( buildTree == null ){  buildTree = GameObject.Find("BuildTree").GetComponent<BuildTree>(); } 
 
-        camera = buildTree.camera;
+        camera = buildTree.GetComponent<Camera>();
         renderTexture = camera.targetTexture;
         return (renderTexture != null && camera != null && buildTree != null ); 
       }

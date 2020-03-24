@@ -6,7 +6,7 @@ public class CopyPosition : Cycle
 {
   public Transform toCopy;
 
-  public void WhileLiving( float v ){
+  public override void WhileLiving( float v ){
     transform.position = toCopy.position;
   }
 
