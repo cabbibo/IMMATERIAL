@@ -74,6 +74,10 @@ public Story story;
 
   public bool frameShown;
 
+  public bool inPerimeter;
+  public bool storyFinished;
+  public float perimeterFadeVal;
+
 
 
   public override void Create(){

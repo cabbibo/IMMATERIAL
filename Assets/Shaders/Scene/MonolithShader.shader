@@ -30,6 +30,8 @@
       float3 _StoryPositions[30];
       float3 _PlayerPosition;
 
+      float _Fade;
+
 
       struct VertexIn{
          float4 position  : POSITION; 

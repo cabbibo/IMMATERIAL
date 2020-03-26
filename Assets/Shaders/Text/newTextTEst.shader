@@ -20,7 +20,8 @@
 
        
     Pass {
-      Tags {"Queue"="Transparent+10" "RenderType"="Transparent" }
+      //Tags {"Queue"="Transparent+10" "RenderType"="Transparent" }
+      Tags{ "LightMode" = "ForwardBase" }
       Cull Off
        //ZWrite Off
         Blend One One
@@ -29,6 +30,8 @@
       #pragma target 4.5
       #pragma vertex vert
       #pragma fragment frag
+
+      #pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
       
       #include "UnityCG.cginc"
       #include "AutoLight.cginc"    
@@ -96,6 +99,7 @@
         o.nor = fNor;
         o.uv =  fUV;
 
+        UNITY_TRANSFER_SHADOW(o,o.worldPos);
         return o;
       }
 
@@ -112,7 +116,7 @@
         d /= 2;
         if( d < .4 ){ discard; }
 
-        float3 col = d;
+        float3 col = d;//float3(1,0,0);
         return float4( col , 1);
         //return 1;
 
@@ -121,6 +125,108 @@
       ENDCG
     }
 
+
+
+
+    Pass
+    {
+      Tags{ "LightMode" = "ShadowCaster" }
+
+
+
+      CGPROGRAM
+
+      #pragma target 4.5
+      #pragma vertex vert
+      #pragma fragment frag
+
+      #pragma multi_compile_shadowcaster
+      #pragma fragmentoption ARB_precision_hint_fastest
+
+      #include "UnityCG.cginc"
+      sampler2D _MainTex;
+      uniform sampler2D _TextMap;
+      uniform sampler2D _CutoffMap;
+      uniform float _NoiseSize;
+      uniform float _Thickness;
+      uniform float _Falloff;
+
+      #include "../Chunks/ShadowCasterPos.cginc"
+   
+
+        struct Vert{
+        float3 pos;
+        float3 vel;
+        float3 nor;
+        float3 lock;
+        float2 uv;
+        float2 offset;
+        float4 extra;
+      };
+
+      StructuredBuffer<Vert> _VertBuffer;
+      StructuredBuffer<int> _TriBuffer;
+
+
+ struct v2f {
+        V2F_SHADOW_CASTER;
+        float3 nor : NORMAL;
+        float3 worldPos : TEXCOORD1;
+        float2 uv : TEXCOORD0;
+      };
+
+
+      v2f vert(appdata_base input, uint id : SV_VertexID)
+      {
+        v2f o;
+        Vert v = _VertBuffer[_TriBuffer[id]];
+
+        float4 position = ShadowCasterPos(v.pos, -v.nor);
+        o.pos = UnityApplyLinearShadowBias(position);
+        o.worldPos = v.pos;
+        o.uv = v.uv;
+        return o;
+      }
+ 
+      v2f vert(uint id : SV_VertexID) {
+
+        v2f o;
+        Vert v = _VertBuffer[_TriBuffer[id]];
+
+        float4 position = ShadowCasterPos(v.pos, -v.nor);
+        o.pos = UnityApplyLinearShadowBias(position);
+        o.worldPos = v.pos;
+        o.uv = v.uv;
+        return o;
+      }
+
+      float4 frag(v2f v) : COLOR {
+    
+        float d;
+        float d2;
+        d = tex2D(_TextMap,v.uv).x;
+        d2 = tex2D(_CutoffMap,v.uv * float2(8,1) * _NoiseSize + _Time.x * .004).z;
+
+        d = lerp(d,d*d2,d2)*1.2;// * 4;//d-d2 * _NoisePower;//smoothstep( d * 10 , 0,1);
+
+        d = clamp( (d - _Thickness) * _Falloff , -1, 1) + 1;
+        d /= 2;
+        if( d < .2 ){ discard; }
+
+        float3 col = d;//float3(1,0,0);
+        return float4( col , 1);
+        //return 1;
+
+      }
+
+      ENDCG
+    }
+  
+    
+
+
   }
+
+    FallBack "Diffuse"
 
 }

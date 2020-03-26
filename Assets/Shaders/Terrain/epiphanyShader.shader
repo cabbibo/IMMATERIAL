@@ -15,6 +15,8 @@ Shader "Terrain/epiphany" {
     Tags { "Queue" = "Transparent" }
         LOD 200
 Blend One One
+//Cull Back
+//Blend SrcAlpha OneMinusSrcAlpha 
 
         CGPROGRAM
 
@@ -103,6 +105,7 @@ float4 terrainSampleColor( float4 pos ){
 
 
         float _ScanTime;
+        sampler2D _AudioMap;
 
 
         void surf (Input v, inout SurfaceOutputStandard o) {
@@ -120,12 +123,15 @@ float4 terrainSampleColor( float4 pos ){
             float3 c1 = 0;
             float3 c2 = _Color.xyz* saturate(max( max( sin( v.worldPosition.x ),0) , max( sin( v.worldPosition.z ),0)) - .9)*2;// * sin(v.worldPosition.z));
 
-            float tCol = tex2D(_MainTex,v.posUV *300).x;
+            float3 tCol = tex2D(_MainTex, v.posUV * 400).x;
             float on =  1-abs((length( dif )-_ScanTime * 1000)) * (.1-(pow(_ScanTime,.1) *.1)); //clamp(1-(length( dif )-_ScanTime * 2000) * .01,0,1);
 
-
-            o.Emission.xyz = saturate(on) * min( pow(_ScanTime,.3) , ( 1-_ScanTime)) * 10* (v.nor * .5 + .5 ) * tCol * tCol;// / 1000;//lerp( 0 , c2 , l * .1);//_Color * (v.nor * .5 + .5)  - l;// hsv(v.normal.y * .5,1,1);
-
+            float scanVal = min( pow(_ScanTime,.3) , ( 1-_ScanTime));
+            tCol = tex2D(_AudioMap,abs((tCol.x * .3+ length(dif) * .01 - .01 * _Time.y))  %.3).xyz;
+            float fScan = (clamp(-(length(dif) - _ScanTime * _ScanTime*2000),0,100)/100) *scanVal *  clamp( (1-_ScanTime) * 1000 - length( dif) , 0 ,100)/100;
+            //o.Emission.xyz =(clamp(-(length(dif) - _ScanTime * _ScanTime*2000),0,100)/100) *scanVal * 10* (v.nor * .5 + .5 ) * tCol * tCol;// saturate(on);//saturate(on) * min( pow(_ScanTime,.3) , ( 1-_ScanTime)) * 10* (v.nor * .5 + .5 ) * tCol * tCol;// / 1000;//lerp( 0 , c2 , l * .1);//_Color * (v.nor * .5 + .5)  - l;// hsv(v.normal.y * .5,1,1);
+            o.Emission.xyz = fScan * 4 * (v.nor * .5 + .5 ) * tCol * tCol;// saturate(on);//saturate(on) * min( pow(_ScanTime,.3) , ( 1-_ScanTime)) * 10* (v.nor * .5 + .5 ) * tCol * tCol;// / 1000;//lerp( 0 , c2 , l * .1);//_Color * (v.nor * .5 + .5)  - l;// hsv(v.normal.y * .5,1,1);
+            o.Alpha = 0;//length( o.Emission.xyz );
 
             //if( ((v.worldPosition.y * .3)+ noise( v.worldPosition * .2 ) * .1)  % 1 < .8 ){ discard; }
             //v.color.w * 1;//float3(1,1,1);//c.rgb;

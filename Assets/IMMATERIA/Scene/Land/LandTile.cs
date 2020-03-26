@@ -19,6 +19,8 @@ public class LandTile : Cycle
 
   public EventTypes.BaseEvent OnSet;
 
+  public HairBasic hairSet;
+
 
  
   public override void Create(){

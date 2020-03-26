@@ -180,7 +180,7 @@ void Set (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 id 
 
    float4 vals = _HeightMap.SampleLevel(sampler_HeightMap, (base.pos.xz-.5) * _MapSize  , 0);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
  
-    vert.debug.x = vals.w * _HairLength  + hash( float(bID)) * .1 * _HairLength;//((sin(float(bID)*10000)+ _HairVariance) / _HairVariance ) * _HairLength;
+    vert.debug.x = vals.w * _HairLength;//  + hash( float(bID)) * .1 * _HairLength;//((sin(float(bID)*10000)+ _HairVariance) / _HairVariance ) * _HairLength;
 
 
 

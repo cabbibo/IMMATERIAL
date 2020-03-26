@@ -46,11 +46,14 @@ Tags { "RenderType"="Opaque" }
             float _HueOffset;
             float _HueSize;
 
+            float _ScanTime;
+
             struct v2f { 
               float4 pos : SV_POSITION; 
               float3 nor : NORMAL;
               float2 uv :TEXCOORD0; 
               float3 worldPos :TEXCOORD1;
+              float noiseV :TEXCOORD3;
               UNITY_SHADOW_COORDS(2)
             };
             float4 _Color;
@@ -64,9 +67,13 @@ Tags { "RenderType"="Opaque" }
 
         UNITY_INITIALIZE_OUTPUT(v2f, o);
                 Vert v = _VertBuffer[_TriBuffer[vid]];
+
+                float noiseV = noise( v.pos + float3(_Time.y * .3,_Time.y * .5,0) );
+
+                v.pos += float3( 0 , noiseV * .1, 0 );
                 o.pos = mul (UNITY_MATRIX_VP, float4(v.pos,1.0f));
 
-
+                o.noiseV = noiseV;
                 o.nor = v.nor;
                 o.uv = v.uv;
                 o.worldPos = v.pos;
@@ -88,20 +95,19 @@ Tags { "RenderType"="Opaque" }
 fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
                 float val = -dot(normalize(_WorldSpaceLightPos0.xyz),normalize(v.nor));// -DoShadowDiscard( i.worldPos , i.uv , i.nor );
 
-                float lookupVal =  max(min( v.uv.y  * .01,( 1- v.uv.y ) ),0);//2 * tex2D(_MainTex,v.uv * float2(4 * saturate(min( v.uv.y * 4,( 1- v.uv.y ) )) ,.8) + float2(0,.2));
                
 
                 float4 tCol = tex2D(_MainTex, v.uv *   float2( 10, 1 ) + .1 - float2(0 , .05)*_Time.y);
 
-
+                float lookupVal =  max(min( v.uv.y  * 1.1,( 1- v.uv.y ) * 2 ) ,0);//2 * tex2D(_MainTex,v.uv * float2(4 * saturate(min( v.uv.y * 4,( 1- v.uv.y ) )) ,.8) + float2(0,.2));
                 float tVal = tCol.x * tCol.x * tCol.x *30 + .3*abs(noise( float3(v.uv.x * 1000,v.uv.y * 20, 0)));
-                float cutoff = saturate(((_Time.y - _StartTime - 8 ) / 2) * _Setting);
-                if( ( lookupVal + 1.3) - 20*tVal  <  cutoff * .3   ){ discard;}
+                
+                if( ( lookupVal ) - 1*tVal -.2-_ScanTime  <  .01  ){ discard;}
 
                // if( v.uv.y + tCol.x * .1> .9){ discard;}
 
                 fixed4 col =   tex2D(_ColorMap , float2( tVal * 1 + (1-shadow  * .05)+ .0 + lookupVal* lookupVal * .1  + v.uv.y * _HueSize + _HueOffset , 0) );//* 20-10;//*tCol* lookupVal*4;//* 10 - 1;
-                    col *= tex2D(_AudioMap , tVal );
+                col *= tex2D(_AudioMap , tVal ) + max(0,v.noiseV -.5);
                     
                    // col = 1;
                 return col;
@@ -133,19 +139,21 @@ fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
       #pragma fragmentoption ARB_precision_hint_fastest
 
       #include "UnityCG.cginc"
+      #include "../Chunks/noise.cginc"
       sampler2D _MainTex;
     float _StartTime;
+    float _ScanTime;
             float _Setting;
       float DoShadowDiscard( float3 pos , float2 uv ){
         
-                float lookupVal =  max(min( uv.y * 2,( 1- uv.y ) ) * 1.5,0);//2 * tex2D(_MainTex,v.uv * float2(4 * saturate(min( v.uv.y * 4,( 1- v.uv.y ) )) ,.8) + float2(0,.2));
-               
+                float4 tCol = tex2D(_MainTex, uv *   float2( 10, 1 ) + .1 - float2(0 , .05)*_Time.y);
 
-                float4 tCol = tex2D(_MainTex, uv *   float2( 10, 1 ) + .1- float2(0 , .05)*_Time.y);
-
-                 float cutoff = saturate(((_Time.y - _StartTime - 8 ) / 2) * _Setting);
-                if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .8  + cutoff * .3){ return 0;}else{ return 1;}//     if( ( lookupVal + 1.3) - 1.2*length( tCol ) < .5 ){ return 0;}else{return 1;}
-      }
+                float lookupVal =  max(min( uv.y  * 1.1,( 1- uv.y ) * 2 ) ,0);//2 * tex2D(_MainTex,uv * float2(4 * saturate(min( uv.y * 4,( 1- uv.y ) )) ,.8) + float2(0,.2));
+                float tVal = tCol.x * tCol.x * tCol.x *30 + .3*abs(noise( float3(uv.x * 1000,uv.y * 20, 0)));
+                float v = 1;
+                if( ( lookupVal ) - 1*tVal -.2-_ScanTime  <  .01  ){ v=0;}
+                return v;
+   }
 
       #include "../Chunks/Struct16.cginc"
 

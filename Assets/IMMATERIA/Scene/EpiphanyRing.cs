@@ -60,6 +60,8 @@ public class EpiphanyRing : Cycle
       circle.body.mpb.SetFloat("_StartTime" , Time.time );
       circle.body.mpb.SetFloat("_Setting" , 1 );
 
+      circle.body.mpb.SetFloat("_ScanTime" ,0 );
+
       for( int i = 0; i < rerenderers.Length; i++ ){
 
         rerenderers[i].mpb.SetFloat("_ID",i+1);
@@ -98,15 +100,20 @@ public class EpiphanyRing : Cycle
 
       float scanTime = Time.time - startTime;
 
-      scanTime /= 4;
+      scanTime /= 10;
       scanRenderer.sharedMaterial.SetFloat("_ScanTime", scanTime);
+      circle.body.mpb.SetFloat("_ScanTime" ,scanTime );
+
+      if( scanTime > .1 && setting ){
+
+        data.sourceParticles.EmitOff();
+      }
       if( scanTime > 1 && setting ){
 
         print("HERE IT IS");
         circle._Deactivate();
         _Deactivate();
         scanRenderer.enabled = false;
-        data.sourceParticles.EmitOff();
       }
     }
 

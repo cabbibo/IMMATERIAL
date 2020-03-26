@@ -12,6 +12,8 @@ public class Monolith : Cycle
 
     public bool isBook;
 
+    public float fade;
+
     public GameObject[] storyMarkers;
     public int whichStory;
 
@@ -104,6 +106,7 @@ public class Monolith : Cycle
       mpb.SetVectorArray("_StoryPositions" , positions );
       mpb.SetInt("_NumStories" , positions.Length );
       mpb.SetInt("_WhichStory" , whichStory );
+      mpb.SetFloat("_Fade", fade);
       monolith.GetComponent<MeshRenderer>().SetPropertyBlock( mpb );
       
      // if( isBook ){ transform.rotation = Quaternion.AngleAxis(90,Vector3.right);}
@@ -145,4 +148,18 @@ public class Monolith : Cycle
 
     }
 
+    public void FadeIn(){ 
+      print( "hnhiiii");
+      gameObject.SetActive(true);
+      data.tween.AddTween(1 , tweenIn ); 
+    }
+
+    public void FadeOut(){ print( "had"); data.tween.AddTween(1 , tweenOut , end ); }
+
+    public void tweenIn(float v){ fade = v; }
+    public void tweenOut(float v){ fade = v; }
+    public void end(){gameObject.SetActive(false); }
+
+
+    
 }

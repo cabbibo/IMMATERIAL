@@ -54,6 +54,8 @@
             StructuredBuffer<Vert> _VertBuffer;
             StructuredBuffer<int> _TriBuffer;
 
+            sampler2D _AudioMap;
+
             v2f vert ( uint vid : SV_VertexID )
             {
                 v2f o;
@@ -63,20 +65,20 @@
 
                 float angle = atan2( sPos.z , sPos.x );
 
-                float distance = (_ID + 4 ) * .05 *  pow( ( _Time.y  - _StartTime)* 6 , 2);
+                float distance = (_ID * 4 + 8 ) * .05 *  pow( ( _Time.y  - _StartTime)* 2 , 2);
                 //float distance = 10;//(_ID + 4 ) * .05 *  pow( ( _Time.y  - _StartTime) , 2);
                 float r =  (length( sPos )* ( distance/3)) + distance;
 
 
 
-                float3 p = sin(angle) * r * float3(1,0,0) - cos(angle) * r * float3(0,0,1);
+                float3 p = sin(angle * 6) * r * float3(1,0,0) - cos(angle * 6) * r * float3(0,0,1);
 
                 float3 fPos = _SetPosition + p;
 
                 o.nor = terrainGetNormal( fPos );
                 //o.uv = v.texcoord.xy;
 
-                o.worldPos = terrainWorldPos( fPos ) + float3(0,distance * 1 + .3,0);// - float4(0,0,_Vertical,0);
+                o.worldPos = terrainWorldPos( fPos ) + float3(0,distance * 1 + _ID * distance * .1,0);// - float4(0,0,_Vertical,0);
                // v.vertex = terrainNewPos( v.vertex )- float4(0,0,_Vertical,0);//mul( unity_WorldToObject, worldPos);
                
 
@@ -103,6 +105,8 @@
                 }else{
                     col = tex2D(_RibbonMap2, float2(sin(col.x * 2 + _ID * .1) * .3 + .7,0));
                 }
+
+                col *= 2*tex2D(_AudioMap , v.uv);
 
                 col /= (1 + .01 * v.dist);// (.5+ .1*dif);
 
