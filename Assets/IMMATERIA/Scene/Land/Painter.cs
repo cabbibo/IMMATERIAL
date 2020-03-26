@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Rendering;
 
 
 [ExecuteInEditMode]
@@ -12,20 +13,27 @@ public class Painter : Simulation
  public int brushType;
 
 
+
+
   public string terrainPath;
 
 
   public bool painting;
+
   public PaintVerts verts;
   public PaintTris tris;
+
+  // how many undos we get!
+  public int undoBufferSize;
+  public int currentUndoLocation;
+
+  public List<float[]> undoBuffer;
+
   public Material windDebugMat;
   public Material grassDebugMat;
   public Material planeDebugMat;
 
 
-  public int undoBufferSize;
-  public int currentUndoLocation;
-  public List<float[]> undoBuffer;
 
   public bool drawPlane;
   public bool drawGrass;
@@ -33,36 +41,54 @@ public class Painter : Simulation
 
   public string safeName;
 
+
+  //Texture taht informs the start
   public Texture startTexture;
   public Texture undoTexture;
 
 
+  // getting position and direction
   public Vector3 paintPosition;
   private Vector3 oPP;
   public Vector3 paintDirection;
 
+  // brush size
   public float paintSize;
   public float paintOpacity;
+
+  // Which object we are painting
   public float normalOrHeight;
-private Color[] colors;
-private float[] values;
+
+
+  private Color[] colors;
+  private float[] values;
 
 
   public float reset;
 
   public Transform paintTip;
 
+  private MaterialPropertyBlock mpb;
+
+
+
+
+  // to get our data back from gpu
+  Queue<AsyncGPUReadbackRequest> _requests = new Queue<AsyncGPUReadbackRequest>();
+
   public override void Create(){
+
+
+    if( mpb == null ){ mpb = new MaterialPropertyBlock(); }
+
     SafeInsert( tris );
 
     if( undoBuffer == null ){ 
       undoBuffer = new List<float[]>(); 
-    }//.Clone();
+    }
   
     if( undoTexture == null ){
-
       undoTexture = new Texture2D(startTexture.width, startTexture.height);
-
       Graphics.CopyTexture(startTexture, undoTexture);
     }
 
@@ -74,11 +100,12 @@ private float[] values;
   // Only Recreate if its not the correct size;
   public override void OnGestated(){
 
+    print("HERE WE GOOO");
+
     Load();
 
     ExtractColors();
     UpdateLand();
-
 
     if( undoBuffer.Count != undoBufferSize ){
       undoBuffer = new List<float[]>(undoBufferSize);
@@ -87,14 +114,16 @@ private float[] values;
         undoBuffer.Add(values);
       }
     }
+  
   }
+  
+
+
+  // binding all our information!
   public override void Bind(){
 
     life.BindPrimaryForm("_VectorBuffer", verts);
 
-//    print(this.paintPosition);
-    
-    
     life.BindVector3( "_PaintPosition"  , () => this.paintPosition  );
     life.BindVector3( "_PaintDirection" , () => this.paintDirection );
     life.BindFloat(   "_PaintSize"      , () => this.paintSize      );
@@ -110,36 +139,35 @@ private float[] values;
   }
 
   public override void WhileDebug(){
+    
+    mpb.SetInt("_Dimensions", verts.width);
+    mpb.SetInt("_Count", verts.count);
+    mpb.SetBuffer("_VertBuffer", verts._buffer);
     if( drawPlane ){
-      planeDebugMat.SetPass(0);
-      planeDebugMat.SetInt("_Dimensions", verts.width );
-      Graphics.DrawProceduralNow( MeshTopology.Triangles ,tris.count );
+      Graphics.DrawProcedural(planeDebugMat,  new Bounds(transform.position, Vector3.one * 5000), MeshTopology.Triangles, tris.count , 1, null, mpb, ShadowCastingMode.Off, true, LayerMask.NameToLayer("Debug"));
     }
 
 
     if( drawGrass ){
-      grassDebugMat.SetPass(0);
-
-    grassDebugMat.SetBuffer("_VertBuffer", verts._buffer);
-    grassDebugMat.SetInt("_Count",verts.count);
-
-      Graphics.DrawProceduralNow( MeshTopology.Triangles ,verts.count * 3 );
+       Graphics.DrawProcedural(grassDebugMat,  new Bounds(transform.position, Vector3.one * 5000), MeshTopology.Triangles, verts.count * 3 , 1, null, mpb, ShadowCastingMode.Off, true, LayerMask.NameToLayer("Debug"));
+   
     }
 
 
     if( drawWind ){
-
       windDebugMat.SetPass(0);
-
-    windDebugMat.SetBuffer("_VertBuffer", verts._buffer);
-    windDebugMat.SetInt("_Count",verts.count);
+      windDebugMat.SetBuffer("_VertBuffer", verts._buffer);
+      windDebugMat.SetInt("_Count",verts.count);
       Graphics.DrawProceduralNow( MeshTopology.Triangles ,verts.count * 3 );
     }
 
 
   }
 
+
+
   public void WhileDown(Ray ray){
+    
     paintDirection = paintPosition;
     paintPosition = data.land.Trace( ray.origin, ray.direction);
     paintTip.position = paintPosition;
@@ -147,16 +175,14 @@ private float[] values;
 
     paintDirection = -(paintDirection - paintPosition).normalized;
 
+    // update our life
     life.YOLO();
-    //Save();
 
   }
 
 
 public void ResetToOriginal(){
-  reset = 2;
-  life.YOLO();
-  reset = 0;
+  Load();
 }
 
 
@@ -197,42 +223,57 @@ public void ResetToFlat(){
     }
 
   }
-   public void Save(){
 
-    print("helloooszo");
+
+  public void ExtractColors( float[] v){
+   
+    //int count = values.Length / verts.structSize;
+
+    values = v;
+    colors =  new Color[verts.count];
+    for( int i = 0; i < verts.count; i ++ ){
+      
+      // extracting height
+      float h = values[ i * verts.structSize + 1 ] / data.land.height;
+      
+      // extracting flow verts
+      float x = values[ i * verts.structSize + 6 ] * .5f + .5f;
+      float z = values[ i * verts.structSize + 8 ] * .5f + .5f;
+
+      // extracting grass height
+      float a = Mathf.Clamp( values[ i * verts.structSize + 11 ], .1f , .9999f);
+
+      colors[i] = new Color( h,x,z,a);
+
+    }
+
+  }
+   public void Save(){
 
     ExtractColors();
     propogateUndoBuffer();
     UpdateLand();
-
 
   }
 
   public void UltraSave(){
 
+    print("HELLLOSOS ULTA");
+
     ExtractColors();
     propogateUndoBuffer();
     UpdateLand();
 
-
-    string path = terrainPath + "safe";
+    string path = "StreamingAssets/Terrain/safe";
     Saveable.Save( verts , path );
 
-    SaveTextureAsPNG( data.land.heightMap , "Assets/"+ path + ".png");
+    SaveTextureAsPNG( data.land.heightMap , Application.dataPath+"/" + path + ".png");
   
-
-
   }
 
   public void Load(){
-
-//    print("wait why am I loading");
-
-    string path = terrainPath + "safe";
+    string path = "StreamingAssets/Terrain/safe";
     Saveable.Load( verts , path );
-
-//    print("loaded");
-
   }
 
 
@@ -253,10 +294,8 @@ public void ResetToFlat(){
 
   public void UpdateLand(){
 
-
-        data.land.heightMap.SetPixels(colors,0);
-        data.land.heightMap.Apply(true);
-
+    data.land.heightMap.SetPixels(colors,0);
+    data.land.heightMap.Apply(true);
 
   }
 
@@ -337,6 +376,25 @@ public void SetBrushOpacity(Slider s){
    }
 
 
+
+
+   public override void WhileLiving( float v ){
+      
+      while (_requests.Count > 0){
+            var req = _requests.Peek();
+
+            if (req.hasError){
+                Debug.Log("GPU readback error detected.");
+                _requests.Dequeue();
+            }else if (req.done){
+                var buffer = req.GetData<float>();
+                ExtractColors( buffer.ToArray() );
+                _requests.Dequeue();
+            }else{
+                break;
+            }
+        }
+   }
   
 
 

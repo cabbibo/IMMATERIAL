@@ -9,6 +9,7 @@ TagManager:
   - Pond
   - Monolith
   - CloseButton
+  - Gem
   layers:
   - Default
   - TransparentFX

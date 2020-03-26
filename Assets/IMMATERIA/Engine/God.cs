@@ -13,7 +13,7 @@ public bool started;
 public bool godPause;
 public bool dontDoIt;
 
-public List<Cycle> cycles;
+public List<Cycle> _cycles;
 public List<Form> forms;
 public List<Life> lifes;
 public List<Binder> binders;
@@ -21,8 +21,8 @@ public List<GameObject> objects;
 
 public override void Create(){
     Application.runInBackground = true;
-   if( cycles == null ){ 
-        cycles = new List<Cycle>(); 
+   if( _cycles == null ){ 
+        _cycles = new List<Cycle>(); 
     }
     if( forms == null ){ 
         forms = new List<Form>(); 
@@ -40,7 +40,7 @@ public override void Create(){
         objects = new List<GameObject>(); 
     }
 
-    cycles.Clear();
+    _cycles.Clear();
     lifes.Clear();
     forms.Clear();
     binders.Clear();
@@ -78,7 +78,7 @@ public void GetCycleInfo( Cycle cycle ){
     }
     if( newGO ){ objects.Add( cycle.gameObject ); }
 
-    cycles.Add( cycle );
+    _cycles.Add( cycle );
     
     if( cycle is Form ){
         forms.Add( (Form)cycle );

@@ -31,8 +31,8 @@ public class BuildCycleTreeCPU : Cycle
 
     public override void OnBirthed(){
       Debug.Log( cycleInfo.Count );
-      Debug.Log( god.cycles.Count );
-      if( god.cycles.Count != (cycleInfo.Count+1) ){
+      Debug.Log( god._cycles.Count );
+      if( god._cycles.Count != (cycleInfo.Count+1) ){
         Rebuild();
       }
 

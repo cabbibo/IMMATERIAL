@@ -139,6 +139,8 @@ public class Saveable {
 
       stream.Close();
     }else{
+
+      Debug.Log(Application.dataPath + "/"+name+".dna");
       Debug.Log("Why would you load something that doesn't exist?!??!?");
     }
   }

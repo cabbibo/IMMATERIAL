@@ -6,7 +6,7 @@ using System.IO;
 
 using System.Runtime.Serialization.Formatters.Binary;
 
-[ExecuteInEditMode]
+
 public class Land : Cycle {
 
   public float size;
@@ -24,6 +24,7 @@ public class Land : Cycle {
   
 
   public override void Create(){
+
 
 
     heightMap = new Texture2D(1024,1024);
@@ -50,6 +51,7 @@ public class Land : Cycle {
   // Makes sure we are using the correct values for heightmap, terrainSize etc.
   // OPTIMIZATION: won't need 'SetGlobalTexture' all the time!
   public override void WhileLiving (float l) {
+
 
     Shader.SetGlobalTexture("_HeightMap", heightMap);
     Shader.SetGlobalFloat("_TerrainSize", size);
@@ -102,10 +104,7 @@ public class Land : Cycle {
       float h = SampleHeight( pos );
 
       if( pos.y < h ){
-
-       // print( h);
         return pos;
-//        break;
       }
 
     }
@@ -125,9 +124,7 @@ public class Land : Cycle {
 
       if( pos.y < h ){
         hit = true;
-       // print( h);
         return pos;
-//        break;
       }
 
     }
@@ -154,6 +151,9 @@ public class Land : Cycle {
     FileStream stream = File.OpenRead(Application.streamingAssetsPath+ "/"+name+".dna");
     float[] data = bf.Deserialize(stream) as float[];
     stream.Close();
+
+    print("loading1111");
+    print( data.Length);
 
     Color[] colors =  new Color[data.Length/4];
     for( int i = 0; i < data.Length / 4; i ++ ){

@@ -109,7 +109,7 @@ float4 terrainSampleColor( float4 pos ){
             float3 c1 = 0;
             float3 c2 = _Color.xyz* saturate(max( max( sin( v.worldPosition.x ),0) , max( sin( v.worldPosition.z ),0)) - .9)*2;// * sin(v.worldPosition.z));
 
-            o.Emission.xyz = _Color;//saturate(sin(length(dif) * .1 - _Time.y * 3));// / 1000;//lerp( 0 , c2 , l * .1);//_Color * (v.nor * .5 + .5)  - l;// hsv(v.normal.y * .5,1,1);
+            o.Emission.xyz = (v.nor * .5 + .5) * v.color.w;//1;///_Color;//saturate(sin(length(dif) * .1 - _Time.y * 3));// / 1000;//lerp( 0 , c2 , l * .1);//_Color * (v.nor * .5 + .5)  - l;// hsv(v.normal.y * .5,1,1);
 
 
             //if( ((v.worldPosition.y * .3)+ noise( v.worldPosition * .2 ) * .1)  % 1 < .8 ){ discard; }
@@ -117,6 +117,7 @@ float4 terrainSampleColor( float4 pos ){
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
+
     
         }
 

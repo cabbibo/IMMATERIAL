@@ -9,6 +9,7 @@ public class SceneCircleVerts : Particles
 
 
   public override void SetCount(){
+    DebugThis( ""+cols );  print( rows);
     count = rows * cols;
   }
 

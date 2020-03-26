@@ -102,6 +102,7 @@ public class PerimeterChecker : Cycle
 
   public void DoFade( float v ){
     OnDoFade.Invoke(v);
+    Shader.SetGlobalFloat("_FadeValue",v);
   }
 
 

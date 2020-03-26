@@ -30,6 +30,9 @@ public class CircleOnTerrain : Cycle
 
     verts = (SceneCircleVerts)(body.verts);
 
+    verts.rows = rows;
+    verts.cols = columns;
+
   }
 
   public override void Bind(){
