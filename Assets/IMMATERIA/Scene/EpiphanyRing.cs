@@ -119,8 +119,7 @@ public class EpiphanyRing : Cycle
 
 
     public void UnSet(){
-      print("UNSET");
-      circle._Activate();
+      //circle._Activate();
       _Deactivate();
 
         scanRenderer.enabled = false;

@@ -275,6 +275,7 @@ animator.runtimeAnimatorController = animator.runtimeAnimatorController;
         float h2 = data.land.SampleHeight( transform.position + transform.forward * .5f );
 
 
+        if( animator.runtimeAnimatorController == null ){ animator.Play(0,0,0); }
     //    print( (1-d) * 10);
         animator.SetFloat("Steepness", (1-d) * 4 );
 

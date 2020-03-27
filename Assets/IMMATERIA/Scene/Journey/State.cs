@@ -247,7 +247,6 @@ public Story story;
 
   public void PutDownBook(){
 
-    print("Putting down book");
     if( data.playerControls.epiphanyRing.circle.body.mpb == null ){ 
       data.playerControls.epiphanyRing.circle.body.mpb  = new MaterialPropertyBlock();
        print("Body material getting recreated"); 
@@ -264,7 +263,7 @@ public Story story;
 
 
     print("Pick Up Book");
-    data.playerControls.epiphanyRing.Set();
+    //data.playerControls.epiphanyRing.Set();
     data.playerControls.OnGroundBook.SetActive(false);
     data.playerControls.InHandBook.SetActive(true);
     data.state.hasPickedUpBook = true;

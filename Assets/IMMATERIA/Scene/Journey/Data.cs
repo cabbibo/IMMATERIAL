@@ -42,6 +42,8 @@ public class Data : Cycle
   public GuideParticles guideParticles;
   public GuideParticles monolithParticles;
   public GuideParticles sourceParticles;
+
+  public GuideParticles extraParticles;
   public TerrainTap  terrainTap;
 
   public Painter painter;
@@ -86,6 +88,7 @@ public class Data : Cycle
     if( guideParticles != null ){ SafePrepend(guideParticles); }
     if( monolithParticles != null ){ SafePrepend(monolithParticles); }
     if( sourceParticles != null ){ SafePrepend(sourceParticles); }
+    if( extraParticles != null ){ SafePrepend(extraParticles); }
     if( tiler != null ){ SafePrepend(tiler); }
     if( terrainTap != null ){ SafePrepend(terrainTap); }
     if( state != null ){ SafePrepend(state); }

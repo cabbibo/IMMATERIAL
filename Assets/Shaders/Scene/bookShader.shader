@@ -53,6 +53,9 @@
             sampler2D _ColorMap;
             sampler2D _TexMap;
             float _HueStart;
+
+
+            float3 _HitPoint;
       
       VertexOut vert(VertexIn v) {
         
@@ -130,12 +133,16 @@ sampler2D _AudioMap;
         // Our color starts off at zero,   
         float3 col = tex2D(_ColorMap, float2( _HueStart + (((dif * 6 - _Time.y * .3 + length( tCol) *5 ) % 1) * .4) + length( tCol) * .1 ,0 )).xyz / ( .4 + .2*thisDif *thisDif + dif);
 
+        float dist = length(_HitPoint - ro);
+        dist = 1/(100 * dist);
         float d = dif - (.008 );
-        if( d < 0 ){ col = 1+d*1000;}else{ col = tex2D(_AudioMap , float2( d * 1 + tCol.x * .03 + sin( float(closestID)) * .03 , 0 )); }
+        if( d < 0 ){ col = 1+d*1000;}else{ col = tex2D(_AudioMap , float2( dist+ d * 1 + tCol.x * .03 + sin( float(closestID)) * .03 , 0 )); }
         col *= float3(1,.7,.3);
+
         //if( connectedDif < .135 + .005 * sin(_Time.y*4)  ){ col = float3(1,0,0);}
         //if( closestID == _WhichStory ){ col *= 4;}
         float4 color = fixed4( col , 1. )* clamp( 1- .01*length( v.player),0,1);
+
         return color;
       }
 

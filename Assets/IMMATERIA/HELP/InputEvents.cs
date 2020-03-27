@@ -74,6 +74,9 @@ public class InputEvents: Cycle {
   public RaycastHit hit;
   public string hitTag;
 
+  public Vector3 hitPosition;
+  public Vector3 hitNormal;
+
   public float swipeInCutoff;
   public float canEdgeSwipe;
   public bool swipable;
@@ -124,14 +127,18 @@ public class InputEvents: Cycle {
 
     RO = ray.origin;
     RD = ray.direction;
-
-
+    
     // Does the ray intersect any objects excluding the player layer
         if (Physics.Raycast( ray , out hit, Mathf.Infinity))
         {
           hitTag = hit.collider.tag;
+          hitNormal = hit.normal;
+          hitPosition = hit.point;
         }else{
+          // Default if we don't hit anything!!!!
           hitTag = "Untagged";
+          hitNormal = new Vector3(0,1,0);
+          hitPosition = new Vector3(0,0,0); 
         }
 
 

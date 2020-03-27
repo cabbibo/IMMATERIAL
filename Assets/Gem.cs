@@ -22,9 +22,6 @@ public class Gem : Cycle
 
 
   public void Die(){
-
-
-    print("Diting");
     _Deactivate();
     _Destroy();
   }

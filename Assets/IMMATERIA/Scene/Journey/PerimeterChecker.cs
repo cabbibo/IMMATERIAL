@@ -20,7 +20,10 @@ public class PerimeterChecker : Cycle
   public EventTypes.BaseEvent OnExitInner;
   public EventTypes.FloatEvent OnDoFade;
 
+ public GameObject[] meshes;
+    public Cycle[] cycles;
 
+   
   public float dif;
   public float oDif;
   public bool started;
@@ -36,7 +39,6 @@ public class PerimeterChecker : Cycle
     oDif = 100000;
   
   }
-
 
 
   public override void WhileLiving( float v){
@@ -78,6 +80,7 @@ public class PerimeterChecker : Cycle
 
     insideOuter=true;
     OnEnterOuter.Invoke();
+    TurnOn();
 
   }
 
@@ -92,6 +95,8 @@ public class PerimeterChecker : Cycle
   public void ExitOuter(){
     insideOuter=false;
     OnExitOuter.Invoke();
+
+    TurnOff();
   }
 
 
@@ -105,6 +110,38 @@ public class PerimeterChecker : Cycle
     Shader.SetGlobalFloat("_FadeValue",v);
   }
 
+
+
+
+  public void TurnOff(){
+
+    if( meshes.Length > 0 ){
+      for(int i = 0; i < meshes.Length; i++ ){
+        meshes[i].SetActive(false);
+      }
+    }
+    if( cycles.Length > 0 ){
+      for( int i = 0; i < cycles.Length; i++ ){
+        cycles[i]._Deactivate();
+      }
+    }
+
+  }
+
+  public void TurnOn(){
+    if( meshes.Length > 0 ){
+      for(int i = 0; i < meshes.Length; i++ ){
+        meshes[i].SetActive(true);
+      }
+    }
+  
+    if( cycles.Length > 0 ){
+      for( int i = 0; i < cycles.Length; i++ ){
+
+        cycles[i]._Activate();
+      }
+    }
+  }
 
 
 }

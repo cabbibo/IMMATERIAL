@@ -152,8 +152,6 @@ public class Land : Cycle {
     float[] data = bf.Deserialize(stream) as float[];
     stream.Close();
 
-    print("loading1111");
-    print( data.Length);
 
     Color[] colors =  new Color[data.Length/4];
     for( int i = 0; i < data.Length / 4; i ++ ){

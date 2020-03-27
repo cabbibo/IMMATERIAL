@@ -49,7 +49,7 @@ public class CircleOnTerrain : Cycle
   }
 
   public override void Activate(){
-
+    
     //Debug.Log("no body for some reason" , this.gameObject );
     body.active = true;
     body.mpb.SetFloat("_Radius", radius);

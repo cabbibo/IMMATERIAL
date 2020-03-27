@@ -10,6 +10,8 @@ public class Monolith : Cycle
     public Transform cameraLerp;
     //public Story story;
 
+    public MeshRenderer renderer;
+
     public bool isBook;
 
     public float fade;
@@ -18,7 +20,9 @@ public class Monolith : Cycle
     public int whichStory;
 
     public float ratio;
-    MaterialPropertyBlock mpb;
+    public MaterialPropertyBlock mpb;
+
+    public bool dynamicPositions;
 
     public void DestroyMe(){
      // print( storyMarkers.Length );
@@ -107,7 +111,9 @@ public class Monolith : Cycle
       mpb.SetInt("_NumStories" , positions.Length );
       mpb.SetInt("_WhichStory" , whichStory );
       mpb.SetFloat("_Fade", fade);
-      monolith.GetComponent<MeshRenderer>().SetPropertyBlock( mpb );
+
+      renderer = monolith.GetComponent<MeshRenderer>();
+      renderer.SetPropertyBlock( mpb );
       
      // if( isBook ){ transform.rotation = Quaternion.AngleAxis(90,Vector3.right);}
       cameraLerp.transform.parent = monolith;
@@ -161,5 +167,20 @@ public class Monolith : Cycle
     public void end(){gameObject.SetActive(false); }
 
 
+  public override void WhileLiving(float v ){
+    if( dynamicPositions ){
+
+      Vector4[] positions = new Vector4[data.journey.monoSetters.Length ];
+      for(int i = 0; i < positions.Length; i++ ){
+        positions[i] = storyMarkers[i].transform.position;
+      }
+
+      mpb.SetVectorArray("_StoryPositions" , positions );
+
+      
+      renderer.SetPropertyBlock( mpb );
+
+    }
+  }
     
 }

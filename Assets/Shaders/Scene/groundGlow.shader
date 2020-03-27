@@ -102,13 +102,14 @@ fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
                 float lookupVal =  max(min( v.uv.y  * 1.1,( 1- v.uv.y ) * 2 ) ,0);//2 * tex2D(_MainTex,v.uv * float2(4 * saturate(min( v.uv.y * 4,( 1- v.uv.y ) )) ,.8) + float2(0,.2));
                 float tVal = tCol.x * tCol.x * tCol.x *30 + .3*abs(noise( float3(v.uv.x * 1000,v.uv.y * 20, 0)));
                 
-                if( ( lookupVal ) - 1*tVal -.2-_ScanTime  <  .01  ){ discard;}
+                if( ( lookupVal ) - 1*tVal -.2-max(0,_ScanTime)  <  .01  ){ discard;}
 
                // if( v.uv.y + tCol.x * .1> .9){ discard;}
 
                 fixed4 col =   tex2D(_ColorMap , float2( tVal * 1 + (1-shadow  * .05)+ .0 + lookupVal* lookupVal * .1  + v.uv.y * _HueSize + _HueOffset , 0) );//* 20-10;//*tCol* lookupVal*4;//* 10 - 1;
                 col *= tex2D(_AudioMap , tVal ) + max(0,v.noiseV -.5);
                     
+                //col = abs(_ScanTime);
                    // col = 1;
                 return col;
             }
@@ -151,7 +152,7 @@ fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
                 float lookupVal =  max(min( uv.y  * 1.1,( 1- uv.y ) * 2 ) ,0);//2 * tex2D(_MainTex,uv * float2(4 * saturate(min( uv.y * 4,( 1- uv.y ) )) ,.8) + float2(0,.2));
                 float tVal = tCol.x * tCol.x * tCol.x *30 + .3*abs(noise( float3(uv.x * 1000,uv.y * 20, 0)));
                 float v = 1;
-                if( ( lookupVal ) - 1*tVal -.2-_ScanTime  <  .01  ){ v=0;}
+                if( ( lookupVal ) - 1*tVal -.2-max(0,_ScanTime)   <  .01  ){ v=0;}
                 return v;
    }
 
