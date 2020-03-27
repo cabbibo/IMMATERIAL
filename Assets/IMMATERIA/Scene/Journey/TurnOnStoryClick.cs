@@ -24,7 +24,7 @@ public class TurnOnStoryClick : Cycle
   public override void WhileLiving(float v){
 
     if( active && data.state.inPages ){
-      print( data.journey.controller.CP);
+//      print( data.journey.controller.CP);
       if( data.journey.controller.CP == page ){
       if( data.inputEvents.hitTag == "StartNode" && data.inputEvents.oDown == 1 && data.inputEvents.Down == 0 ){
         for( int i = 0; i< monolith.storyMarkers.Length; i++ ){
