@@ -81,6 +81,7 @@ public class PerimeterChecker : Cycle
     insideOuter=true;
     OnEnterOuter.Invoke();
     TurnOn();
+    DoFade(0);
 
   }
 
@@ -88,6 +89,8 @@ public class PerimeterChecker : Cycle
 
     insideInner=true;
     OnEnterInner.Invoke();
+    
+    DoFade(1);
 
 
   }
@@ -95,14 +98,17 @@ public class PerimeterChecker : Cycle
   public void ExitOuter(){
     insideOuter=false;
     OnExitOuter.Invoke();
+    DoFade(0);
 
     TurnOff();
+    
   }
 
 
   public void ExitInner(){
     insideInner=false;
     OnExitInner.Invoke();
+    DoFade(1);
   }
 
   public void DoFade( float v ){
@@ -137,10 +143,13 @@ public class PerimeterChecker : Cycle
   
     if( cycles.Length > 0 ){
       for( int i = 0; i < cycles.Length; i++ ){
-
         cycles[i]._Activate();
       }
     }
+  }
+
+  public void Fade( float v ){
+
   }
 
 

@@ -149,6 +149,8 @@ public class Body : Cycle {
 
 */
 
+
+
   public override void WhileDebug(){
     debugMaterial.SetPass(0);
     debugMaterial.SetBuffer("_VertBuffer", verts._buffer);

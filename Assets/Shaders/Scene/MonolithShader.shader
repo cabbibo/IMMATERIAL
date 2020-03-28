@@ -30,7 +30,7 @@
       float3 _StoryPositions[30];
       float3 _PlayerPosition;
 
-      float _Fade;
+      float _FadeValue;
 
 
       struct VertexIn{
@@ -177,7 +177,8 @@ float sdCapsule( float3 p, float3 a, float3 b, float r )
             col *= 2 + length(tCol);
           }
 
-        float4 color = fixed4(col, 1. );
+        float4 color = fixed4(col, 1. ) * _FadeValue;
+        //float4 color = _FadeValue;
         return color;
       }
 

@@ -54,6 +54,7 @@ public class State : Cycle
 
 
 public StorySetter setter;
+public StorySetter oSetter;
 public Story story;
 
   public bool fast;
@@ -189,7 +190,16 @@ public Story story;
 
 
     }else{
-      data.journey.controller.started = false;
+      data.journey.controller.started = false; 
+      
+      // IF we have any old things playing, stop them playing now!
+      for( int i = 0; i < data.journey.setters.Length; i++ ){
+        if( data.journey.setters[i].audio.playing ){ data.journey.setters[i].audio.Exit(); }
+      }
+
+      // Fade in the global sound!
+      data.sound.globalLooper.FadeIn();
+      
     }
 
     firstStory = false;
@@ -330,6 +340,7 @@ public Story story;
 
 
   public void SetterEnterOuter(StorySetter s){
+    oSetter = setter;
     setter = s;
     lastTimeStoryVisited = Time.time;
     inStory = true;
@@ -340,6 +351,8 @@ public Story story;
   }
 
   public void SetterExitOuter(StorySetter s){
+    
+    oSetter = setter;
     setter = null;
   }
 
@@ -352,11 +365,13 @@ public Story story;
 
 
   public void SetSetter( StorySetter s ){
+    oSetter = setter;
     setter = s;
   }
 
 
   public void UnsetSetter(){
+    oSetter = setter;
     setter = null;
   }
 

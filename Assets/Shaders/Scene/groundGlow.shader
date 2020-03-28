@@ -102,6 +102,7 @@ fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.worldPos) * .5 + .5;
                 float lookupVal =  max(min( v.uv.y  * 1.1,( 1- v.uv.y ) * 2 ) ,0);//2 * tex2D(_MainTex,v.uv * float2(4 * saturate(min( v.uv.y * 4,( 1- v.uv.y ) )) ,.8) + float2(0,.2));
                 float tVal = tCol.x * tCol.x * tCol.x *30 + .3*abs(noise( float3(v.uv.x * 1000,v.uv.y * 20, 0)));
                 
+                //if( ( lookupVal ) - 1*tVal -.2-max(0,_ScanTime)  <  .01  ){ discard;}
                 if( ( lookupVal ) - 1*tVal -.2-max(0,_ScanTime)  <  .01  ){ discard;}
 
                // if( v.uv.y + tCol.x * .1> .9){ discard;}

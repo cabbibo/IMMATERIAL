@@ -17,6 +17,8 @@ public class StoryAudio : Cycle
    public float[] audioInfo;
    public float[] oAudioInfo;
 
+   public bool playing;
+
    public override void Create(){
 
 
@@ -89,8 +91,8 @@ public class StoryAudio : Cycle
 
   public void Enter(){
 
-   // print("ENNTNT");
-
+    
+    playing = true;
     data.sound.globalLooper.FadeOut();
 
     data.sound.NewLoop();
@@ -102,6 +104,7 @@ public class StoryAudio : Cycle
 
   public void Exit(){
 
+    playing = false;
     data.sound.globalLooper.FadeIn();
     for( int i = 0; i < audioInfo.Length; i++ ){
       data.sound.FadeLoop(i , 0 , data.sound.globalLooper.fadeInSpeed );
