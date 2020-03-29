@@ -22,6 +22,7 @@ public class State : Cycle
   public int  whichMonolithEmitting;
 
   public int[] storiesVisited;
+  public int[] storiesCompleted;
 
   public int currentSetter;
   private int oCurrentStory;
@@ -282,13 +283,12 @@ public Story story;
 
   public void SetStoryState( Story s ){
 
-
-    //print("SEtting");
-    //print( s.monolithParticlesEmitting );
-    hasPickedUpBook = s.hasPickedUpBook;
-    hasFallen = s.hasFallen;
-    monolithParticlesEmitting = s.monolithParticlesEmitting;
-    whichMonolithEmitting = s.whichMonolithEmitting;
+    if( s.state == null  ){ s.DebugThis( "THIS STORY HAS NO STATE"); }else{
+      hasPickedUpBook = s.state.bookPickedUp;
+      hasFallen = s.state.hasFallen;
+      monolithParticlesEmitting = s.state.monolithParticlesEmitting;
+      whichMonolithEmitting = s.state.whichMonolithEmitting;
+    }
     
   }
   

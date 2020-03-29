@@ -36,7 +36,7 @@ private Vector3 oPos;
 
 
 public void OnDown(){
-  if(data.inputEvents.hitTag == "Book"){
+  if(data.inputEvents.hitTag == "Book" || data.inputEvents.hitTag == "Monolith"){
     synth.active = true;
     
       data.extraParticles.EmitOn();
@@ -52,7 +52,7 @@ public void OnUp(){
 
   public void WhileDown( Vector2 d ){
 
-    if(data.inputEvents.hitTag == "Book"){
+    if(data.inputEvents.hitTag == "Book" || data.inputEvents.hitTag == "Monolith"){
 
       delta = data.inputEvents.hit.point - oPos;
       oPos = data.inputEvents.hit.point;

@@ -27,10 +27,12 @@ public class MonolithStorySetter : StorySetter
   }
 
   public void TurnOffMonolith(){
+    monolith._Deactivate();
     monolith.gameObject.SetActive(false);
   }
 
   public void TurnOnMonolith(){
+    monolith._Activate();
     monolith.gameObject.SetActive(true);
   }
 

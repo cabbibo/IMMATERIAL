@@ -5,14 +5,6 @@ using UnityEngine;
 public class Story : Cycle
 {
 
-  public bool monolithParticlesEmitting;
-  public int  whichMonolithEmitting;
-  public bool hasFallen;
-  public bool hasPickedUpBook;
-  public int[] storiesVisited;
-
-  public bool canRestart;
-
 
   public float frameBorder = .05f;
 
@@ -60,13 +52,7 @@ public class Story : Cycle
   public EventTypes.BaseEvent OnStoryStart;
   public EventTypes.BaseEvent OnStoryEnd;
 
-    
-  bool s_monolithParticlesOn;
-  int  s_whichActiveMonolith;
-  bool s_grounded;
-  bool s_bookPickedUp;
-
-  int[] s_storiesVisited;
+  
   
 
   // The words should be coming from the camera

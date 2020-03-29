@@ -86,6 +86,17 @@ float3 ringXZ( float id , float r ){
 
 }
 
+
+float3 ring( float id, float3 x , float3 y , float r ){
+
+  float a = hash(id*100) * 6.28;
+
+  float3 p = r*(sin( a )*x -cos(a)*y);
+
+  return p; 
+
+}
+
 float4x4 rotation(float3 axis, float angle)
 {
     axis = normalize(axis);
@@ -398,8 +409,19 @@ void Extra(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
   if( vert.life < 0 && _Emit > .5  ){
    // float3 pos = float3(vert.uv.x/_MapSize,0, vert.uv.y/_MapSize );
     float p = float(pID);
+
+
+    float3 z = normalize( _Gravity );
+    float3 x = cross( z, float3(0,1,0));
+    if( length( x )== 0){
+      x = float3(1,0,0);
+    }else{
+      x = normalize(x);
+    }
+
+    float3 y = normalize( cross( x , z));
     
-    float3 r = ringXZ(p,_SpawnRingRadius);
+    float3 r = ring(p, x , y,_SpawnRingRadius);
 
  
     
