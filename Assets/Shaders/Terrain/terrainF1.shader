@@ -174,12 +174,14 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
 
 
         color = tex2D(_MainTex,v.worldPos.xz * .1);
-        color = tex2D(_ColorMap, float2(color.x * .2 + dif * .01+.6 + grassHeight * .7 - shadow * .3 + _HueStart, 0)) * l ;
+        color = tex2D(_ColorMap, float2(color.x * .2 + dif * .01+.6 + grassHeight * .7 + _HueStart, 0)) * l ;
 
 
 
         float3 tCol = texCUBE(_CubeMap,refl) * color;
         color *= ( grassHeight + .5);
+
+        color *= texCUBE( _CubeMap , refl ) * 2;
 
 
         float holeVal = length( v.worldPos - _TerrainHole)  + noise( v.worldPos * 4.2 + float3(0,_Time.y * .2,0) )  * .2;
@@ -198,7 +200,7 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
         //tCol = grassHeight;
         if( _Debug != 0 ){ color.xyz = v.nor * .5 + .5; }
         //return float4( 0,0,0,1 );
-        return float4( color.xyz * (shadow * .5 + .5)  , 1.);
+        return float4( color.xyz  , 1.);
       }
 
       ENDCG

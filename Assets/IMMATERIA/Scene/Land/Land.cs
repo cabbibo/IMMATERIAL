@@ -27,9 +27,11 @@ public class Land : Cycle {
 
 
 
-    heightMap = new Texture2D(1024,1024);
+    heightMap = new Texture2D(1024,1024,TextureFormat.RGBAFloat,false);
 
     heightMap.wrapMode = TextureWrapMode.Clamp;
+    heightMap.filterMode = FilterMode.Trilinear;
+    heightMap.mipMapBias = 10000;
     //Graphics.CopyTexture( startTexture , heightMap);
 
    // heightMap.Apply();

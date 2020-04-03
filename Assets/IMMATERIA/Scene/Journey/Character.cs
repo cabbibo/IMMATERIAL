@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput;
 
 public class Character : Cycle {
 
   public Animator animator;
+  public RuntimeAnimatorController runtime;
 
   public bool doTerrain;
 
   public Vector3 moveTarget;
+  public Vector3 oMoveTarget;
   
   public float runMultiplier;
   public float maxSpeed;
@@ -51,6 +52,23 @@ public class Character : Cycle {
 
   public bool canMove;
 
+
+
+  public Transform forwardRep;
+  public Transform leftRep;
+  public Transform rightRep;
+  public Transform baseRep;
+  public Transform velRep;
+
+  public Transform movementRep;
+
+  public bool downToLeft;
+
+  public float steepnessVal;
+
+
+
+
   public override void Create () {
 
     moveTarget = transform.position;
@@ -59,13 +77,21 @@ public class Character : Cycle {
     oPos = Vector3.zero;
     velocity = Vector3.zero;
     animator.Play("Grounded");
+
+
   }
 
   public override void WhileLiving (float v) {
 
+
+    // fixing error ( usually in edit mode ) of there being no runtime controller
      if(animator.runtimeAnimatorController==null){
-      Debug.Log( "WHATTT");
+
+       print("hello");
+      animator.runtimeAnimatorController = runtime;
      }
+
+
     DoMovement();   
     animator.Update(Time.deltaTime); 
   }
@@ -112,8 +138,9 @@ public class Character : Cycle {
 
 
 
-  public void SwipeTurn( Vector2 delta ){
 
+// Turns our player so that we are looking a new direction
+  public void SwipeTurn( Vector2 delta ){
 
     if( data.book.started == false  && data.state.inPages == false ){
       if( delta.magnitude > 10 ){
@@ -140,20 +167,17 @@ public class Character : Cycle {
 
     force = Vector3.zero;
 
+    // If we are moving towards something specific, 
+    // Set it!
     if( movingTowardsTarget && moveTargetTransform ){
       moveTarget = moveTargetTransform.position;
     }
 
-
+    // This is if we are moving towards a locked position
     if( lerping ){
-
-       if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 11 && !animator.IsInTransition(0)){
-        //animator.Play("Grounded");
-       }
 
       float v = Mathf.Clamp((Time.time - lerpStartTime)/lerpSpeed, 0 , 1);
       if( lerpSpeed == 0 ){ v = 1; }
-//      print( v );
 
       v = v * v * (3 - 2 * v);
       
@@ -166,19 +190,8 @@ public class Character : Cycle {
     }else{
 
 
-      //force +=  m_Move  * moveForce * .1f  * runForce;
-        
-
-      //moveTarget += dif.magnitude * angleOffset * transform.right * .1f;
-
-     // moveTarget = angleOffset * transform.right * .1f  * (forwardOffset + 1.3f) + forwardOffset * transform.forward * .1f;
-     
-    //  dif = moveTarget;
-
-   //   if( dif.magnitude < .003f ){ dif = Vector3.zero; }
-
-      //if( moveTargetTransform ){ moveTargetTransform.position = moveTarget + transform.position; }
-
+      
+      // When we click we are moving towards a target!
       if( movingTowardsTarget ){
 
 
@@ -194,13 +207,8 @@ public class Character : Cycle {
         force = angleOffset  * transform.right   + forwardOffset * transform.forward;/// dif * .01f * moveForce;// * (velocity.magnitude+.13f);
       }
     
-     // if( force.magnitude < .001f ){ force = Vector3.zero; }
       force *= .1f;
-     // if( force.magnitude < .01f ){ force = Vector3.zero; }
-
     
-      
-
       velocity += force;
       velocity *= dampening;
 
@@ -211,94 +219,117 @@ public class Character : Cycle {
 
 
 
+    // Getting our turning and our forward amount by comparing out velocity
+    // to our transforms direction
+    Vector3 m = transform.InverseTransformDirection(velocity);
+    float turn = Mathf.Atan2(m.x, m.z) * m.magnitude;
+    float forward = m.z;
 
-      Vector3 m = transform.InverseTransformDirection(velocity);
-      float turn = Mathf.Atan2(m.x, m.z) * m.magnitude;
-      float forward = m.z;
+    canMove = true;
+    float d = 1;
 
+    if( doTerrain ){
 
-     
-      //turn += angleOffset;
-
-canMove = true;
-float d = 1;
-
- if( doTerrain ){
         float h = data.land.SampleHeight( transform.position );
-        float h2 = data.land.SampleHeight( transform.position + transform.forward * .5f );
+
+        Vector3 f =  transform.position + transform.forward * 3 * .8f;
+        float h2 = data.land.SampleHeight( f );
+        forwardRep.position = new Vector3(f.x , h2 , f.z);
+
+        f = transform.position + transform.forward * 3* .4f + transform.right* 3 * .4f;
+        float h3 = data.land.SampleHeight( f );
+        rightRep.position = new Vector3(f.x , h3 , f.z);
+
+
+        f = transform.position + transform.forward* 3 * .4f - transform.right * 3* .4f;
+        float h4 = data.land.SampleHeight( f );
+        leftRep.position = new Vector3(f.x , h4 , f.z);
+
 
         Vector3 normal = data.land.SampleNormal( transform.position );
+
         d = Vector3.Dot( normal , Vector3.up );
+        steepnessVal = d;
 
+        if( h4 < h3 ){ downToLeft = true; }else{ downToLeft = false;}
+        // If the terrain is steep enough, we can't move up it!
+        if( h2 > h && d < .9 ){
+         // print("can't move");
+          canMove = false;
+        }
 
-    if( h2 > h && d < .9 ){
-    canMove = false;
     }
 
-}
-
-
- if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0)){
-  animator.Play("Grounded");
- }
+    // Automatically play the animator so we get less errors
+    if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0)){
+      animator.Play("Grounded");
+    }
 
       Rotate(forward , turn );
 
-       if( moveTargetTransform && movingTowardsTarget ){
+      if( moveTargetTransform && movingTowardsTarget ){
          Vector3 dif = moveTarget-transform.position;
-          //print(Vector3.Angle(transform.forward, moveTargetTransform.forward ) );
+
+         // up or down tells us if we are looking left or right
          float upOrDown =Mathf.Sign(Vector3.Cross(transform.forward, moveTargetTransform.forward ).y);
-//          print(Mathf.Sign(Vector3.Cross(transform.forward, moveTargetTransform.forward ).y) );
-        turn += upOrDown * Vector3.Angle(transform.forward, moveTargetTransform.forward ) * .05f   * Mathf.Clamp( 1-  3 *dif.magnitude ,0,1);
+         turn += upOrDown * Vector3.Angle(transform.forward, moveTargetTransform.forward ) * .05f   * Mathf.Clamp( 1-  3 *dif.magnitude ,0,1);
+
       }
+
       animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
-    
-if( canMove ){
 
 
-  if( forward < forwardCutoff ){ forward = 0; }
-  animator.SetFloat("Forward", forward*runMultiplier, 0.1f, Time.deltaTime);
-}else{
-  //forward = 0;
-  animator.SetFloat("Forward", forward*runMultiplier * d * d * d, 0.1f, Time.deltaTime);
-}
+    float currentForward = animator.GetFloat("Forward");
 
- transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+// if its not too steep
+      if( canMove ){
+        if( forward < forwardCutoff ){ forward = 0; }
+        //Mathf.Lerp( currentForward , forward*runMultiplier, .2f)
+        animator.SetFloat("Forward",forward*runMultiplier , 0.1f, Time.deltaTime);
+      }else{
 
-animator.runtimeAnimatorController = animator.runtimeAnimatorController;
+        float t = 1;
+        if( downToLeft ){ t = -1; }
+
+        angleOffset += t;
+        //animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
+        
+        animator.SetFloat("Forward", d*d*d, 0.1f, Time.deltaTime);
+      }
+
+      transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+
+      animator.runtimeAnimatorController = animator.runtimeAnimatorController;
       if( doTerrain ){
         float h = data.land.SampleHeight( transform.position );
-       
+        
         Vector3 normal = data.land.SampleNormal( transform.position );
         //float d = Vector3.Dot( normal , Vector3.up );
 
         float h2 = data.land.SampleHeight( transform.position + transform.forward * .5f );
 
-
-        if( animator.runtimeAnimatorController == null ){ animator.Play(0,0,0); }
-    //    print( (1-d) * 10);
         animator.SetFloat("Steepness", (1-d) * 4 );
 
-        //bool data.state.hasFallen = false;
         if( h2 > h ){
           animator.SetBool( "Uphill" , true);
         }else{
           animator.SetBool("Uphill", false);
-        
+      
           if( (1-d) * 10 > 1 ){
-           // data.state.hasFallen = true;
-            transform.position += velocity;//*(1+(1-d) * 10);
+            transform.position += velocity;
           }
         }
 
 
-        //if( data.state.hasFallen ){ h -= .5f; }
 
-          transform.position = new Vector3( transform.position.x , h , transform.position.z);
+        transform.position = new Vector3( transform.position.x , h , transform.position.z);
       }
 
-   //animator.Update(Time.deltaTime);
 
+      velRep.position = transform.position + velocity * 10;
+      velRep.LookAt( transform.position );
+      velRep.position += Vector3.up;
+      velRep.localScale = new Vector3(velocity.magnitude, velocity.magnitude ,velocity.magnitude*20)* 7;
       deltaPos = transform.position - oPos;
 
       velocity = deltaPos;
@@ -308,19 +339,35 @@ animator.runtimeAnimatorController = animator.runtimeAnimatorController;
       forwardOffset *= .98f;
 
     }
-
+    baseRep.position = transform.position;
   }
 
 
   public void SetMoveTarget( Vector3 p ){
+
+  
+    oMoveTarget = transform.position;
     moveTarget = p;
+
+    movementRep.position = (oMoveTarget - moveTarget) * .5f + oMoveTarget;
+    movementRep.LookAt( moveTarget );
+    
+    movementRep.position += Vector3.up;
+    movementRep.localScale = new Vector3( .1f,.1f,(oMoveTarget - moveTarget).magnitude);
     movingTowardsTarget = true;
     lerping = false;
   }
 
   public void SetMoveTarget( Transform p ){
+    oMoveTarget = transform.position;
     moveTargetTransform = p;
     moveTarget = p.position;
+
+    movementRep.position = -(oMoveTarget - moveTarget) * .5f + oMoveTarget;
+    movementRep.LookAt( moveTarget );
+    movementRep.position += Vector3.up;
+    movementRep.localScale = new Vector3( .1f,.1f,(oMoveTarget - moveTarget).magnitude);
+
     movingTowardsTarget = true;
     lerping = false;
   }

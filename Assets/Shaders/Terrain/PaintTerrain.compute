@@ -165,7 +165,7 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
       v.debug -= .04*lerp( _PaintOpacity , 0 , l );
       v.debug = saturate(v.debug);
 
-// lower Grass
+// Wind Direction 
     }else{
 
 
@@ -205,7 +205,7 @@ void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
     }
 
 
-       if( _Reset == 3 ){
+    if( _Reset == 3 ){
 
       float4 tCol = getUndoTexture( v.pos );
       v.pos.y = _MapHeight * tCol.x;

@@ -65,7 +65,10 @@ public class GlobalEditWindow : EditorWindow
        //data = g.GetComponent<Data>();
        //events = data.inputEvents;
        //state = data.state;
+
        //skin = (GUISkin)Resources.Load("GlobalEditSkin");
+       
+       // Debug.Log(skin);
 
     }
 
@@ -73,6 +76,7 @@ public class GlobalEditWindow : EditorWindow
 
     void Assign(){
 
+       skin = (GUISkin)Resources.Load("GlobalEditSkin");
       if( god == null ){
          GameObject g = GameObject.Find("God");
 

@@ -1,5 +1,5 @@
 ﻿
-Shader "Debug/TerrainWindDebug" {
+Shader "Debug/WindDebug" {
     Properties {
 
     _Color ("Color", Color) = (1,1,1,1)
@@ -20,7 +20,7 @@ Shader "Debug/TerrainWindDebug" {
       #pragma fragment frag
 
       #include "UnityCG.cginc"
-     // #include "../Chunks/Struct12.cginc"
+      #include "../Chunks/Struct12.cginc"
 
 
 
@@ -99,18 +99,22 @@ varyings vert (uint id : SV_VertexID){
       Vert v = _VertBuffer[base];
       float4 t = terrainSampleColor( v.pos );
 
+    float3 tan = normalize(float3( t.y -.5 ,0, t.z -.5 ));
 
-float3 dir = normalize(float3( v.tan.x, 0, v.tan.z));
+float3 dir = tan; 
+
+float3 viewDir = UNITY_MATRIX_IT_MV[2].xyz;
 
 float3 yVal = normalize( cross( dir , float3(0,1,0) ));
 
   if( alternate == 0 ){ extra =  -yVal * .1; uv = float2(0,0); }
   if( alternate == 1 ){ extra =  +yVal  * .1; uv = float2(1,0); }
-  if( alternate == 2 ){ extra =  dir + float3(0,_Up,0) * 2; uv = float2(.5,1); }
+  if( alternate == 2 ){ extra =  dir; uv = float2(.5,1); }
 
 
       o.worldPos = v.pos.xyz + float3(0,_Up,0) +extra * _Size;
-      o.debug = dir;
+      o.debug = normalize(dir);
+      o.uv = uv * v.debug.x * 3;
 
       o.pos = mul (UNITY_MATRIX_VP, float4(o.worldPos,1.0f));
 
@@ -121,10 +125,12 @@ float3 yVal = normalize( cross( dir , float3(0,1,0) ));
 }
 
 
+
+
 //Pixel function returns a solid color for each point.
 float4 frag (varyings v) : COLOR {
    return float4(v.debug * .5 + .5,1 );
-   // return 1;
+    return 1;
 }
 
       ENDCG

@@ -78,8 +78,8 @@ EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();
 
        
 
- test.brushType = EditorGUILayout.Popup("Label", test.brushType, test.options); 
-EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();
+  test.brushType = EditorGUILayout.Popup("Label", test.brushType, test.options); 
+  EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();
 
         DrawDefaultInspector ();
        

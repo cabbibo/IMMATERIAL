@@ -155,10 +155,8 @@ public class Painter : Simulation
 
 
     if( drawWind ){
-      windDebugMat.SetPass(0);
-      windDebugMat.SetBuffer("_VertBuffer", verts._buffer);
-      windDebugMat.SetInt("_Count",verts.count);
-      Graphics.DrawProceduralNow( MeshTopology.Triangles ,verts.count * 3 );
+      Graphics.DrawProcedural(windDebugMat,  new Bounds(transform.position, Vector3.one * 5000), MeshTopology.Triangles, verts.count * 3 , 1, null, mpb, ShadowCastingMode.Off, true, LayerMask.NameToLayer("Debug"));
+   
     }
 
 
@@ -267,7 +265,7 @@ public void ResetToFlat(){
     string path = "StreamingAssets/Terrain/safe";
     Saveable.Save( verts , path );
 
-    SaveTextureAsPNG( data.land.heightMap , Application.dataPath+"/" + path + ".png");
+    SaveTextureAsPNG( data.land.heightMap , Application.dataPath+"/" + path );
   
   }
 
@@ -336,8 +334,6 @@ public void ResetToFlat(){
     data.land.heightMap.SetPixels(colors,0);
     data.land.heightMap.Apply(true);
 
-    //SaveTextureAsPNG( data.land.heightMap , "Assets/" + safeName + ".png");
-
 
   }
 
@@ -370,9 +366,9 @@ public void SetBrushOpacity(Slider s){
 
   public static void SaveTextureAsPNG(Texture2D _texture, string _fullPath)
    {
-       byte[] _bytes =_texture.EncodeToPNG();
+       byte[] _bytes =_texture.EncodeToJPG(1000);
        System.IO.File.WriteAllBytes(_fullPath, _bytes);
-       Debug.Log(_bytes.Length/1024  + "Kb was saved as: " + _fullPath);
+       Debug.Log(_bytes.Length/1024  + "Kb was saved as: " + _fullPath + ".jpg");
    }
 
 
