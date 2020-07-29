@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[ExecuteInEditMode]
+[ExecuteAlways]
 public class SpacePupTarget : MonoBehaviour
 {
     Vector3 target;
@@ -18,21 +18,28 @@ public class SpacePupTarget : MonoBehaviour
 
 
     public void SetTarget(Transform t){
-      target = t.position;
+
+      
+        print( "setting pos");
+        print( t.name );
+              target = t.position;
     }
 
     public void Update(){
 
-      if( Time.time - shakeTime > 4 ){
+
+      
+      if( Time.time - shakeTime > 8 ){
         shake = false;
       }
 
-      //transform.position = Vector3.Lerp( transform.position , target , .03f );
+      transform.position = Vector3.Lerp( transform.position , target , .03f );
       
       if( shake == true ){
-        float v = (Time.time - shakeTime)/ 4;
-        v= Mathf.Min( v * 4  , 1-v);
-        transform.position += v*new Vector3( Mathf.Sin(Time.time * 20) * .4f , Mathf.Sin(Time.time * 15 + 20) * .4f , Mathf.Sin(Time.time * 10 + 10) * .4f );
+        float v = (Time.time - shakeTime)/ 8;
+        v= Mathf.Min( v * 8  , 1-v);
+        float t = Time.time * .7f;
+        transform.position += v*new Vector3( Mathf.Sin(t * 20) * 1 , Mathf.Sin(t * 15 + 20) * 1 , Mathf.Sin(t * 10 + 10) * 1 );
       }
 
     }

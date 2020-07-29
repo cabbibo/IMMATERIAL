@@ -202,6 +202,8 @@ public string text;
           column = 0;
         }else{
 
+          if( NovaMono.info.ContainsKey(c)){
+
           float[] v1 = NovaMono.info[c];
 
 
@@ -214,6 +216,12 @@ public string text;
           locationX += scaledAdvance;
           column ++;
           count ++;
+          }else{
+            DebugThis("character not found");
+            print( c );
+            print( row );
+            print( column );
+          }
         }
       }
 

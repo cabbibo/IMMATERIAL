@@ -62,6 +62,8 @@
 
                 col.xyz *= p * .3+ p * r;
                 col *= baseM;
+                col *= 10.;
+                col *=  SampleAudio(v.uv.x * .1);
 
                 //col = shadow;
 

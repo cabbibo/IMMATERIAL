@@ -10,6 +10,7 @@ public class TurnOnStoryClick : Cycle
   public Monolith monolith;
 
   public override void Create(){
+    print("locking");
     page.locked = true;
   }
 

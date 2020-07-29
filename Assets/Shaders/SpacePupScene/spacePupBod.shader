@@ -39,13 +39,14 @@
             #include "../Chunks/MapNormal.cginc"
             #include "../Chunks/Reflection.cginc"
             #include "../Chunks/SampleAudio.cginc"
+            #include "../Chunks/snoise.cginc"
 
             fixed4 frag (v2f v) : SV_Target
             {
 
                 fixed shadow = UNITY_SHADOW_ATTENUATION(v,v.world) * .5 + .5;
 
-                float3 n = MapNormal( v , 100 , .2 );
+                float3 n = MapNormal( v , .5 , 13.2 );
                 float3 r = Reflection( v.pos , n );
 
                 float m = dot( n, _WorldSpaceLightPos0.xyz);
@@ -57,8 +58,10 @@
                 float4 col  = tex2D(_ColorMap , m * _ColorSize  + _ColorBase );
                 float3 p = Painterly( m, v.uv.yx * 5) * .7 + .3;
 
-                col.xyz *= p * .3+ p * r;
-                col *= baseM;
+               // col.xyz *= p * .3+ p * r;
+                //col *= baseM;
+
+                col = 3.*SampleAudio( snoise(v.world * .5) * .2 + .2) * col;
 
 
                 //col = shadow;

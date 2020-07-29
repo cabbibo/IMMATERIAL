@@ -40,15 +40,14 @@ public class SampleSynth : Cycle
 
 
   public override void WhileLiving( float v ){
-
     if( Time.time - lastTime  > speed + randomOffset ){
-      
       PlayGrain();
     } 
 
   }
 
   public void PlayGrain(){
+    
       randomOffset = speedRandomness * Random.Range( -.5f, .5f);
 
       float fLocation = location + locationRandomness * Random.Range( -.5f, .5f);

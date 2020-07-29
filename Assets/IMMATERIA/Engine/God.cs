@@ -48,6 +48,9 @@ public override void Create(){
 
 
 
+// currently not doing any of the 
+// simulation on unity physics side so might as well ignore!
+ //Physics.autoSimulation = false;
 
 
     if( data != null ){
@@ -82,6 +85,11 @@ public void GetCycleInfo( Cycle cycle ){
     
     if( cycle is Form ){
         forms.Add( (Form)cycle );
+
+       //if(((Form)cycle).alwaysRemake ){
+       // EditorGUIUtility.PingObject(cycle.gameObject);
+       //    print( cycle.gameObject.name );
+       //}
     }
     if( cycle is Life ){
         lifes.Add( (Life)cycle );

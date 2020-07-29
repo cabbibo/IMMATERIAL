@@ -9,6 +9,7 @@ Shader "Scenes/FishScene/Coral1"
         // normal map texture on the material,
         // default to dummy "flat surface" normalmap
         _BumpMap("Normal Map", 2D) = "bump" {}
+        _TextureMap("Texture Map", 2D) = "bump" {}
         _SpecMap("specMap", 2D) = "bump" {}
         _ColorMap("Color Map", 2D) = "bump" {}
     }
@@ -113,9 +114,10 @@ Shader "Scenes/FishScene/Coral1"
 
                 float3 cMap = tex2D(_ColorMap , float2(dot( worldRefl , _WorldSpaceLightPos0 ) * .3 + atten * .1 + .4, 0 ));
                 float3 cMap2 = tex2D(_ColorMap , float2(skyColor.x * 1.1+ 0, 0 )) * skyColor.x;
-                c.rgb = skyColor;
+               // c.rgb = skyColor;
                 float m =  dot( worldNormal , _WorldSpaceLightPos0);
-                c.rgb = cMap * skyColor * ( atten * .3 + .7);//*lerp( cMap2,  cMap * c , 0*specMap.x) + tex2D(_ColorMap , float2(m , 0 )) * m;// * (1-specMap);
+                float3 c2 = cMap * skyColor * ( atten * .3 + .7);
+                c.rgb = lerp( 0,cMap2 , specMap.x);// + tex2D(_ColorMap , float2(m , 0 )) * m;// * (1-specMap);
 
                // c.rgb = specMap;
                 return c;

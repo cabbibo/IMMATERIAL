@@ -174,7 +174,7 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
 
 
         color = tex2D(_MainTex,v.worldPos.xz * .1);
-        color = tex2D(_ColorMap, float2(color.x * .2 + dif * .01+.6 + grassHeight * .7 + _HueStart, 0)) * l ;
+        color = tex2D(_ColorMap, float2(color.x * .2 - dif * .01+.6 + grassHeight * .7 + _HueStart, 0)) * l ;
 
 
 
@@ -193,7 +193,7 @@ float l = saturate( (_PlayerFalloff-dif)/_PlayerFalloff);
         //tCol *=color;// pow(eyeM,100)  * 20;
         //tCol = 1;
 
-        //tCol *= shadow;
+        tCol *= shadow;
 
         //tCol = dif;
 

@@ -13,6 +13,8 @@ public class DandelionBunch : Cycle
 
   public bool constant;
 
+  public int releasing;
+
   public override void Create(){
     SafeInsert(circle);
     SafeInsert(baseParticles);
@@ -45,6 +47,12 @@ public class DandelionBunch : Cycle
 
   public override void Bind(){
     data.BindAllData( stalk.collision ); 
+    stalk.collision.BindInt("_Releasing",()=>releasing);
+  }
+
+
+  public void SetRelease( int i ){
+    releasing = i;
   }
 
 

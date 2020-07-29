@@ -197,6 +197,7 @@ public class AudioPlayer : Cycle{
     }
 
     public void Play( AudioClip clip ){
+//        print( clip);
 
         sources[playID].clip = clip;
         //sources[playID].time = 0;

@@ -28,7 +28,9 @@ public class IKController : Cycle
    }
 
  void OnAnimatorIK()
-    {
+  {
+
+
         if(animator) {  //if the IK is active, set the position and rotation directly to the goal. 
             if(ikActive) {
 

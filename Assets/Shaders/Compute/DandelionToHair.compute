@@ -166,10 +166,9 @@ void Force (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID, uint3 i
 
     float3 force = 1.01 * normalize(dir);//( x *  sin( v  ) + y * -cos(v)); //-(vert.pos - targetPos) * 30;
 
-    if( base2.debug.x < 1 ){
-      //force *= 200;
+    if( base2.tang.x < 0 ){
+      force *= 200;
     }
- //force *= 20000;
 
  force += curlNoise( vert.pos + _Time);
     // Inertia: objects in motion stay in motion.

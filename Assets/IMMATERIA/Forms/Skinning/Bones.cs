@@ -11,6 +11,10 @@ public class Bones: Form {
   public Matrix4x4[] bindPoses;
   public Matrix4x4 tmpMat;
 
+  public int speed = 1;
+
+  public int currentFrame;
+
   [HideInInspector] public float[] values;
 
 
@@ -36,7 +40,12 @@ public class Bones: Form {
 
 public override void WhileLiving( float v ){
 
-  UpdateBones();
+  if( currentFrame >= speed ){
+    UpdateBones();
+    currentFrame = 0;
+  }
+
+  currentFrame ++;
 }
 
 

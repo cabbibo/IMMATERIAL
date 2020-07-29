@@ -128,6 +128,7 @@
         if( v.special > .5 ){
           c=1;
         }
+        c = 1;//
          //if( length(bg)/3 < .4 ){ c = 1; }else{
          //c = 0;
          //}//1-d;

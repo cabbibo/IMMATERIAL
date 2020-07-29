@@ -11,6 +11,7 @@ public class Character : Cycle {
 
   public Vector3 moveTarget;
   public Vector3 oMoveTarget;
+
   
   public float runMultiplier;
   public float maxSpeed;
@@ -57,6 +58,7 @@ public class Character : Cycle {
   public Transform forwardRep;
   public Transform leftRep;
   public Transform rightRep;
+  public Transform backRep;
   public Transform baseRep;
   public Transform velRep;
 
@@ -65,7 +67,6 @@ public class Character : Cycle {
   public bool downToLeft;
 
   public float steepnessVal;
-
 
 
 
@@ -85,15 +86,17 @@ public class Character : Cycle {
 
 
     // fixing error ( usually in edit mode ) of there being no runtime controller
-     if(animator.runtimeAnimatorController==null){
-
-       print("hello");
-      animator.runtimeAnimatorController = runtime;
-     }
+     if(animator.runtimeAnimatorController==null){ animator.runtimeAnimatorController = runtime;}
 
 
-    DoMovement();   
-    animator.Update(Time.deltaTime); 
+    MyPhysics();
+
+    //DoMovement();   
+
+    // once we assign all the values, then we update the animator
+    //animator.Update(Time.deltaTime); 
+
+    
   }
 
   public void Fall(){
@@ -149,6 +152,7 @@ public class Character : Cycle {
       angleOffset -= delta.x * .003f;
       forwardOffset -= delta.y * .004f ;
       forwardOffset = Mathf.Max( forwardOffset, 0);
+      rotVel += delta.x * .3f;
     }
   
   }
@@ -168,7 +172,7 @@ public class Character : Cycle {
     force = Vector3.zero;
 
     // If we are moving towards something specific, 
-    // Set it!
+    // Set our move target towards taht position
     if( movingTowardsTarget && moveTargetTransform ){
       moveTarget = moveTargetTransform.position;
     }
@@ -176,14 +180,19 @@ public class Character : Cycle {
     // This is if we are moving towards a locked position
     if( lerping ){
 
+      // get our current position in the lerp
       float v = Mathf.Clamp((Time.time - lerpStartTime)/lerpSpeed, 0 , 1);
       if( lerpSpeed == 0 ){ v = 1; }
 
+      // cubic curve it.
       v = v * v * (3 - 2 * v);
       
+      // Getting our lerped position
       transform.position  = Vector3.Lerp(startLerpPos , lerpTarget.position , v);
       transform.rotation  = Quaternion.Slerp(startLerpRot , lerpTarget.rotation , v);
 
+    // setting the values
+    // TODO: WHy not 0?!?
       animator.SetFloat("Turn", 0, 0.1f, Time.deltaTime);
       animator.SetFloat("Forward", 0, 0.1f, Time.deltaTime);
 
@@ -194,17 +203,35 @@ public class Character : Cycle {
       // When we click we are moving towards a target!
       if( movingTowardsTarget ){
 
-
+        // Getting the difference between our current position
+        // and the target position
         Vector3 dif = moveTarget-transform.position;
+        
+        // Using this to add to the force
+        // in this case, the higher our velocity already is
+        // the more the force will be, giving the speed up 
         force =  dif * moveForce * (velocity.magnitude + .01f);
+        
+        // dampenign our angle offset
         angleOffset *= .5f;
+
+        // using that force to define how far forward our offset is
+
         forwardOffset = Mathf.Lerp( forwardOffset  , force.magnitude * .01f , .1f );
+
+
       }else{
 
-        if( Mathf.Abs(angleOffset) < .001f ){
+
+        if( Mathf.Abs(angleOffset) < .1f ){
           angleOffset = 0;
         }
+
+        // if we have moved towards our location, then we just need to figure our rotation
+        // aka when you are swipe turning
         force = angleOffset  * transform.right   + forwardOffset * transform.forward;/// dif * .01f * moveForce;// * (velocity.magnitude+.13f);
+      
+      
       }
     
       force *= .1f;
@@ -217,6 +244,7 @@ public class Character : Cycle {
       }
 
 
+  
 
 
     // Getting our turning and our forward amount by comparing out velocity
@@ -228,60 +256,77 @@ public class Character : Cycle {
     canMove = true;
     float d = 1;
 
+    // This is how we do the terrain!
     if( doTerrain ){
 
+
+        // Getting the height where we are
         float h = data.land.SampleHeight( transform.position );
 
+        // getting the height in front of us
         Vector3 f =  transform.position + transform.forward * 3 * .8f;
         float h2 = data.land.SampleHeight( f );
         forwardRep.position = new Vector3(f.x , h2 , f.z);
 
+
+        // getting the height to the right of us
         f = transform.position + transform.forward * 3* .4f + transform.right* 3 * .4f;
         float h3 = data.land.SampleHeight( f );
         rightRep.position = new Vector3(f.x , h3 , f.z);
 
 
+         // getting the height to the left of us
         f = transform.position + transform.forward* 3 * .4f - transform.right * 3* .4f;
         float h4 = data.land.SampleHeight( f );
         leftRep.position = new Vector3(f.x , h4 , f.z);
 
 
+        // Getting the current normal of the terrain
         Vector3 normal = data.land.SampleNormal( transform.position );
 
+
+        // dotting our normal with up vector 
+        // to get how 'steep' the terrain is
         d = Vector3.Dot( normal , Vector3.up );
         steepnessVal = d;
 
         if( h4 < h3 ){ downToLeft = true; }else{ downToLeft = false;}
+
+
         // If the terrain is steep enough, we can't move up it!
-        if( h2 > h && d < .9 ){
+        if( h2 > h && steepnessVal < .9 ){
          // print("can't move");
           canMove = false;
         }
 
+
     }
 
-    // Automatically play the animator so we get less errors
-    if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0)){
-      animator.Play("Grounded");
-    }
+      // Automatically play the animator so we get less errors
+      if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0)){
+        animator.Play("Grounded");
+      }
 
+      // Here is where we set the animations for the rotations
       Rotate(forward , turn );
 
       if( moveTargetTransform && movingTowardsTarget ){
+         
          Vector3 dif = moveTarget-transform.position;
 
          // up or down tells us if we are looking left or right
          float upOrDown =Mathf.Sign(Vector3.Cross(transform.forward, moveTargetTransform.forward ).y);
+        
          turn += upOrDown * Vector3.Angle(transform.forward, moveTargetTransform.forward ) * .05f   * Mathf.Clamp( 1-  3 *dif.magnitude ,0,1);
 
       }
 
-      animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
+     animator.SetFloat("Turn", turn, 0.1f, Time.deltaTime);
 
 
     float currentForward = animator.GetFloat("Forward");
 
-// if its not too steep
+      // if its not too steep
       if( canMove ){
         if( forward < forwardCutoff ){ forward = 0; }
         //Mathf.Lerp( currentForward , forward*runMultiplier, .2f)
@@ -339,6 +384,9 @@ public class Character : Cycle {
       forwardOffset *= .98f;
 
     }
+
+
+
     baseRep.position = transform.position;
   }
 
@@ -398,6 +446,112 @@ public class Character : Cycle {
   // TODO
   public void LookAt( Transform t ){
     
+  }
+
+
+
+public float rotVel;
+public float rotForce;
+
+public float myMaxSpeed;
+public float myMaxRotSpeed;
+
+  public void MyPhysics(){
+
+    
+        // Getting the height where we are
+        float h = data.land.SampleHeight( transform.position );
+
+    // getting the height in front of us
+        Vector3 f =  transform.position + transform.forward * 3 * .8f;
+        float h2 = data.land.SampleHeight( f );
+        forwardRep.position = new Vector3(f.x , h2 , f.z);
+
+        f =  transform.position -  transform.forward * 3 * .8f;
+        float h3 = data.land.SampleHeight( f );
+        backRep.position = new Vector3(f.x , h3 , f.z);
+
+
+        // getting the height to the right of us
+        f = transform.position + transform.right* 3 * .8f;
+        float h4 = data.land.SampleHeight( f );
+        rightRep.position = new Vector3(f.x , h4 , f.z);
+
+
+         // getting the height to the left of us
+        f = transform.position  - transform.right * 3* .8f;
+        float h5 = data.land.SampleHeight( f );
+        leftRep.position = new Vector3(f.x , h5 , f.z);
+
+
+
+
+
+
+
+
+        // Getting the current normal of the terrain
+        Vector3 normal = data.land.SampleNormal( transform.position );
+
+
+        force = Vector3.zero;
+
+      //  force += (leftRep.position - transform.position) * 10f;
+      //  force += (rightRep.position - transform.position) * 10f;
+//
+
+
+//force += normal * 10f;
+
+float hDifFront = h - h2;
+
+// add a force that adds 'gravity'
+force += transform.forward * hDifFront * 2;
+
+
+
+if( movingTowardsTarget ){
+    Vector3 dif =  moveTarget-transform.position;
+
+
+    force += dif;
+
+
+
+float angle =  Vector3.Angle( transform.forward , dif.normalized );
+float py = Vector3.Cross( transform.forward , dif.normalized  ).y;
+angle *= py;
+rotForce = angle * .3f;
+    rotVel += rotForce ;
+
+
+    velocity += force * .0003f;
+
+
+
+}
+
+
+if( velocity.magnitude > myMaxSpeed ){ velocity = velocity.normalized * myMaxSpeed; }
+transform.Rotate(0, rotVel * Time.deltaTime, 0);
+transform.position += velocity;
+
+
+
+
+transform.position += Vector3.up * ( h - transform.position.y );
+
+
+  rotVel *= .9f;
+  velocity *= .9f;
+
+animator.SetFloat("Forward",velocity.magnitude * 16 , 0.1f, Time.deltaTime);
+animator.SetFloat("Turn",rotVel * .03f , 0.1f, Time.deltaTime);
+animator.SetBool("Uphill" ,hDifFront < 0 );
+animator.SetFloat("Steepness",-hDifFront * 1, 0.1f, Time.deltaTime);
+
+animator.Update(Time.deltaTime); 
+
   }
 
 

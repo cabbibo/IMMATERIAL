@@ -38,6 +38,7 @@ private Vector3 oPos;
 public void OnDown(){
   if(data.inputEvents.hitTag == "Book" || data.inputEvents.hitTag == "Monolith"){
     synth.active = true;
+    print("HMMM");
     
       data.extraParticles.EmitOn();
   }

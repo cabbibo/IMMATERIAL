@@ -132,7 +132,7 @@
 
                 if( dist > 1 - noise( v.worldPos * 20 + col.x) ){ discard; }
 
-                 col = dist + -dot( normalize(v.eye) ,  fNor );//1/dist;// * 1.1;
+                 col.xyz =fNor;// dist + -dot( normalize(v.eye) ,  fNor );//1/dist;// * 1.1;
                 return col;
             }
             ENDCG

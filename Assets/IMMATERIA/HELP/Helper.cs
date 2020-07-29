@@ -5,16 +5,26 @@ using UnityEngine;
 public class Helper : Cycle
 {
 
+
+  public AudioClip errorClip;
+  public AudioClip successClip;
+
+
   public void OnPageCantGoBack(){
+
+    data.sound.PlayOne( errorClip );
     print("Sorry but you can't go back from this position");
   }
 
 
   public void OnPageLocked(){
+    
+    data.sound.PlayOne( errorClip );
     print("Sorry but this page is locked! Youll have to do something to fix it! ");
   }
 
   public void OnSuccessUnlock(){
+    data.sound.PlayOne( successClip );
     print("GOOD JOB U ONLOCKTIOD!");  
   }
 

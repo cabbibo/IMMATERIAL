@@ -4,6 +4,9 @@ using System.Collections;
 
 [ExecuteInEditMode]
 public class CaptureTest : MonoBehaviour {
+   
+
+
     // Capture frames as a screenshot sequence. Images are
     // stored as PNG files in a folder - these can be combined into
     // a movie using image utility software (eg, QuickTime Pro).
@@ -23,6 +26,12 @@ public class CaptureTest : MonoBehaviour {
 
     private string oldFolderName;
 
+    public int speed;
+    public int currentFrame;
+    public int framesSaved;
+
+    public bool sceneView;
+
     void Start () {
 
 
@@ -31,14 +40,20 @@ public class CaptureTest : MonoBehaviour {
         // Create the folder
         System.IO.Directory.CreateDirectory(final);
 
+        startFrameCount = Time.frameCount;
+        framesSaved = 0;
+
+        currentFrame = 0;
+
 
     }
 
 
 
-    void Update () {
+    void LateUpdate () {
 
-        if( oldFolderName != folderName ){
+        currentFrame ++;
+        if( oldFolderName != folderName && capturing == true ){
             
             oldFolderName = folderName;
 
@@ -50,17 +65,18 @@ public class CaptureTest : MonoBehaviour {
 
         if( capturing == true && oCapturing == false ){
             Time.captureFramerate = frameRate;
-            startFrameCount = Time.frameCount;
+            framesSaved = 0;
+            currentFrame = 0;
         }
 
          if( capturing == false && oCapturing == true ){
             Time.captureFramerate = 0;
         }
 
-        if( capturing == true ){
+        if( capturing == true && currentFrame % speed == 0 ){
             // Append filename to folder name (format is '0005 shot.png"')
-            string name = string.Format("{0}/shot{1:D04}.png", final, Time.frameCount - startFrameCount );
-
+            string name = string.Format("{0}/shot{1:D04}.png", final, framesSaved );
+            framesSaved ++;
             // Capture the screenshot to the specified file.
             ScreenCapture.CaptureScreenshot(name,superSize);
         }
@@ -71,5 +87,5 @@ public class CaptureTest : MonoBehaviour {
         if( !captureVid ) capturing = false;
     }
 
-
+   
 }

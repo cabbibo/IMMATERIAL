@@ -39,6 +39,9 @@ Blend One One
 
             float _CanEdgeSwipe;
 
+            int _MustContinue;
+            int _Locked;
+
 
             struct v2f { 
               float4 pos : SV_POSITION; 
@@ -47,6 +50,7 @@ Blend One One
               float3 vel : TEXCOORD1;
               float3 dif : TEXCOORD2;
               float2 uv : TEXCOORD3;
+              int side : TEXCOORD4;
             };
             float4 _Color;
             sampler2D _MainTex;
@@ -54,9 +58,14 @@ Blend One One
             StructuredBuffer<Vert> _VertBuffer;
             StructuredBuffer<int> _TriBuffer;
 
+
+            int _VertCount;
+
             v2f vert ( uint vid : SV_VertexID )
             {
                 v2f o;
+                int vertID = _TriBuffer[vid];
+                int side = vertID / ( _VertCount /4);
                 Vert v = _VertBuffer[_TriBuffer[vid]];
                 o.pos = mul (UNITY_MATRIX_VP, float4(v.pos,1.0f));
                 o.nor = v.nor;
@@ -64,6 +73,7 @@ Blend One One
                 o.dif = v.pos - v.tan;
                 o.debug = v.debug;
                 o.uv = v.uv;
+                o.side =  side;
                 return o;
             }
 
@@ -72,23 +82,43 @@ Blend One One
                 // sample the texture
 
                 float3 col = .3; float alpha = 1;
-                col += length(v.dif);
-               
+
+            
                 col = 1;
 
-                col = tex2D(_MainTex, float2(1-v.uv.y * (1./5.), v.uv.x * .03 * v.debug.y ).yx ).a ;
+                col = tex2D(_MainTex, float2(1-v.uv.y * (1./5.), v.uv.x * .03 * v.debug.y ).yx ).a;
                 if( col.x < .1 ){
                   discard;
                 }
 
-
-                col *= (.3 + 3*length( v.dif ));
+              // Getting distance from original position ( further away is brighter)
+                col *= (.3 + 3*length( v.dif ));    
+    
                  if( _CanEdgeSwipe > 0 ){
+                   // making it all brighter;
                     col += length(v.dif);
                     col += 1;
                 }
+
+                if( v.side == 3 ){
+                  if( _MustContinue == 1 ){
+
+
+                    col /= 4;
+                  }
+                }
+
+
+                if( v.side == 1 ){
+                  if( _Locked == 1 ){
+                    col /= 4;
+                  }
+                }
+
+              
                // col = v.uv.x;
                 return float4(col  * v.debug.x, length(col) * v.debug.x);
+                //return float( v.side )/4;//float4(col  * v.debug.x, length(col) * v.debug.x);
             }
 
             ENDCG

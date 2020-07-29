@@ -197,6 +197,9 @@ public class StoryController : Cycle
     
     // Setting the next page for our camera to move to
     data.cameraControls.SetLerpTarget( pages[currentPageID].transform , transitionSpeed );
+
+    print(pages[currentPageID].locked);
+    print(pages[currentPageID].mustContinue);
     
     // Setting up the audio for each page
     if( pages[currentPageID].audioInfo.Length == setter.audio.audioInfo.Length ){
@@ -233,6 +236,8 @@ public class StoryController : Cycle
 
     transitionSpeed = pages[currentPageID].lerpSpeed;
     
+    data.framer.frames[data.framer.currentFrame].transfer.body.mpb.SetInt("_Locked",  pages[currentPageID].locked ? 1:0);
+    data.framer.frames[data.framer.currentFrame].transfer.body.mpb.SetInt("_MustContinue",  pages[currentPageID].mustContinue? 1:0);
 
     // Set up the text for this page
     data.textParticles.Set( pages[currentPageID].text );

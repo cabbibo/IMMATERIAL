@@ -66,7 +66,7 @@ public class SpacePup : Cycle
 
     force = Vector3.zero;
 
-    force += (target.position - transform.position);
+    force += (target.position - transform.position) * 1;
 
     velocity += force;
 

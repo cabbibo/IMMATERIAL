@@ -100,7 +100,6 @@ public class Painter : Simulation
   // Only Recreate if its not the correct size;
   public override void OnGestated(){
 
-    print("HERE WE GOOO");
 
     Load();
 

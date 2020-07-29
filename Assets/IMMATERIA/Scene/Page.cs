@@ -53,7 +53,15 @@ public class Page : Cycle
             if( audioInfo == null ){ audioInfo = new float[setter.audio.audioInfo.Length]; }
 
             if( audioInfo.Length != setter.audio.audioInfo.Length){
+              float[] tmp = audioInfo;
               audioInfo = new float[setter.audio.audioInfo.Length];
+
+              // Copy over our old audio info if we change the length of this array just so 
+              // we dont erase everything every time we add a loop
+              int minIndex = Mathf.Min( setter.audio.audioInfo.Length, tmp.Length);
+              for( int i = 0; i < minIndex; i++ ){
+                audioInfo[i] = tmp[i];
+              }
             }
 
         }

@@ -12,7 +12,6 @@
     _CutoffMap ("CutoffMap", 2D) = "white" {}
 
     
-    _BaseHue ("Base Hue", float ) = 1
     _ColorMap ("ColorMap", 2D) = "white" {}
 
     

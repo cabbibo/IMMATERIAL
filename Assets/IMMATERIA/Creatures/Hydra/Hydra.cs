@@ -5,7 +5,8 @@ using UnityEngine;
 public class Hydra : Cycle
 {
 
-
+  public float speed = 1;
+  public float dampening = .9f;
 
    public TransformBuffer stalk;
    public TransformBuffer tips;
@@ -57,8 +58,8 @@ public class Hydra : Cycle
 
     Vector3 targetPos = stalk.transforms[0].position + Vector3.up * 6;
 
-    force += (targetPos - stalk.transforms[1].position) * .001f;
-    force += (target.position - stalk.transforms[1].position) * .001f;
+    force += (targetPos - stalk.transforms[1].position) * .001f * speed;
+    force += (target.position - stalk.transforms[1].position) * .001f * speed;
 
 
       torsoVel += force;
@@ -67,7 +68,7 @@ public class Hydra : Cycle
       stalk.transforms[1].LookAt( target.position );
       stalk.transforms[1].transform.Rotate( 90, 0, 0 );
 
-      torsoVel *= .9f;
+      torsoVel *= .9f * dampening;
 
       for( int i = 0; i< vels.Length; i++ ){
 

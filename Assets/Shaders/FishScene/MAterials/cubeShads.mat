@@ -24,7 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMap:
-        m_Texture: {fileID: 2800000, guid: cd9e5b499c8ff5d47b8d7bbae003b803, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1180ba89c715a46479f543d0e18b3ed3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -65,6 +65,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SpeciMap:
         m_Texture: {fileID: 2800000, guid: c17b52f3830fb5a4dbd9617283f4c95f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureMap:
+        m_Texture: {fileID: 2800000, guid: 1dc31ae343e190e4a9311719d41e7085, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
