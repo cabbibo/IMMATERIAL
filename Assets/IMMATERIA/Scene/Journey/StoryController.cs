@@ -198,8 +198,8 @@ public class StoryController : Cycle
     // Setting the next page for our camera to move to
     data.cameraControls.SetLerpTarget( pages[currentPageID].transform , transitionSpeed );
 
-    print(pages[currentPageID].locked);
-    print(pages[currentPageID].mustContinue);
+    //print(pages[currentPageID].locked);
+    //print(pages[currentPageID].mustContinue);
     
     // Setting up the audio for each page
     if( pages[currentPageID].audioInfo.Length == setter.audio.audioInfo.Length ){

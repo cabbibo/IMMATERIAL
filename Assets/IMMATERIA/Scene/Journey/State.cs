@@ -273,7 +273,7 @@ public Story story;
   public void PickUpBook(){
 
 
-    print("Pick Up Book");
+//    print("Pick Up Book");
     //data.playerControls.epiphanyRing.Set();
     data.playerControls.OnGroundBook.SetActive(false);
     data.playerControls.InHandBook.SetActive(true);

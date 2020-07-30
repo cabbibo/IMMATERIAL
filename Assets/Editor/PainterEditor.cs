@@ -10,6 +10,8 @@
      
      void OnSceneGUI()
      {
+
+     Debug.Log("test");
          Painter test = (Painter)target;
  HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
 
@@ -37,10 +39,10 @@
      }
      public override void OnInspectorGUI()
      {
+       Debug.Log("etss");
         Painter test = (Painter)target;
 
 
-EditorGUILayout.Space();EditorGUILayout.Space();EditorGUILayout.Space();
         GUILayout.Label("PaintSize : " + test.paintSize);
         test.paintSize = GUILayout.HorizontalSlider(test.paintSize, 0.0F, 100.0F);
        

@@ -164,6 +164,8 @@ public class Painter : Simulation
 
 
   public void WhileDown(Ray ray){
+
+    print("hiii");
     
     paintDirection = paintPosition;
     paintPosition = data.land.Trace( ray.origin, ray.direction);

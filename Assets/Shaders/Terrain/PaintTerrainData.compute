@@ -1,0 +1,166 @@
+﻿#pragma kernel Paint
+
+#include "../Chunks/safeID.cginc"
+
+
+struct Vert{
+    float3 pos;
+    float4 info1;
+    float4 info2;
+    float4 info3;
+    float4 info4;
+    float debug;
+};
+
+
+RWStructuredBuffer<Vert> _VectorBuffer;
+
+int _VectorBuffer_COUNT;
+float _Delta;
+
+
+float _Reset;
+
+
+
+float4x4 _Transform;
+float4x4 _oTransform;
+float3 _DeltaPos;
+
+
+float3 _PaintPosition;
+float3 _PaintDirection;
+float _PaintSize;
+float _PaintOpacity;
+
+int _Brush;
+int _RaiseLowerFlatten;
+
+
+
+float weight[5] =  {0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216};
+
+Texture2D<float4> _HeightMap;
+SamplerState sampler_HeightMap;
+float _MapSize;
+float _MapHeight;
+
+
+    float3 worldPos( float3 pos ){
+        float4 c = _HeightMap.SampleLevel(sampler_HeightMap, (pos.xz) * _MapSize + .5 /1024  , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+        pos.y = _MapHeight * c.x;//* sin(.1 *length(pos.xz)) ;//c.x * 1000;//_MapHeight;
+        return pos;
+    }
+
+
+
+Texture2D<float4> _UndoTexture;
+SamplerState sampler_UndoTexture;
+
+
+
+Texture2D<float4> _TextureReset;
+SamplerState sampler_TextureReset;
+
+
+    float3 worldPosTexture( float3 pos ){
+        float4 c = _TextureReset.SampleLevel(sampler_TextureReset, (pos.xz) * _MapSize + .5 /1024  , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+        pos.y = _MapHeight * c.x;//* sin(.1 *length(pos.xz)) ;//c.x * 1000;//_MapHeight;
+        return pos;
+    }
+
+    float4 getTexture( float3 pos ){
+       float4 c = _TextureReset.SampleLevel(sampler_TextureReset, (pos.xz) * _MapSize  + .5 /1024 , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+       return c;
+    }
+
+
+       float4 getUndoTexture( float3 pos ){
+       float4 c = _UndoTexture.SampleLevel(sampler_UndoTexture, (pos.xz) * _MapSize  + .5 /1024 , 1);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+       return c;
+    }
+
+
+
+
+
+    float3 getNormal( float3 pos ){
+
+      float delta = .01;
+      float3 dU = worldPos( pos + float3(delta,0,0) );
+      float3 dD = worldPos( pos + float3(-delta,0,0) );
+      float3 dL = worldPos( pos + float3(0,0,delta) );
+      float3 dR = worldPos( pos + float3(0,0,-delta) );
+
+      return -normalize(cross(dU.xyz-dD.xyz , dL.xyz-dR.xyz));
+
+    }
+
+#include "../Chunks/noise.cginc"
+
+
+
+
+
+
+
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Paint(uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+
+    int sID = safeID( pID , _VectorBuffer_COUNT );
+    Vert v = _VectorBuffer[sID];
+
+    float l = saturate( length(v.pos - _PaintPosition ) / _PaintSize );
+    float val = lerp( _PaintOpacity * _PaintOpacity , 0 , l );
+
+    if( _RaiseLowerFlatten == 0 ){
+        val = val;
+    }else{
+        val = -val;
+    }
+
+    if( _Brush == 0 ){
+        v.info1.x += val; v.info1.x = saturate(v.info1.x);
+    }else if( _Brush == 1 ){
+        v.info1.y += val; v.info1.y = saturate(v.info1.y);
+    }else if( _Brush == 2 ){
+        v.info1.z += val; v.info1.z = saturate(v.info1.z);
+    }else if( _Brush == 3 ){
+        v.info1.w += val; v.info1.w = saturate(v.info1.w);
+    }else if( _Brush == 4 ){
+        v.info2.x += val; v.info2.x = saturate(v.info2.x);
+    }else if( _Brush == 5 ){
+        v.info2.y += val; v.info2.y = saturate(v.info2.y);
+    }else if( _Brush == 6 ){
+        v.info2.z += val; v.info2.z = saturate(v.info2.z);
+    }else if( _Brush == 7 ){
+        v.info2.w += val; v.info2.w = saturate(v.info2.w);
+    }else if( _Brush == 8 ){
+        v.info3.x += val; v.info3.x = saturate(v.info3.x);
+    }else if( _Brush == 9 ){
+        v.info3.y += val; v.info3.y = saturate(v.info3.y);
+    }else if( _Brush == 10 ){
+        v.info3.z += val; v.info3.z = saturate(v.info3.z);
+    }else if( _Brush == 11 ){
+        v.info3.w += val; v.info3.w = saturate(v.info3.w);
+    }else if( _Brush == 12 ){
+        v.info4.x += val; v.info4.x = saturate(v.info4.x);
+    }else if( _Brush == 13 ){
+        v.info4.y += val; v.info4.y = saturate(v.info4.y);
+    }else if( _Brush == 14 ){
+        v.info4.z += val; v.info4.z = saturate(v.info4.z);
+    }else if( _Brush == 15 ){
+        v.info4.w += val; v.info4.w = saturate(v.info4.w);
+    }   
+
+
+
+    _VectorBuffer[sID] = v;
+
+
+}

@@ -110,7 +110,10 @@ public class Saveable {
     public static void Save( Form form , string name ){
 
     BinaryFormatter bf = new BinaryFormatter();
+    
+    Debug.Log(name);
     FileStream stream = new FileStream(Application.dataPath + "/"+name+".dna",FileMode.Create);
+
 
     if( form.intBuffer ){
       int[] data = form.GetIntDNA();
@@ -131,13 +134,55 @@ public class Saveable {
 
       if( form.intBuffer ){
         int[] data = bf.Deserialize(stream) as int[];
-        form.SetDNA(data);
+        stream.Close();
+
+        if( data == null ){
+          form.DebugThis("YOUR  DATA IS NULL");
+          form.saveName = GetSafeName();
+          form.Embody();
+          form.loadedFromFile = false;
+          Saveable.Save(form,name);
+        }else{
+          if( data.Length != form.count * form.structSize ){
+            form.DebugThis("YOUR INPUT DATA IS OFF");
+            form.saveName = GetSafeName();
+            form.Embody();
+            form.loadedFromFile = false;
+            Saveable.Save(form,name);
+
+          }else{
+            //form.DebugThis("loadedFromFileee");
+            form.SetDNA(data);
+          }
+        }
       }else{
-        float[] data = bf.Deserialize(stream) as float[];
-        form.SetDNA(data);
+          float[] data = bf.Deserialize(stream) as float[];
+          stream.Close();
+          
+          if( data == null ){
+                  form.DebugThis("NULL DATA");
+            form.saveName = GetSafeName();
+            form.Embody();
+            form.loadedFromFile = false;
+            Saveable.Save(form,name);
+          }else{
+
+          if( data.Length != form.count * form.structSize ){
+            form.DebugThis("YOUR INPUT DATA IS OFF");
+            form.saveName = GetSafeName();
+            form.Embody();
+            form.loadedFromFile = false;
+            Saveable.Save(form,name);
+
+          }else{
+            
+          // form.DebugThis("loadedFromFileee");
+            form.SetDNA(data);
+          }
+        }
       }
 
-      stream.Close();
+
     }else{
 
       Debug.Log(Application.dataPath + "/"+name+".dna");
@@ -168,9 +213,6 @@ public class Saveable {
           Saveable.Save(form);
         }else{
 
-          //form.DebugThis("hello");
-          //form.DebugThis("" + stream);
-          //form.DebugThis("" + data.Length);
           if( data.Length != form.count * form.structSize ){
             form.DebugThis("YOUR INPUT DATA IS OFF");
             form.saveName = GetSafeName();
