@@ -131,7 +131,7 @@ public void FullRebuild(){
      if( Saveable.Check(f.saveName)){
         Saveable.Delete(f.saveName);
      } 
-    new WaitForSeconds(5);
+    new WaitForSeconds(3);
 
      f.alwaysRemake = true;
     }

@@ -68,15 +68,10 @@
 
 
 
-      sampler2D _HeightMap;
-    float _MapSize;
-    float _MapHeight;
+#include "../Chunks/ComputeTerrainInfo.cginc"
 
 
 
-  float4 sampleColor( float3 pos ){
-        return tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
-    }
 
       struct varyings {
         float4 pos    : SV_POSITION;

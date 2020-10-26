@@ -51,6 +51,7 @@ public class ParticlesOnCircle: Particles {
 
   public override void Embody(){
 
+    print("embody1");
 
     float[] triangleAreas = new float[tris.count / 3];
     
@@ -88,7 +89,7 @@ public class ParticlesOnCircle: Particles {
 
       float Y = 1-((1-uv0.y) + (1-uv1.y) + (1-uv2.y) ) / 3;
       area = Mathf.Clamp( Mathf.Min( Y * 2,( 1- Y )) * 4.5f  ,0 , 4);//((1-uv0.y) + (1-uv1.y) + (1-uv2.y) ) / 3;
-      area *= area*area*area;// * area * area*area;
+      area *= area*area;// * area * area*area;
 }else if( noiseType == NoiseType.CenterOut ){
 
   }else if( noiseType == NoiseType.Even ){

@@ -22,3 +22,9 @@ float3 getNormal( float3 pos ){
   return normalize(cross(dU.xyz-dD.xyz , dL.xyz-dR.xyz));
 
 }
+
+
+  float4 sampleColor( float3 pos ){
+        return  _HeightMap.SampleLevel(sampler_HeightMap, (pos.xz-.5) * _MapSize  , 0);//tex2Dlod(_HeightMap , float4(pos.xz * _MapSize,0,0) );
+   
+    }

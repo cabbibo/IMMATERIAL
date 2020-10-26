@@ -325,7 +325,7 @@ public void ResetToFlat(){
 
 
 public void UpdateLand(){
-print( "APPLUIONG " + whichTexture);
+//print( "APPLUIONG " + whichTexture);
     textures[whichTexture].SetPixels(colors,0);
     textures[whichTexture].Apply(true);
 

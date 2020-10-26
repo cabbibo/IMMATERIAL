@@ -30,8 +30,8 @@ public class TransferLifeForm : LifeForm {
 
     transformArray = new float[16];
 
-    SafeInsert(body);
-    SafeInsert(transfer);
+    SafePrepend(body);
+    SafePrepend(transfer);
 
 
     DoCreate();
@@ -40,12 +40,16 @@ public class TransferLifeForm : LifeForm {
 
   public override void _Bind(){
     transfer.BindPrimaryForm("_VertBuffer", verts);
-    transfer.BindForm("_SkeletonBuffer", skeleton); 
+    
+    if( skeleton != null ){
+      transfer.BindForm("_SkeletonBuffer", skeleton); 
+    }
 
     data.BindCameraData( transfer );
     
     transfer.BindFloat("_Radius" , () => this.radius ); 
-    transfer.BindFloats("_TransformBase", () => this.transformArray);
+    //transfer.BindFloats("_TransformBase", () => this.transformArray);
+    transfer.BindMatrix("_TransformBase", () => transform.localToWorldMatrix);
     
     Bind();
   }

@@ -1,0 +1,114 @@
+﻿#pragma kernel Transfer
+#pragma kernel TransferFlat
+
+struct Vert{
+    float3 pos;
+    float3 ogPos;
+    float3 nor;
+    float3 ogNor;
+    float2 uv;
+    float2 debug;
+};
+
+RWStructuredBuffer<Vert> _VertBuffer;
+
+int _VertBuffer_COUNT;
+int _SkeletonBuffer_COUNT;
+int _HairBuffer_COUNT;
+#include "../Chunks/safeID.cginc"
+
+float3 _CameraLeft;
+
+
+float3 _CameraRight;
+float3 _CameraUp;
+float3 _CameraForward;
+float _Radius;
+
+
+float4x4 _TransformBase;
+#include "../Chunks/ComputeTerrainInfo.cginc"
+float3 tPos( float3 wPos  , float2 uv  ){
+    float3 pos = worldPos( wPos);// terrainWorldPos( vWorld );
+    float tVal = 2*abs(uv.x-.5);
+                tVal = 3 * ( tVal * tVal ) - 2 * ( tVal * tVal * tVal );
+                return lerp( pos , wPos ,(1-tVal) * pow( uv.y , 1) );
+}
+
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void Transfer (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+
+    int particleID = pID;
+
+
+    Vert v = _VertBuffer[safeID(particleID,_VertBuffer_COUNT)];
+
+
+    float3 inputPos = v.ogPos;
+    float tVal = (1-v.uv.y);
+    tVal = 3 * ( tVal * tVal ) - 2 * ( tVal * tVal * tVal );
+    inputPos.x *= tVal + .3;
+    inputPos.y -= v.uv.y * .6;
+
+    float4 vWorld =   mul(_TransformBase, float4(inputPos,1));//terrainWorldPos( v.vertex ) - float4(0,0,_Vertical,0);
+
+    float3 fPos = tPos( vWorld , v.uv);
+
+    float3 nor = normalize(cross( 
+            normalize( tPos( vWorld + float3(.1,0,0) , v.uv ) - tPos( vWorld - float3(.1,0,0) , v.uv )), 
+            normalize( tPos( vWorld + float3(0,0,.1) , v.uv ) - tPos( vWorld - float3(0,0,.1) , v.uv )) ));
+
+
+   v.pos = fPos;
+   v.nor = nor;
+
+
+   _VertBuffer[pID] = v;
+
+}
+
+float3 tPos1( float3 wPos  , float2 uv  ){
+    float3 pos = worldPos( wPos);// terrainWorldPos( vWorld );
+    float tVal = 2*abs(uv.x-.5);
+                tVal = 3 * ( tVal * tVal ) - 2 * ( tVal * tVal * tVal );
+                return pos;//lerp( pos , wPos ,(1-tVal) * pow( uv.y , 1) );
+}
+
+#define NR_THREADS 128
+[numthreads(NR_THREADS,1,1)]
+void TransferFlat (uint threadID : SV_GroupIndex, uint3 u3GroupID : SV_GroupID) {
+
+    int pID = threadID + u3GroupID.x * NR_THREADS;
+
+    int particleID = pID;
+
+
+    Vert v = _VertBuffer[safeID(particleID,_VertBuffer_COUNT)];
+
+
+    float3 inputPos = v.ogPos;
+    float tVal = (1-v.uv.y);
+    tVal = 3 * ( tVal * tVal ) - 2 * ( tVal * tVal * tVal );
+    inputPos.x *= tVal + .3;
+    inputPos.y -= v.uv.y * .6;
+
+    float4 vWorld =   mul(_TransformBase, float4(inputPos,1));//terrainWorldPos( v.vertex ) - float4(0,0,_Vertical,0);
+
+    float3 fPos = worldPos( vWorld ) + float3(0,.2,0);
+
+    float3 nor = getNormal( vWorld);/* normalize(cross( 
+            normalize( tPos( vWorld + float3(.1,0,0) , v.uv ) - tPos( vWorld - float3(.1,0,0) , v.uv )), 
+            normalize( tPos( vWorld + float3(0,0,.1) , v.uv ) - tPos( vWorld - float3(0,0,.1) , v.uv )) ));
+*/
+
+   v.pos = fPos;
+   v.nor = nor;
+
+
+   _VertBuffer[pID] = v;
+
+}

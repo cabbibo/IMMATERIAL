@@ -20,7 +20,7 @@ static void RebuildScene()
 [MenuItem("IMMATERIA/Fake Swipe Right %w")]
 static void FakeSwipeLeft()
 {
-  UnityEngine.Debug.Log("huhh");
+//  UnityEngine.Debug.Log("huhh");
   GameObject.Find("Input").GetComponent<InputEvents>().fakeSwipeRight = true;
 }
 
